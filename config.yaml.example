@@ -1,0 +1,53 @@
+# Auralynq configuration file
+# Copy to config.yaml and edit. Precedence: env vars > this file > built-in defaults.
+# Set AURALYNQ_CONFIG=/path/to/config.yaml to point at a non-default location.
+
+# ── LLM ─────────────────────────────────────────────────────────────────────
+# provider: auto   → tries ollama first, then OpenAI/Anthropic if keys are set
+# provider: ollama → forces local Ollama (no cloud deps, no API key needed)
+# provider: openai | anthropic | cohere → forces that provider (requires key)
+llm:
+  provider: auto
+  model: llama3          # Ollama model tag (ignored when provider != ollama)
+  base_url: http://localhost:11434
+  temperature: 0.1
+  max_tokens: 1024
+
+# ── Embeddings ───────────────────────────────────────────────────────────────
+# provider: auto   → tries ollama first, then bge (if installed), then hash
+# provider: ollama → nomic-embed-text via local Ollama (recommended, zero-cost)
+# provider: bge    → BAAI/bge-m3 (requires sentence-transformers + torch)
+# provider: openai → text-embedding-3-small (requires OPENAI_API_KEY)
+embedding:
+  provider: auto
+  ollama_model: nomic-embed-text    # used when provider=ollama
+  model: BAAI/bge-m3                # used when provider=bge
+  dim: 768
+
+# ── Vector store ─────────────────────────────────────────────────────────────
+# backend: auto   → chroma (if installed) else memory
+# backend: chroma → local on-disk ChromaDB, no server needed (recommended)
+# backend: qdrant → Qdrant server (best for large corpora, requires running server)
+# backend: memory → in-process numpy (fast but no persistence across runs)
+vector:
+  backend: auto
+  chroma_persist_dir: ./data/vectorstore
+  chroma_collection: auralynq
+  url: http://localhost:6333    # Qdrant URL (only used when backend=qdrant)
+
+# ── Retrieval ────────────────────────────────────────────────────────────────
+retrieval:
+  top_k: 20
+  final_k: 6
+
+# ── PDF source directory ─────────────────────────────────────────────────────
+# Default directory scanned by `auralynq ingest` when no path argument is given.
+pdf_source_dir: ./data/pdfs
+
+# ── Optional cloud provider keys ─────────────────────────────────────────────
+# Prefer setting API keys via env vars (OPENAI_API_KEY, ANTHROPIC_API_KEY, etc.)
+# rather than in this file to avoid accidentally committing secrets.
+#
+# openai_api_key: ""
+# anthropic_api_key: ""
+# cohere_api_key: ""

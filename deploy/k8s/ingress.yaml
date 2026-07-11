@@ -1,0 +1,32 @@
+# Public entry. The web UI is the only public surface (it proxies /api to the API
+# Service, injecting the bearer token); the API/MCP/Qdrant/Phoenix Services stay
+# internal ClusterIPs. TLS is terminated by the ingress controller (cert-manager
+# annotation shown). Expose the MCP HTTP endpoint at /mcp only if you want remote
+# MCP clients — it is bearer-authenticated (ADR-0016).
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: auralynq
+  namespace: auralynq
+  labels: { app.kubernetes.io/part-of: auralynq }
+  annotations:
+    # cert-manager.io/cluster-issuer: letsencrypt-prod   # uncomment with cert-manager
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"   # keep SSE/voice streaming
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts: ["auralynq.example.com"]
+      secretName: auralynq-tls
+  rules:
+    - host: auralynq.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: { name: auralynq-web, port: { number: 3000 } }
+          # Optional: expose remote MCP (bearer-authenticated) at /mcp
+          # - path: /mcp
+          #   pathType: Prefix
+          #   backend:
+          #     service: { name: auralynq-mcp, port: { number: 8765 } }

@@ -1,0 +1,21 @@
+# Example Hugging Face Space metadata block.
+#
+# This is NOT a file Hugging Face reads directly — Spaces read this exact
+# YAML as the front-matter of the Space's own README.md (the file at the
+# root of the Space repo). Copy the block below into the top of that file,
+# between two `---` lines. See README_SPACE_TEMPLATE.md for the complete
+# template with this front-matter already in place.
+
+title: Auralynq
+emoji: 🎙️
+colorFrom: blue
+colorTo: purple
+sdk: docker
+app_port: 7860
+pinned: false
+license: apache-2.0
+short_description: "Local-first, voice-native, agentic RAG with visual citation grounding"
+
+# Optional, once you have real numbers to report (do not fabricate):
+# models: []
+# datasets: []

@@ -1,0 +1,46 @@
+# Phoenix — observability / trace UI + OTLP collector. Internal ClusterIP.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auralynq-phoenix
+  namespace: auralynq
+  labels: { app.kubernetes.io/name: auralynq-phoenix, app.kubernetes.io/part-of: auralynq }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app.kubernetes.io/name: auralynq-phoenix }
+  template:
+    metadata:
+      labels: { app.kubernetes.io/name: auralynq-phoenix, app.kubernetes.io/part-of: auralynq }
+    spec:
+      containers:
+        - name: phoenix
+          image: docker.io/arizephoenix/phoenix:latest
+          ports:
+            - { name: ui, containerPort: 6006 }
+            - { name: otlp, containerPort: 4317 }
+          env:
+            - { name: PHOENIX_WORKING_DIR, value: /data }
+          readinessProbe:
+            tcpSocket: { port: 6006 }
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+            requests: { cpu: "100m", memory: "256Mi" }
+            limits: { cpu: "1", memory: "1Gi" }
+          volumeMounts:
+            - { name: data, mountPath: /data }
+      volumes:
+        - { name: data, emptyDir: {} }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auralynq-phoenix
+  namespace: auralynq
+  labels: { app.kubernetes.io/name: auralynq-phoenix, app.kubernetes.io/part-of: auralynq }
+spec:
+  selector: { app.kubernetes.io/name: auralynq-phoenix }
+  ports:
+    - { name: ui, port: 6006, targetPort: 6006 }
+    - { name: otlp, port: 4317, targetPort: 4317 }

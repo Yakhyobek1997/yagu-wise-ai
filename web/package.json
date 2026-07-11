@@ -1,0 +1,52 @@
+{
+  "name": "auralynq-web",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Auralynq — Talk to Your Data. Web UI.",
+  "engines": {
+    "node": ">=18.18"
+  },
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test:sse": "node lib/sse.test.mjs",
+    "test:failover": "node lib/failover.test.mjs",
+    "test:theme": "node lib/theme.test.mjs",
+    "test:format": "node lib/format.test.mjs",
+    "test:ui": "node lib/ui.test.mjs",
+    "test:modelfit": "node lib/modelfit.test.mjs",
+    "test:demo": "node lib/demo.test.mjs",
+    "test": "node lib/sse.test.mjs && node lib/failover.test.mjs && node lib/theme.test.mjs && node lib/format.test.mjs && node lib/ui.test.mjs && node lib/modelfit.test.mjs && node lib/demo.test.mjs"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.19",
+    "@radix-ui/react-hover-card": "^1.1.19",
+    "@radix-ui/react-tooltip": "^1.2.12",
+    "cmdk": "^1.1.1",
+    "highlight.js": "11.9.0",
+    "lucide-react": "^0.460.0",
+    "next": "15.5.18",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-markdown": "9.0.1",
+    "rehype-highlight": "7.0.0",
+    "remark-gfm": "4.0.0",
+    "tailwindcss-animate": "^1.0.7",
+    "undici": "6.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.14.0",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "autoprefixer": "10.4.19",
+    "postcss": "8.5.10",
+    "tailwindcss": "3.4.6",
+    "typescript": "5.5.3"
+  },
+  "overrides": {
+    "postcss": "8.5.10"
+  }
+}

@@ -1,0 +1,56 @@
+# Auralynq TLS reverse proxy (ADR-0013).
+#
+# Single public HTTPS entrypoint that terminates TLS in front of the stack. The
+# browser only ever talks to Caddy; Caddy forwards everything to the web
+# container, which serves the UI and proxies /api/* to the API (injecting the
+# bearer token server-side). So web/api/qdrant/phoenix need NOT be public.
+#
+# TLS: by default we serve a self-signed cert baked into the image (SANs include
+# the server IP + localhost) via an explicit `tls` directive — reliable for an
+# IP / no-domain host. For a real domain, set AURALYNQ_SITE_ADDRESS=https://your
+# .domain and AURALYNQ_TLS=internal-or-empty so Caddy provisions a trusted cert.
+
+{
+	admin off
+	auto_https disable_redirects
+	# Rootless host can't size the QUIC UDP buffer; serve plain h1/h2.
+	servers {
+		protocols h1 h2
+	}
+}
+
+# Site address defaults to ":8443". The TLS directive defaults to the baked
+# self-signed cert+key; set AURALYNQ_TLS=internal (Caddy CA) or a domain email
+# for ACME when deploying with a real hostname.
+{$AURALYNQ_SITE_ADDRESS::8443} {
+	tls {$AURALYNQ_TLS:/certs/site.crt /certs/site.key}
+
+	encode gzip
+
+	# Hard cap on incoming request bodies — prevents DoS via massive audio/file
+	# uploads before the request reaches the API layer's per-endpoint limit.
+	# Override with AURALYNQ_MAX_BODY_SIZE for environments that need larger uploads.
+	request_body {
+		max_size {$AURALYNQ_MAX_BODY_SIZE:100MB}
+	}
+
+	# Deny path traversal attempts at the proxy layer.
+	@dotpath {
+		path_regexp \.\.
+	}
+	respond @dotpath 400
+
+	# Minimal security headers for browser clients.
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	# Stream-friendly: disable response buffering so SSE token streaming and the
+	# voice WebSocket pass through without latency/aggregation.
+	reverse_proxy {$AURALYNQ_WEB_UPSTREAM:http://web:3000} {
+		flush_interval -1
+	}
+}

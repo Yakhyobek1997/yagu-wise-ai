@@ -1,0 +1,68 @@
+[
+  {
+    "id": "q1",
+    "category": "factoid",
+    "question": "What is Auralynq?",
+    "expects": "answerable"
+  },
+  {
+    "id": "q2",
+    "category": "factoid",
+    "question": "What does the 'span' grounding stage mean?",
+    "expects": "answerable"
+  },
+  {
+    "id": "q3",
+    "category": "summary",
+    "question": "Summarize how Auralynq's retrieval architecture works.",
+    "expects": "answerable"
+  },
+  {
+    "id": "q4",
+    "category": "citation_verification",
+    "question": "Which RAG strategies are listed as Available in the strategy comparison table?",
+    "expects": "answerable"
+  },
+  {
+    "id": "q5",
+    "category": "visual_grounding_clickthrough",
+    "question": "According to the sample benchmark report, what is the nDCG@10 for the hybrid strategy?",
+    "expects": "answerable"
+  },
+  {
+    "id": "q6",
+    "category": "insufficient_evidence",
+    "question": "What was Auralynq's total revenue in Q4 2025?",
+    "expects": "abstain"
+  },
+  {
+    "id": "q7",
+    "category": "modelfit_command",
+    "question": "Which CLI command recommends the best local model for a RAG task, and what does it print?",
+    "expects": "answerable"
+  },
+  {
+    "id": "q8",
+    "category": "strategy_comparison",
+    "question": "Compare the hybrid and PathRAG rows in both the strategy table and the benchmark report.",
+    "expects": "answerable"
+  },
+  {
+    "id": "q9",
+    "category": "factoid",
+    "question": "What five sub-scores make up the composite ModelFit score, and what are their weights?",
+    "expects": "answerable"
+  },
+  {
+    "id": "q10",
+    "category": "factoid",
+    "question": "In the sample benchmark report, which quantization level gives the best memory compression, and what recall does it trade off to get there?",
+    "expects": "answerable"
+  },
+  {
+    "id": "q11",
+    "category": "summary",
+    "question": "In two sentences, what does the Source Workspace let a user do?",
+    "expects": "answerable"
+  }
+]

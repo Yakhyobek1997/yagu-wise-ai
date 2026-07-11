@@ -1,0 +1,49 @@
+# Non-secret configuration shared across Auralynq services. In k8s, services
+# resolve each other by their Service DNS name (auralynq-qdrant, auralynq-api, …),
+# so the rootless-CNI workarounds from the compose stack are unnecessary here.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auralynq-config
+  namespace: auralynq
+  labels:
+    app.kubernetes.io/part-of: auralynq
+data:
+  AURALYNQ_ENV: "prod"
+  AURALYNQ_LOG_LEVEL: "INFO"
+  AURALYNQ_LOG_JSON: "true"
+  AURALYNQ_DATA_DIR: "/app/data"
+  # In-cluster service-name addressing (k8s DNS).
+  AURALYNQ_VECTOR__URL: "http://auralynq-qdrant:6333"
+  AURALYNQ_VECTOR__BACKEND: "qdrant"
+  AURALYNQ_TELEMETRY__OTLP_ENDPOINT: "http://auralynq-phoenix:4317"
+  AURALYNQ_LLM__PROVIDER: "auto"
+  AURALYNQ_MCP_HOST: "0.0.0.0"
+  AURALYNQ_MCP_PORT: "8765"
+  # The web /api proxy forwards to the API Service.
+  AURALYNQ_API_INTERNAL: "http://auralynq-api:8000"
+---
+# Secret TEMPLATE — DO NOT COMMIT REAL VALUES. Create the real Secret out-of-band:
+#   kubectl -n auralynq create secret generic auralynq-secrets \
+#     --from-literal=AURALYNQ_SERVE__API_KEY=... \
+#     --from-literal=COHERE_API_KEY=... [--from-literal=OPENAI_API_KEY=... ...]
+# Every secret is optional except where a feature requires it; missing keys
+# degrade to the offline fallbacks (ADR-0003). This stub keeps `kubectl apply -k`
+# working before real secrets are provisioned (all values empty).
+apiVersion: v1
+kind: Secret
+metadata:
+  name: auralynq-secrets
+  namespace: auralynq
+  labels:
+    app.kubernetes.io/part-of: auralynq
+type: Opaque
+stringData:
+  AURALYNQ_SERVE__API_KEY: ""
+  AURALYNQ_MCP_API_KEY: ""
+  HUGGINGFACE_TOKEN: ""
+  OPENAI_API_KEY: ""
+  ANTHROPIC_API_KEY: ""
+  COHERE_API_KEY: ""
+  LANGFUSE_PUBLIC_KEY: ""
+  LANGFUSE_SECRET_KEY: ""

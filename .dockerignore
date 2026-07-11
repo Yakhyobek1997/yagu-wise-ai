@@ -1,0 +1,27 @@
+# Keep container build context small and secret-free (Podman build).
+.git
+.github
+.venv
+venv
+**/__pycache__
+**/*.pyc
+.mypy_cache
+.ruff_cache
+.pytest_cache
+htmlcov
+coverage.xml
+.coverage
+.env
+.env.*
+!.env.example
+data
+reports
+models
+*.log
+web/node_modules
+web/.next
+web/out
+tests
+docs
+prompt.md
+*.prompt.md

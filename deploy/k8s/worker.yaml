@@ -1,0 +1,40 @@
+# Worker — background ingestion processor (polls an inbox, indexes into Qdrant).
+# No Service (not network-reachable). Single replica by default; the inbox is a
+# per-pod volume here — for multi-replica workers, back it with a shared
+# ReadWriteMany PVC or a real queue (roadmap). Scales independently of the API.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auralynq-worker
+  namespace: auralynq
+  labels: { app.kubernetes.io/name: auralynq-worker, app.kubernetes.io/part-of: auralynq }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app.kubernetes.io/name: auralynq-worker }
+  template:
+    metadata:
+      labels: { app.kubernetes.io/name: auralynq-worker, app.kubernetes.io/part-of: auralynq }
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+        - name: worker
+          image: ghcr.io/mhhamdan/auralynq-api:0.1.0
+          args: ["python", "-m", "auralynq.serving.worker"]
+          envFrom:
+            - configMapRef: { name: auralynq-config }
+            - secretRef: { name: auralynq-secrets }
+          livenessProbe:
+            exec: { command: ["sh", "-c", "pgrep -f auralynq.serving.worker"] }
+            periodSeconds: 30
+          resources:
+            requests: { cpu: "100m", memory: "256Mi" }
+            limits: { cpu: "1", memory: "1Gi" }
+          securityContext:
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - { name: data, mountPath: /app/data }
+      volumes:
+        - { name: data, emptyDir: {} }

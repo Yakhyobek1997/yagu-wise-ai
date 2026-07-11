@@ -1,0 +1,127 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Install (light deps only — $0, offline-capable)
+        run: |
+          uv venv .venv --python ${{ matrix.python-version }}
+          uv pip install --python .venv/bin/python -e ".[dev,ingest,eval]"
+
+      - name: Lint (ruff)
+        run: |
+          .venv/bin/ruff check auralynq tests scripts
+          .venv/bin/ruff format --check auralynq tests scripts
+
+      - name: Type check (mypy)
+        run: .venv/bin/mypy auralynq
+
+      - name: Name audit
+        run: .venv/bin/python scripts/name_audit.py
+
+      - name: Docs consistency (links, make targets, env vars)
+        run: .venv/bin/python scripts/check_docs.py
+
+      - name: Tests + coverage
+        run: |
+          .venv/bin/pytest --cov=auralynq --cov-report=xml \
+            --cov-report=term-missing --cov-fail-under=80 tests/
+
+      - name: Eval smoke (offline, no keys)
+        run: .venv/bin/python -m auralynq.cli eval --smoke
+
+      - name: Upload coverage
+        if: matrix.python-version == '3.11'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage.xml
+
+  package-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build sdist + wheel
+        run: |
+          python -m pip install --upgrade build twine
+          python -m build
+          twine check dist/*
+      - name: Upload package artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/*
+
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install
+        run: npm ci
+      - name: Type check
+        run: npm run typecheck
+      - name: Unit tests (dependency-free)
+        run: npm test
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_BASE: /api
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: No secrets committed
+        run: |
+          # .env must never be tracked (only .env.example is allowed).
+          if git ls-files | grep -E '(^|/)\.env$'; then
+            echo "::error::a .env file is tracked — remove it (only .env.example is allowed)"; exit 1
+          fi
+          # Grep tracked text files for obvious private-key markers. Excludes
+          # docs and this workflow (which necessarily contains the pattern
+          # literal); real keys belong in GitHub Secrets, never a workflow file.
+          if git grep -nI -E 'BEGIN (RSA|OPENSSH|EC|PGP) PRIVATE KEY|-----BEGIN PRIVATE KEY-----' -- . ':!*.md' ':!.github/**'; then
+            echo "::error::a private key appears to be committed"; exit 1
+          fi
+          echo "no tracked .env and no private-key markers found"
+
+  container-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate compose + runtime detector
+        run: |
+          bash -n scripts/check_container_runtime.sh
+          test -f compose.yml

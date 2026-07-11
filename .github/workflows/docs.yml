@@ -1,0 +1,35 @@
+name: docs
+
+# Fast, dependency-free check that the public docs stay consistent with the
+# code: relative links resolve, referenced `make` targets exist, and
+# env-example files document the variables the getting-started / HF docs
+# promise. Runs on any change to docs, the Makefile, or the env examples.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**/*.md"
+      - "Makefile"
+      - ".env.example"
+      - "deploy/huggingface/env.example"
+      - "scripts/check_docs.py"
+      - ".github/workflows/docs.yml"
+  pull_request:
+    paths:
+      - "**/*.md"
+      - "Makefile"
+      - ".env.example"
+      - "deploy/huggingface/env.example"
+      - "scripts/check_docs.py"
+      - ".github/workflows/docs.yml"
+
+jobs:
+  check-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Docs consistency
+        run: python scripts/check_docs.py

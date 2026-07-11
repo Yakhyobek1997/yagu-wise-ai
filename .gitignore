@@ -1,0 +1,143 @@
+# =========================
+# Auralynq - Git ignore
+# =========================
+
+# Local project prompt / private planning
+prompt.md
+*.prompt.md
+CLAUDE.md.local
+
+# Secrets and environment files
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.token
+*token*
+*secret*
+*api_key*
+*apikey*
+credentials.json
+service-account*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+dist/
+build/
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Jupyter / notebooks
+.ipynb_checkpoints/
+
+# Node / Next.js
+web/node_modules/
+web/.next/
+web/out/
+web/dist/
+web/.turbo/
+web/.env
+web/.env.*
+!web/.env.example
+
+# Local datasets, indexes, generated reports
+data/*
+!data/.gitkeep
+!data/README.md
+
+reports/*
+!reports/.gitkeep
+!reports/README.md
+
+# Model/cache files
+models/
+# ...but the research Ollama-profiles *source package* is code, not weights.
+# Un-ignore only the .py source (not __pycache__/*.pyc, which stay ignored):
+!auralynq/research/models/
+!auralynq/research/models/*.py
+model_cache/
+.cache/
+.huggingface/
+torch_cache/
+whisper_cache/
+qdrant_storage/
+storage/
+tmp/
+temp/
+
+# Audio/video/generated demo artifacts
+*.wav
+*.mp3
+*.m4a
+*.flac
+*.ogg
+*.mp4
+*.mov
+*.avi
+
+# Logs
+*.log
+logs/
+
+# Research Phase 2: experiment run artifacts (provenance + traces + metrics)
+runs/*
+!runs/.gitkeep
+# LaTeX paper draft — kept local, built on Overleaf, never committed (per request)
+docs/paper/
+# Research datasets (manual download; never auto-committed)
+data/research/
+
+# Research code, configs, scripts, tests — local only
+auralynq/research/
+configs/research/
+scripts/research/
+tests/test_research.py
+
+# All docs — local only (design notes, audits, service descriptions, paper)
+docs/
+
+# Screenshots / snapshots — local only
+docs/screenshots/
+
+# Podman / compose local artifacts
+.podman/
+containers/.env
+containers/.env.*
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+
+# Large archives
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.rar
+prompt.md
+
+# Runtime markers written by the local stack
+.qdrant-initialized
+
+# Auto-generated GPU visibility override (host-specific)
+compose.gpu.yml

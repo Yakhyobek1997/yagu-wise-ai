@@ -1,0 +1,11 @@
+# Keep the web build context clean: never copy host build artifacts or deps into
+# the image — they cause stale bundles (Next reuses a cached .next) and bloat.
+node_modules
+.next
+out
+.turbo
+npm-debug.log*
+*.tsbuildinfo
+.env
+.env.*
+!.env.example

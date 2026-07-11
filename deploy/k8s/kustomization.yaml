@@ -1,0 +1,30 @@
+# Auralynq Kubernetes deployment (kustomize). Apply with:
+#   kubectl apply -k deploy/k8s
+# Pin a released version centrally via the images: transform below.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: auralynq
+
+resources:
+  - namespace.yaml
+  - config.yaml
+  - qdrant.yaml
+  - phoenix.yaml
+  - api.yaml
+  - mcp.yaml
+  - worker.yaml
+  - web.yaml
+  - hpa.yaml
+  - ingress.yaml
+
+commonLabels:
+  app.kubernetes.io/part-of: auralynq
+
+# Central image pinning — bump the tag here to roll the whole app to a new
+# released version (images are published to GHCR by the release workflow).
+images:
+  - name: ghcr.io/mhhamdan/auralynq-api
+    newTag: "0.1.0"
+  - name: ghcr.io/mhhamdan/auralynq-web
+    newTag: "0.1.0"

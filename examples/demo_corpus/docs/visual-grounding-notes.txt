@@ -1,0 +1,41 @@
+Auralynq Visual Grounding — Field Notes (Sample Corpus Document)
+
+This document was written for Auralynq's public demo corpus. It is an
+original summary, not third-party material.
+
+GROUNDING STAGES
+
+span
+  Meaning: an exact text-span bounding box was found during layout
+  extraction at ingest time.
+  Visual indicator: a colored rectangle drawn around the exact cited text.
+
+page
+  Meaning: the page number is known, but no exact bounding box was
+  resolved for the citation.
+  Visual indicator: a soft, page-level highlight rather than a tight box.
+
+unavailable
+  Meaning: no grounding metadata exists for this citation, usually because
+  the document was ingested before visual grounding existed, or page
+  rendering failed. The document needs to be re-ingested or re-rendered.
+  Visual indicator: a warning banner with a "reindex" prompt instead of a
+  highlight.
+
+THE SOURCE WORKSPACE
+
+Clicking any numbered citation under an assistant answer opens the Source
+Workspace, a full-screen three-panel view:
+
+1. Citation panel (left) — lists every citation for the current answer,
+   each tagged with a claim-support status: "Supported" when the citation
+   directly backs the claim, or "Partial" when it only backs part of it.
+2. PDF viewer (center) — the original page, rendered at the ingest-time
+   DPI, with the cited span or page highlighted. Supports zoom presets
+   (50%, 75%, fit-width, 125%, 150%) and left/right page navigation.
+3. Evidence panel (right) — the extracted text for the highlighted region,
+   plus its relevance and confidence scores.
+
+In short: the Source Workspace lets a user go from "the model said X" to
+"here is the exact sentence, on the exact page, that X came from" in one
+click, without re-running the query.

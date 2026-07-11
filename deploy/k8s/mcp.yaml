@@ -1,0 +1,51 @@
+# MCP — the streamable-HTTP MCP server (7 tools) for remote agents/IDEs. Stateless
+# against Qdrant; scales horizontally. Bearer auth via AURALYNQ_MCP_API_KEY.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auralynq-mcp
+  namespace: auralynq
+  labels: { app.kubernetes.io/name: auralynq-mcp, app.kubernetes.io/part-of: auralynq }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app.kubernetes.io/name: auralynq-mcp }
+  template:
+    metadata:
+      labels: { app.kubernetes.io/name: auralynq-mcp, app.kubernetes.io/part-of: auralynq }
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+        - name: mcp
+          image: ghcr.io/mhhamdan/auralynq-api:0.1.0
+          args: ["python", "-m", "auralynq.mcp_server.server", "--transport", "streamable-http"]
+          ports:
+            - { name: http, containerPort: 8765 }
+          envFrom:
+            - configMapRef: { name: auralynq-config }
+            - secretRef: { name: auralynq-secrets }
+          readinessProbe:
+            tcpSocket: { port: 8765 }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket: { port: 8765 }
+            periodSeconds: 15
+          resources:
+            requests: { cpu: "250m", memory: "512Mi" }
+            limits: { cpu: "2", memory: "2Gi" }
+          securityContext:
+            allowPrivilegeEscalation: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auralynq-mcp
+  namespace: auralynq
+  labels: { app.kubernetes.io/name: auralynq-mcp, app.kubernetes.io/part-of: auralynq }
+spec:
+  selector: { app.kubernetes.io/name: auralynq-mcp }
+  ports:
+    - { name: http, port: 8765, targetPort: 8765 }

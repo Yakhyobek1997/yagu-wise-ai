@@ -1,0 +1,41 @@
+# Independent horizontal autoscaling for the stateless services — the core payoff
+# of the split: each scales on its own load, against the shared Qdrant. Requires
+# metrics-server in the cluster.
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: auralynq-api
+  namespace: auralynq
+spec:
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: auralynq-api }
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource: { name: cpu, target: { type: Utilization, averageUtilization: 70 } }
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: auralynq-mcp
+  namespace: auralynq
+spec:
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: auralynq-mcp }
+  minReplicas: 2
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource: { name: cpu, target: { type: Utilization, averageUtilization: 70 } }
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: auralynq-web
+  namespace: auralynq
+spec:
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: auralynq-web }
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource: { name: cpu, target: { type: Utilization, averageUtilization: 70 } }

@@ -1,0 +1,65 @@
+name: docker
+
+# Build-only smoke test of the container images (no push). Runs when anything
+# affecting an image changes. This catches build breakage — e.g. a Next.js
+# build-arg that only resolves at build time — before a release tag, without
+# needing GHCR credentials. Publishing images is release.yml's job.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "containers/**"
+      - "deploy/huggingface/**"
+      - "auralynq/**"
+      - "web/**"
+      - "pyproject.toml"
+      - ".github/workflows/docker.yml"
+  pull_request:
+    paths:
+      - "containers/**"
+      - "deploy/huggingface/**"
+      - "auralynq/**"
+      - "web/**"
+      - "pyproject.toml"
+      - ".github/workflows/docker.yml"
+
+jobs:
+  build-hf-space:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build single-container HF Space image (no push)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deploy/huggingface/Dockerfile
+          push: false
+          load: true
+          tags: auralynq-space:ci
+      - name: Smoke-test the image boots and serves /api/health
+        run: |
+          docker run -d --name space -p 7860:7860 auralynq-space:ci
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:7860/api/health >/dev/null 2>&1; then
+              echo "healthy"; break
+            fi
+            sleep 2
+          done
+          curl -fsS http://localhost:7860/api/health
+          curl -fsS http://localhost:7860/api/status | grep -q '"demo_mode":true'
+          docker rm -f space
+
+  build-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build API image (no push)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: containers/api.Dockerfile
+          push: false

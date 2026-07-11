@@ -1,0 +1,265 @@
+# Auralynq stack — Podman-compatible, rootless, no sudo. `make stack-up`.
+#
+# Security posture (ADR-0012/0013/0014):
+#   * Public:   the Caddy TLS proxy ONLY (one HTTPS port on 0.0.0.0). All other
+#               services additionally bind their dev ports to
+#               ${AURALYNQ_BIND_INTERNAL:-127.0.0.1} (host loopback, off the
+#               external NIC) for host tooling/debugging.
+#   * Routing:  all services share podman-compose's default network and address
+#               peers by container_name (auralynq-qdrant/-api/-web).
+#               scripts/stack_up.sh pins that network's CNI conflist to 0.4.0 and
+#               adds the dnsname plugin so container DNS works without sudo
+#               (the firewall plugin only validates <=0.4.0) — see ADR-0014.
+#   * API auth: AURALYNQ_SERVE__API_KEY (empty == open). The browser never holds
+#               the key — the web container proxies /api/* with the bearer header.
+#   * Least privilege: api/worker run as the image's non-root user +
+#               no-new-privileges; all services restart unless-stopped + healthcheck.
+name: auralynq
+
+# No explicit networks block: podman-compose places all services on its default
+# network, where the dnsname plugin resolves peers by their container_name
+# (auralynq-qdrant / auralynq-api / auralynq-web). scripts/stack_up.sh ensures
+# that default network's CNI conflist is 0.4.0 + has dnsname (see ADR-0014).
+services:
+  caddy:
+    build:
+      context: .
+      dockerfile: containers/caddy.Dockerfile
+      args:
+        # Bakes a self-signed cert with this host as a SAN (IP or domain).
+        AURALYNQ_CERT_HOST: ${AURALYNQ_CERT_HOST:-localhost}
+    image: ${AURALYNQ_IMAGE_PREFIX:-auralynq-}caddy:${AURALYNQ_IMAGE_TAG:-0.2.0}
+    container_name: auralynq-caddy
+    restart: unless-stopped
+    security_opt: ["no-new-privileges"]
+    # The ONLY service published on the external NIC; reaches `web` by name.
+    ports:
+      - "${AURALYNQ_HTTPS_PORT:-8443}:8443"
+    environment:
+      - AURALYNQ_SITE_ADDRESS=${AURALYNQ_SITE_ADDRESS:-:8443}
+      - AURALYNQ_TLS=${AURALYNQ_TLS:-/certs/site.crt /certs/site.key}
+      - AURALYNQ_WEB_UPSTREAM=${AURALYNQ_WEB_UPSTREAM:-http://auralynq-web:3000}
+    volumes:
+      - ./containers/Caddyfile:/etc/caddy/Caddyfile:ro,Z
+      - auralynq-caddy-data:/data
+      - auralynq-caddy-config:/config
+    depends_on:
+      - web
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- --no-check-certificate https://localhost:8443 >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  qdrant:
+    image: docker.io/qdrant/qdrant:v1.12.1
+    container_name: auralynq-qdrant
+    restart: unless-stopped
+    security_opt: ["no-new-privileges"]
+    # Internal: loopback publish for host tooling; reachable in-cluster as qdrant:6333.
+    ports:
+      - "${AURALYNQ_BIND_INTERNAL:-127.0.0.1}:${AURALYNQ_QDRANT_HTTP_PORT:-6333}:6333"
+      - "${AURALYNQ_BIND_INTERNAL:-127.0.0.1}:${AURALYNQ_QDRANT_GRPC_PORT:-6334}:6334"
+    volumes:
+      - auralynq-qdrant:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/127.0.0.1/6333' 2>/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  phoenix:
+    image: docker.io/arizephoenix/phoenix:latest
+    container_name: auralynq-phoenix
+    restart: unless-stopped
+    security_opt: ["no-new-privileges"]
+    ports:
+      - "${AURALYNQ_BIND_INTERNAL:-127.0.0.1}:${AURALYNQ_PHOENIX_PORT:-6006}:6006"
+      - "${AURALYNQ_BIND_INTERNAL:-127.0.0.1}:${AURALYNQ_PHOENIX_OTLP_PORT:-4317}:4317"
+    environment:
+      - PHOENIX_WORKING_DIR=/data
+    volumes:
+      - auralynq-phoenix:/data
+    healthcheck:
+      # The Phoenix image is distroless (no /bin/sh), so a CMD-SHELL test can
+      # never execute and the service shows perpetually "unhealthy" even while
+      # serving fine. Use the exec form with the image's own python interpreter.
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:6006').status == 200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  api:
+    build:
+      context: .
+      dockerfile: containers/api.Dockerfile
+    image: ${AURALYNQ_IMAGE_PREFIX:-auralynq-}api:${AURALYNQ_IMAGE_TAG:-0.2.0}
+    container_name: auralynq-api
+    restart: unless-stopped
+    security_opt: ["no-new-privileges"]
+    command: ["uvicorn", "auralynq.serving.app:app", "--host", "0.0.0.0", "--port", "8000"]
+    # Host services (e.g. Ollama on :11434) are reachable at
+    # host.containers.internal: rootless Podman injects this into every
+    # container's /etc/hosts automatically (slirp4netns/pasta/netavark → the
+    # host gateway, 10.0.2.2). We deliberately do NOT declare it via
+    # `extra_hosts: "host.containers.internal:host-gateway"` — that magic value
+    # requires podman >= 4.1 and HARD-ERRORS on 3.x ("invalid IP address in
+    # add-host: host-gateway"), which is what broke `make start`.
+    # Internal: loopback publish for host tooling; reachable in-cluster as api:8000.
+    ports:
+      - "${AURALYNQ_BIND_INTERNAL:-127.0.0.1}:${AURALYNQ_API_PORT:-8000}:8000"
+    environment:
+      - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - COHERE_API_KEY=${COHERE_API_KEY:-}
+      - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY:-}
+      - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY:-}
+      # In-cluster service-name addressing (container DNS via the pinned network).
+      - AURALYNQ_VECTOR__URL=${AURALYNQ_VECTOR_URL:-http://auralynq-qdrant:6333}
+      - AURALYNQ_VECTOR__BACKEND=${AURALYNQ_VECTOR_BACKEND:-auto}
+      - AURALYNQ_LLM__PROVIDER=${AURALYNQ_LLM__PROVIDER:-auto}
+      - AURALYNQ_LLM__MODEL=${AURALYNQ_LLM__MODEL:-llama3.1:8b}
+      - AURALYNQ_LLM__BASE_URL=${AURALYNQ_LLM__BASE_URL:-http://host.containers.internal:11434}
+      - AURALYNQ_TELEMETRY__OTLP_ENDPOINT=${AURALYNQ_OTLP_ENDPOINT:-http://auralynq-phoenix:4317}
+      - AURALYNQ_DATA_DIR=/app/data
+      - AURALYNQ_SERVE__API_KEY=${AURALYNQ_SERVE__API_KEY:-}
+      - AURALYNQ_SERVE__CORS_ORIGINS=${AURALYNQ_SERVE__CORS_ORIGINS:-["http://localhost:3000"]}
+      # Compounding Wiki (off by default): synthesize durable entity pages at ingest.
+      - AURALYNQ_WIKI__ENABLED=${AURALYNQ_WIKI__ENABLED:-false}
+      # Watch Folder (off by default): auto-reindex files dropped in the bind below.
+      - AURALYNQ_WATCH__ENABLED=${AURALYNQ_WATCH__ENABLED:-false}
+    volumes:
+      # Podman-managed named volumes initialize with the image's (non-root) owner,
+      # so the non-root runtime user can write without host-ownership clashes.
+      - auralynq-data:/app/data
+      - auralynq-reports:/app/reports
+      # Host folder auto-reindexed when AURALYNQ_WATCH__ENABLED=true.
+      - ${AURALYNQ_WATCH_HOST:-./data/watch}:/app/data/watch:z
+    depends_on:
+      - qdrant
+      - phoenix
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8000/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # MCP server exposing the 7 Auralynq tools over the streamable-HTTP transport,
+  # so remote MCP clients (Claude Desktop, IDEs, agents) can call them — not just
+  # local stdio. Internal-only (loopback publish); front with Caddy for public TLS.
+  mcp:
+    image: ${AURALYNQ_IMAGE_PREFIX:-auralynq-}api:${AURALYNQ_IMAGE_TAG:-0.2.0}
+    container_name: auralynq-mcp
+    restart: unless-stopped
+    security_opt: ["no-new-privileges"]
+    command: ["python", "-m", "auralynq.mcp_server.server", "--transport", "streamable-http"]
+    ports:
+      - "${AURALYNQ_BIND_INTERNAL:-127.0.0.1}:${AURALYNQ_MCP_PORT:-8765}:8765"
+    environment:
+      - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - COHERE_API_KEY=${COHERE_API_KEY:-}
+      - AURALYNQ_MCP_HOST=0.0.0.0
+      - AURALYNQ_MCP_PORT=8765
+      # Bearer auth on the HTTP MCP surface: dedicated key wins, else the API key.
+      # Empty == open (local/demo). See ADR-0016.
+      - AURALYNQ_MCP_API_KEY=${AURALYNQ_MCP_API_KEY:-}
+      - AURALYNQ_SERVE__API_KEY=${AURALYNQ_SERVE__API_KEY:-}
+      - AURALYNQ_VECTOR__URL=${AURALYNQ_VECTOR_URL:-http://auralynq-qdrant:6333}
+      - AURALYNQ_VECTOR__BACKEND=${AURALYNQ_VECTOR_BACKEND:-auto}
+      - AURALYNQ_LLM__PROVIDER=${AURALYNQ_LLM__PROVIDER:-auto}
+      - AURALYNQ_LLM__MODEL=${AURALYNQ_LLM__MODEL:-llama3.1:8b}
+      - AURALYNQ_LLM__BASE_URL=${AURALYNQ_LLM__BASE_URL:-http://host.containers.internal:11434}
+      - AURALYNQ_DATA_DIR=/app/data
+    volumes:
+      - auralynq-data:/app/data
+    depends_on:
+      - qdrant
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/127.0.0.1/8765' 2>/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  worker:
+    build:
+      context: .
+      dockerfile: containers/api.Dockerfile
+    image: ${AURALYNQ_IMAGE_PREFIX:-auralynq-}api:${AURALYNQ_IMAGE_TAG:-0.2.0}
+    container_name: auralynq-worker
+    restart: unless-stopped
+    security_opt: ["no-new-privileges"]
+    command: ["python", "-m", "auralynq.serving.worker"]
+    environment:
+      - HUGGINGFACE_TOKEN=${HUGGINGFACE_TOKEN:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - COHERE_API_KEY=${COHERE_API_KEY:-}
+      - AURALYNQ_VECTOR__URL=${AURALYNQ_VECTOR_URL:-http://auralynq-qdrant:6333}
+      - AURALYNQ_VECTOR__BACKEND=${AURALYNQ_VECTOR_BACKEND:-auto}
+      - AURALYNQ_LLM__PROVIDER=${AURALYNQ_LLM__PROVIDER:-auto}
+      - AURALYNQ_LLM__MODEL=${AURALYNQ_LLM__MODEL:-llama3.1:8b}
+      - AURALYNQ_LLM__BASE_URL=${AURALYNQ_LLM__BASE_URL:-http://host.containers.internal:11434}
+      - AURALYNQ_DATA_DIR=/app/data
+      - AURALYNQ_WIKI__ENABLED=${AURALYNQ_WIKI__ENABLED:-false}
+      - AURALYNQ_WATCH__ENABLED=${AURALYNQ_WATCH__ENABLED:-false}
+    volumes:
+      - auralynq-data:/app/data
+      - ${AURALYNQ_WATCH_HOST:-./data/watch}:/app/data/watch:z
+    depends_on:
+      - qdrant
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f auralynq.serving.worker || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  web:
+    build:
+      context: ./web
+      dockerfile: ../containers/web.Dockerfile
+      args:
+        # Same-origin proxy path baked into the bundle (no IP, no secret).
+        NEXT_PUBLIC_API_BASE: ${NEXT_PUBLIC_API_BASE:-/api}
+    image: ${AURALYNQ_IMAGE_PREFIX:-auralynq-}web:${AURALYNQ_IMAGE_TAG:-0.2.0}
+    container_name: auralynq-web
+    restart: unless-stopped
+    security_opt: ["no-new-privileges"]
+    # Internal: loopback publish for host tooling; Caddy reaches it as web:3000.
+    ports:
+      - "${AURALYNQ_BIND_INTERNAL:-127.0.0.1}:${AURALYNQ_WEB_PORT:-3000}:3000"
+    environment:
+      # Server-side only (never sent to the browser): the /api proxy forwards here
+      # (by service name) and injects the bearer token.
+      - AURALYNQ_API_INTERNAL=${AURALYNQ_API_INTERNAL:-http://auralynq-api:8000}
+      - AURALYNQ_SERVE__API_KEY=${AURALYNQ_SERVE__API_KEY:-}
+      # Optional failover (ADR-0020): if the local API is unreachable, the proxy
+      # replays the request against this remote backup (e.g. https://<server>:8443/api).
+      # Empty = single upstream, no failover (default).
+      - AURALYNQ_API_FALLBACK=${AURALYNQ_API_FALLBACK:-}
+      - AURALYNQ_API_FALLBACK_INSECURE_TLS=${AURALYNQ_API_FALLBACK_INSECURE_TLS:-0}
+      - AURALYNQ_API_PRIMARY_TIMEOUT_MS=${AURALYNQ_API_PRIMARY_TIMEOUT_MS:-12000}
+    depends_on:
+      - api
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000 >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+volumes:
+  auralynq-qdrant:
+  auralynq-phoenix:
+  auralynq-data:
+  auralynq-reports:
+  auralynq-caddy-data:
+  auralynq-caddy-config:
