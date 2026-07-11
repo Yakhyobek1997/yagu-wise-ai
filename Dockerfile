@@ -39,13 +39,14 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # ---- API (light extras only — no torch/GPU stack; see pyproject.toml) ----
-# Only `ingest` (PDF/DOCX parsing + page rendering for visual grounding) is
-# needed to serve the demo — `eval` pulls in ragas, which transitively drags
-# in langchain/langgraph/openai and roughly doubles image size, but is only
-# used by `make eval`/`make bench`, neither of which this Space runs.
+# `ingest` = PDF/DOCX parsing + page rendering for visual grounding. `llm` =
+# the lightweight openai/anthropic/cohere HTTP SDKs (no torch, no langchain) —
+# openai is required for the `huggingface` provider (HF Inference Providers via
+# the OpenAI-compatible router). `eval` is deliberately excluded (ragas drags in
+# langchain/langgraph and ~doubles image size; only `make eval`/`bench` need it).
 COPY pyproject.toml README.md ./
 COPY auralynq ./auralynq
-RUN pip install -e ".[ingest]"
+RUN pip install -e ".[ingest,llm]"
 COPY scripts ./scripts
 COPY examples ./examples
 
