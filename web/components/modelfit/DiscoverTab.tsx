@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { DiscoverEntry, DiscoverHardware, DiscoverResult } from "@/lib/modelfit";
 import { discoverModels } from "@/lib/modelfit";
+import { statusSummary, deploymentMode } from "@/lib/api";
 import { SystemReport } from "@/components/modelfit/SystemReport";
 import { PullConfirmModal } from "@/components/modelfit/PullConfirmModal";
 import { VerdictPill } from "@/components/modelfit/VerdictPill";
@@ -504,6 +505,14 @@ export function DiscoverTab() {
   const [elapsed, setElapsed] = useState<string>("—");
   const [showCopy, setShowCopy] = useState(false);
   const [pullTarget, setPullTarget] = useState<DiscoverEntry | null>(null);
+  // Hosted demo (HF Space): the probe reads the server, not the visitor's device.
+  const [hosted, setHosted] = useState(false);
+
+  useEffect(() => {
+    statusSummary()
+      .then((s) => setHosted(deploymentMode(s).hfSpace))
+      .catch(() => {});
+  }, []);
 
   // tick elapsed display every 5s
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -569,6 +578,7 @@ export function DiscoverTab() {
           onPull={(entry) => setPullTarget(entry)}
           onRefresh={() => discover(true)}
           loading={loading}
+          hosted={hosted}
         />
       )}
 

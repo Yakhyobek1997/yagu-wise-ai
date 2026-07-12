@@ -129,11 +129,14 @@ export function SystemReport({
   onPull,
   onRefresh,
   loading,
+  hosted = false,
 }: {
   result: DiscoverResult;
   onPull: (entry: DiscoverEntry) => void;
   onRefresh: () => void;
   loading: boolean;
+  /** True on a hosted demo (HF Space): the probe reads the SERVER, not the visitor's device. */
+  hosted?: boolean;
 }) {
   const hw = result.hardware;
   const top = result.recommendations[0] as DiscoverEntry | undefined;
@@ -160,11 +163,34 @@ export function SystemReport({
         </button>
       </div>
 
+      {/* Hosted-demo notice: the probe reads the Space's server, not the visitor's device. */}
+      {hosted && (
+        <div className="mx-6 mt-4 rounded-lg border border-amber-600/40 bg-amber-900/20 px-3.5 py-2.5 text-[11px] leading-relaxed text-amber-200/90">
+          <span className="font-semibold text-amber-200">You&apos;re on the hosted demo.</span>{" "}
+          This report profiles the <span className="font-semibold">Space&apos;s server</span>{" "}
+          ({hw.os}
+          {hw.arch ? ` · ${hw.arch}` : ""}) — not your own device. Models shown here would run on the
+          server, not on your machine. To profile your Mac/PC and pull models onto it, run Auralynq
+          locally (
+          <a
+            href="https://github.com/MHHamdan/Auralynq"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-amber-100"
+          >
+            one command
+          </a>
+          ).
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-zinc-800">
         {/* ── This machine ── */}
         <div className="p-6 space-y-4">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">This machine</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
+              {hosted ? "Server (hosted demo)" : "This machine"}
+            </span>
             <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold ring-1 ${backendTone(hw.best_backend)}`}>
               {hw.best_backend.toUpperCase()}
             </span>
@@ -216,7 +242,7 @@ export function SystemReport({
         {/* ── Top pick ── */}
         <div className="p-6 space-y-4">
           <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
-            Best pick for you
+            {hosted ? "Best pick for this server" : "Best pick for you"}
           </span>
 
           {!top ? (
@@ -289,7 +315,7 @@ export function SystemReport({
       <div className="px-6 py-2.5 border-t border-zinc-800 text-[11px] text-zinc-500 flex items-center gap-2">
         <span>
           <span className="text-zinc-300 font-medium">{result.total_candidates}</span> models scored against
-          your hardware
+          {hosted ? " the server's hardware" : " your hardware"}
         </span>
         <span className="text-zinc-700">·</span>
         <span>full ranking below ↓</span>
