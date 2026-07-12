@@ -15,8 +15,9 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { DiscoverEntry, DiscoverHardware } from "@/lib/modelfit";
-import { discoverModels, fetchHardware, pullModel } from "@/lib/modelfit";
+import type { DiscoverEntry } from "@/lib/modelfit";
+import { discoverModels, pullModel } from "@/lib/modelfit";
+import { detectClientHardware, clientFit, type ClientHardware } from "@/lib/clienthw";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -51,9 +52,9 @@ interface ScanStep {
 }
 
 const INITIAL_STEPS: ScanStep[] = [
-  { id: "hw",      label: "Detecting CPU, GPU & memory",         status: "pending", detail: "" },
-  { id: "catalog", label: "Querying live model catalog",          status: "pending", detail: "" },
-  { id: "rank",    label: "Scoring models against your hardware", status: "pending", detail: "" },
+  { id: "hw",      label: "Detecting your device (OS, GPU, cores)", status: "pending", detail: "" },
+  { id: "catalog", label: "Querying live model catalog",            status: "pending", detail: "" },
+  { id: "rank",    label: "Ranking models for your device",         status: "pending", detail: "" },
 ];
 
 function StepRow({ step }: { step: ScanStep }) {
@@ -81,13 +82,22 @@ function StepRow({ step }: { step: ScanStep }) {
 
 // ── Model card (top-3 on landing) ─────────────────────────────────────────────
 
-function ModelCard({ entry, rank }: { entry: DiscoverEntry; rank: number }) {
+const CLIENT_FIT_BADGE: Record<string, { label: string; cls: string }> = {
+  runs: { label: "✓ Fits your device", cls: "bg-emerald-500/10 text-emerald-300 border-emerald-500/30" },
+  tight: { label: "~ Tight on your RAM", cls: "bg-amber-500/10 text-amber-300 border-amber-500/30" },
+  too_big: { label: "✕ Too big for your device", cls: "bg-red-500/10 text-red-300 border-red-500/30" },
+  unknown: { label: "", cls: "" },
+};
+
+function ModelCard({ entry, rank, clientHw }: { entry: DiscoverEntry; rank: number; clientHw: ClientHardware | null }) {
   const [installed, setInstalled] = useState(entry.already_installed);
   const [pulling, setPulling] = useState(false);
   const [pullErr, setPullErr] = useState<string | null>(null);
   const sc = scoreColor(entry.overall_score);
   const re = entry.resource_estimate;
   const name = (entry.model_meta.display_name || entry.model_id).replace(/^(ollama:|hf:|local:)/, "");
+  const fit = clientHw ? clientFit(clientHw, re?.estimated_ram_gb) : "unknown";
+  const fitBadge = CLIENT_FIT_BADGE[fit];
 
   async function doPull() {
     setPulling(true);
@@ -120,15 +130,20 @@ function ModelCard({ entry, rank }: { entry: DiscoverEntry; rank: number }) {
         <p className={`text-xs mt-0.5 font-medium ${sc.text}`}>{entry.label}</p>
       </div>
 
-      {/* VRAM + fit */}
+      {/* size + per-device fit */}
       <div className="flex items-center gap-2 flex-wrap">
         {re && (
           <span className={`text-xs px-2 py-0.5 rounded-full border font-mono ${FIT_PILL[re.fit_level] ?? "border-edge text-fg3"}`}>
-            {re.estimated_vram_gb} GB VRAM
+            {re.estimated_ram_gb} GB RAM
           </span>
         )}
         <span className="text-xs text-fg3 font-mono">{entry.best_quantization}</span>
       </div>
+      {fitBadge?.label && (
+        <span className={`text-[11px] px-2 py-0.5 rounded-full border font-medium self-start ${fitBadge.cls}`}>
+          {fitBadge.label}
+        </span>
+      )}
 
       {/* progress bar */}
       <div className="h-1 rounded-full bg-panel2 overflow-hidden">
@@ -175,38 +190,40 @@ function ModelCard({ entry, rank }: { entry: DiscoverEntry; rank: number }) {
 
 // ── Hardware summary strip ────────────────────────────────────────────────────
 
-function HwStrip({ hw }: { hw: DiscoverHardware }) {
-  const backendColor =
-    hw.best_backend === "cuda"  ? "text-emerald-400" :
-    hw.best_backend === "metal" ? "text-sky-400"     : "text-fg3";
-
+/** The visitor's own device, read from browser APIs (real per-device). */
+function ClientHwStrip({ hw }: { hw: ClientHardware }) {
+  const gpuColor = hw.gpuVendor === "NVIDIA" ? "text-emerald-400" : hw.gpuVendor === "Apple" ? "text-sky-400" : "text-fg";
+  const Sep = () => <span className="hidden sm:block text-edge2">│</span>;
   return (
     <div className="card-inset flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
       <span className="text-fg3">
-        CPU <span className="font-mono text-fg">{hw.cpu || hw.os || "—"}</span>
+        OS <span className="font-mono text-fg">{hw.os}{hw.arch ? ` · ${hw.arch}` : ""}</span>
       </span>
-      <span className="hidden sm:block text-edge2">│</span>
-      <span className="text-fg3">
-        RAM <span className="font-mono text-fg">{hw.ram_gb} GB</span>
-      </span>
-      {hw.total_vram_gb > 0 && (
+      {hw.cpuCores != null && (
         <>
-          <span className="hidden sm:block text-edge2">│</span>
+          <Sep />
           <span className="text-fg3">
-            VRAM{" "}
-            <span className="font-mono font-bold text-emerald-400">{hw.total_vram_gb} GB</span>
-            {hw.gpus.length > 1 && <span className="text-fg3 ml-1">×{hw.gpus.length} GPU</span>}
+            CPU <span className="font-mono text-fg">{hw.cpuCores} logical cores</span>
           </span>
         </>
       )}
-      <span className="hidden sm:block text-edge2">│</span>
-      <span className={`font-mono font-bold ${backendColor}`}>
-        {hw.best_backend.toUpperCase()}
+      <Sep />
+      <span className="text-fg3">
+        RAM{" "}
+        <span className="font-mono text-fg">
+          {hw.ramGb != null ? `${hw.ramIsLowerBound ? "≥" : "~"}${hw.ramGb} GB` : "not exposed by browser"}
+        </span>
       </span>
-      <span className="hidden sm:block text-edge2">│</span>
-      <span className={hw.ollama_available ? "text-ok" : "text-bad"}>
-        Ollama {hw.ollama_available ? "✓" : "not detected"}
-      </span>
+      {hw.gpu && (
+        <>
+          <Sep />
+          <span className="text-fg3">
+            GPU <span className={`font-mono font-medium ${gpuColor}`}>{hw.gpu}</span>
+          </span>
+        </>
+      )}
+      <Sep />
+      <span className="text-fg3 text-xs italic">detected in your browser</span>
     </div>
   );
 }
@@ -228,9 +245,8 @@ function ConsentModal({
   }, [onSkip]);
 
   const items = [
-    { icon: "🖥", text: "CPU model, core count, and available RAM" },
-    { icon: "⚡", text: "GPU vendor, name, and VRAM across all devices" },
-    { icon: "📦", text: "Ollama installation and locally installed models" },
+    { icon: "🖥", text: "Your device — OS, CPU cores & GPU — read in your browser" },
+    { icon: "⚡", text: "Approximate memory, when your browser exposes it" },
     { icon: "🌐", text: "Live model sizes from the Ollama registry (external call)" },
     { icon: "🤗", text: "Popular GGUF models on HuggingFace Hub (external call)" },
   ];
@@ -274,11 +290,10 @@ function ConsentModal({
         {/* privacy note */}
         <div className="mx-6 mb-4 px-3 py-2 rounded-lg bg-info/5 border border-info/20">
           <p className="text-xs text-fg3 leading-relaxed">
-            <span className="text-info font-semibold">Privacy:</span> Hardware data stays on this
-            server. External calls go only to{" "}
+            <span className="text-info font-semibold">Privacy:</span> Your device details are read
+            in your browser and never leave it. Only model-catalog lookups go out — to{" "}
             <span className="font-mono text-fg2">registry.ollama.ai</span> and{" "}
-            <span className="font-mono text-fg2">huggingface.co</span> to fetch model sizes —
-            no personal data is sent.
+            <span className="font-mono text-fg2">huggingface.co</span> — and carry no personal data.
           </p>
         </div>
 
@@ -301,38 +316,53 @@ function ConsentModal({
 
 // ── Results panel (after scan) ────────────────────────────────────────────────
 
+const FIT_RANK: Record<string, number> = { runs: 0, tight: 1, unknown: 2, too_big: 3 };
+
+function deviceTier(hw: ClientHardware): string {
+  if (hw.gpuVendor === "NVIDIA" || hw.gpuVendor === "AMD") return "well-equipped";
+  if (hw.gpuVendor === "Apple") return "capable"; // unified memory
+  if (hw.ramGb != null && hw.ramGb >= 16) return "capable";
+  return "ready to run local AI";
+}
+
 function ResultsPanel({
-  hw,
-  top3,
+  clientHw,
+  entries,
   totalCandidates,
   onReset,
 }: {
-  hw: DiscoverHardware;
-  top3: DiscoverEntry[];
+  clientHw: ClientHardware | null;
+  entries: DiscoverEntry[];
   totalCandidates: number;
   onReset: () => void;
 }) {
+  // Re-rank by *this device's* fit (server ranks by its own hardware); keep the
+  // server's order as the tie-breaker within a fit bucket.
+  const ranked = clientHw
+    ? [...entries].sort((a, b) => {
+        const fa = FIT_RANK[clientFit(clientHw, a.resource_estimate?.estimated_ram_gb)];
+        const fb = FIT_RANK[clientFit(clientHw, b.resource_estimate?.estimated_ram_gb)];
+        return fa - fb || b.overall_score - a.overall_score;
+      })
+    : entries;
+  const top3 = ranked.slice(0, 3);
+  const canJudge = clientHw?.ramGb != null;
+
   return (
     <div className="space-y-6 animate-fade-up">
       {/* section header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="overline">Hardware profile</p>
+          <p className="overline">Your device</p>
           <h2 className="section-title mt-1">
             Your machine is{" "}
             <span className="gradient-text">
-              {hw.total_vram_gb >= 40
-                ? "research-grade"
-                : hw.total_vram_gb >= 16
-                  ? "well-equipped"
-                  : hw.total_vram_gb >= 8
-                    ? "capable"
-                    : "ready to run local AI"}
+              {clientHw ? deviceTier(clientHw) : "ready to run local AI"}
             </span>
           </h2>
           <p className="mt-2 text-fg3 text-sm">
-            {totalCandidates} models scored ·{" "}
-            top 3 shown below · ranked by hardware fit
+            {totalCandidates} models from the live catalog ·{" "}
+            {canJudge ? "top 3 that fit your device" : "top 3 by capability"} · sizes are per-model
           </p>
         </div>
         <button
@@ -343,20 +373,26 @@ function ResultsPanel({
         </button>
       </div>
 
-      {/* hardware strip */}
-      <HwStrip hw={hw} />
+      {/* the visitor's own device (browser-detected) */}
+      {clientHw && <ClientHwStrip hw={clientHw} />}
+      {clientHw && !canJudge && (
+        <p className="text-xs text-fg3 -mt-3">
+          Your browser doesn&apos;t expose exact RAM, so fit is estimated from OS/GPU only. Run
+          Auralynq locally for an exact hardware probe.
+        </p>
+      )}
 
-      {/* top 3 model cards */}
+      {/* top 3 model cards, ranked for this device */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {top3.map((entry, i) => (
-          <ModelCard key={entry.model_id} entry={entry} rank={i + 1} />
+          <ModelCard key={entry.model_id} entry={entry} rank={i + 1} clientHw={clientHw} />
         ))}
       </div>
 
       {/* CTAs */}
       <div className="flex flex-wrap items-center gap-4 pt-2">
         <Link href="/modelfit" className="btn-cta">
-          View all {totalCandidates} compatible models →
+          Explore all {totalCandidates} models →
         </Link>
         <Link href="/chat" className="btn-outline">
           Start chatting
@@ -371,7 +407,7 @@ function ResultsPanel({
 
 // ── Scan panel ────────────────────────────────────────────────────────────────
 
-function ScanPanel({ onDone }: { onDone: (hw: DiscoverHardware, entries: DiscoverEntry[], total: number) => void }) {
+function ScanPanel({ onDone }: { onDone: (clientHw: ClientHardware | null, entries: DiscoverEntry[], total: number) => void }) {
   const [steps, setSteps] = useState<ScanStep[]>(INITIAL_STEPS);
   const [error, setError] = useState<string | null>(null);
   const started = useRef(false);
@@ -385,19 +421,21 @@ function ScanPanel({ onDone }: { onDone: (hw: DiscoverHardware, entries: Discove
     started.current = true;
 
     try {
-      // Step 1 — hardware probe
+      // Step 1 — detect THIS device in the browser (real per-visitor)
       setStep("hw", { status: "running" });
-      const hw = await fetchHardware();
-      const gpuLabel =
-        hw.gpus.length > 0
-          ? `${hw.gpus.length > 1 ? `${hw.gpus.length}× ` : ""}${hw.gpus[0].name} · ${hw.total_vram_gb} GB VRAM`
-          : `${hw.ram_gb} GB RAM · CPU only`;
-      setStep("hw", { status: "done", detail: gpuLabel });
+      const clientHw = await detectClientHardware();
+      const hwLabel = [
+        `${clientHw.os}${clientHw.arch ? ` · ${clientHw.arch}` : ""}`,
+        clientHw.gpu ?? (clientHw.cpuCores ? `${clientHw.cpuCores} cores` : null),
+      ]
+        .filter(Boolean)
+        .join(" · ");
+      setStep("hw", { status: "done", detail: hwLabel });
 
       // Brief pause so user can read step 1
       await new Promise((r) => setTimeout(r, 400));
 
-      // Step 2 — live catalog
+      // Step 2 — live catalog (server queries Ollama + HuggingFace registries)
       setStep("catalog", { status: "running" });
       const result = await discoverModels("rag", true, false, 30);
       setStep("catalog", {
@@ -407,21 +445,14 @@ function ScanPanel({ onDone }: { onDone: (hw: DiscoverHardware, entries: Discove
 
       await new Promise((r) => setTimeout(r, 300));
 
-      // Step 3 — ranking (instant — already done by the API)
+      // Step 3 — rank models against THIS device (done in ResultsPanel)
       setStep("rank", { status: "running" });
       await new Promise((r) => setTimeout(r, 500));
-      setStep("rank", {
-        status: "done",
-        detail: `Top model: ${result.recommendations[0]?.model_meta?.display_name ?? "—"} · ${result.recommendations[0]?.overall_score ?? "—"}/100`,
-      });
+      setStep("rank", { status: "done", detail: `matched to your ${clientHw.gpu ?? clientHw.os}` });
 
       await new Promise((r) => setTimeout(r, 400));
 
-      onDone(
-        result.hardware,
-        result.recommendations.slice(0, 3),
-        result.total_candidates,
-      );
+      onDone(clientHw, result.recommendations, result.total_candidates);
     } catch (e) {
       const msg = String(e).replace(/^Error:\s*/, "");
       setError(msg);
@@ -468,7 +499,7 @@ type UIState =
   | { phase: "idle" }        // checking localStorage
   | { phase: "modal" }       // consent modal visible
   | { phase: "scanning" }    // scan in progress
-  | { phase: "done"; hw: DiscoverHardware; top3: DiscoverEntry[]; total: number }
+  | { phase: "done"; clientHw: ClientHardware | null; entries: DiscoverEntry[]; total: number }
   | { phase: "skipped" };    // user said skip
 
 export function HardwareGate() {
@@ -505,8 +536,8 @@ export function HardwareGate() {
     setState({ phase: "scanning" });
   }
 
-  function onScanDone(hw: DiscoverHardware, top3: DiscoverEntry[], total: number) {
-    setState({ phase: "done", hw, top3, total });
+  function onScanDone(clientHw: ClientHardware | null, entries: DiscoverEntry[], total: number) {
+    setState({ phase: "done", clientHw, entries, total });
   }
 
   // "skipped" state: show a subtle invite chip
@@ -545,8 +576,8 @@ export function HardwareGate() {
             {state.phase === "scanning" && <ScanPanel onDone={onScanDone} />}
             {state.phase === "done" && (
               <ResultsPanel
-                hw={state.hw}
-                top3={state.top3}
+                clientHw={state.clientHw}
+                entries={state.entries}
                 totalCandidates={state.total}
                 onReset={reset}
               />
