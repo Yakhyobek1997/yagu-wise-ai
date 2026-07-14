@@ -22,6 +22,29 @@ from auralynq.voice.factory import build_asr, build_tts
 
 _log = get_logger("auralynq.voice.loop")
 
+# The full answer stays on screen; the spoken reply is a short, clean summary so
+# TTS is fast and pleasant (no markdown symbols or citation markers read aloud).
+import re as _re
+
+_SPEECH_MAX_CHARS = 480
+
+
+def _clean_for_speech(text: str) -> str:
+    text = _re.sub(r"\[\d+\]", "", text or "")  # drop [1] citation markers
+    text = _re.sub(r"\[\[([^\]]+)\]\]", r"\1", text)  # [[link]] -> link
+    text = _re.sub(r"[#*`_>|]+", " ", text)  # strip markdown symbols
+    return " ".join(text.split())
+
+
+def _speech_excerpt(text: str, max_chars: int = _SPEECH_MAX_CHARS) -> str:
+    text = _clean_for_speech(text)
+    if len(text) <= max_chars:
+        return text
+    cut = text[:max_chars]
+    m = _re.search(r"^.*[.!?](?=\s|$)", cut)  # end on a sentence boundary if possible
+    excerpt = m.group(0) if (m and m.end() >= max_chars * 0.5) else cut.rsplit(" ", 1)[0]
+    return excerpt.strip() + " …"
+
 
 class VoiceTurnResult(BaseModel):
     transcript: str = ""
@@ -85,7 +108,7 @@ def run_voice_turn(
     if speak and result.answer:
         tts = build_tts()
         out_path = s.storage_dir / "tts_out.wav"
-        tts_res = tts.synthesize(result.answer, out_path)
+        tts_res = tts.synthesize(_speech_excerpt(result.answer), out_path)
         out.audio_out_path = str(tts_res.audio_path)
         out.tts_provider = tts_res.provider
     return out
