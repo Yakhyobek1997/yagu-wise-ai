@@ -35,7 +35,7 @@ WORKDIR /app
 # only for the pre-built Next.js standalone server (no build tools needed
 # here — the build already happened in the web-builder stage).
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl poppler-utils nodejs npm ffmpeg libsndfile1 \
+    && apt-get install -y --no-install-recommends curl poppler-utils nodejs npm ffmpeg libsndfile1 espeak-ng \
     && rm -rf /var/lib/apt/lists/*
 
 # ---- API (light extras only — no torch/GPU stack; see pyproject.toml) ----
@@ -55,9 +55,15 @@ RUN pip install -e ".[ingest,llm]"
 # an image layer so voice works instantly + offline at runtime (no per-cold-start
 # download on the free CPU tier).
 ENV HF_HOME=/app/hfcache
+# faster-whisper (ASR, small) + Kokoro (TTS, spoken replies). Install the
+# CPU-only torch wheel first so kokoro doesn't drag in the ~2GB CUDA build.
+# Prebake both models into image layers → voice is instant + offline at runtime.
 RUN pip install "faster-whisper>=1.0" "soundfile>=0.12" \
+    && pip install --index-url https://download.pytorch.org/whl/cpu torch \
+    && pip install "kokoro>=0.9" \
     && mkdir -p /app/hfcache \
-    && python -c "from faster_whisper import WhisperModel; WhisperModel('base', device='cpu', compute_type='int8')"
+    && python -c "from faster_whisper import WhisperModel; WhisperModel('small', device='cpu', compute_type='int8')" \
+    && python -c "from kokoro import KPipeline; p=KPipeline(lang_code='a'); [c for _,_,c in p('warm up', voice='af_heart')]"
 
 COPY scripts ./scripts
 COPY examples ./examples
@@ -92,10 +98,11 @@ ENV AURALYNQ_HF_SPACE=true \
     AURALYNQ_EMBEDDING__PROVIDER=hash \
     AURALYNQ_LLM__PROVIDER=extractive \
     AURALYNQ_VOICE__ASR_PROVIDER=faster_whisper \
-    AURALYNQ_VOICE__ASR_MODEL=base \
+    AURALYNQ_VOICE__ASR_MODEL=small \
     AURALYNQ_VOICE__VAD=false \
     AURALYNQ_VOICE__DIARIZE=false \
-    AURALYNQ_VOICE__TTS_PROVIDER=null \
+    AURALYNQ_VOICE__TTS_PROVIDER=kokoro \
+    AURALYNQ_VOICE__TTS_VOICE=af_heart \
     AURALYNQ_VISUAL__ENABLED=true \
     AURALYNQ_SERVE__API_KEY= \
     AURALYNQ_INTERNAL_API_URL=http://127.0.0.1:8000 \
