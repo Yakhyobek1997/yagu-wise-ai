@@ -35,7 +35,7 @@ WORKDIR /app
 # only for the pre-built Next.js standalone server (no build tools needed
 # here — the build already happened in the web-builder stage).
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl poppler-utils nodejs npm \
+    && apt-get install -y --no-install-recommends curl poppler-utils nodejs npm ffmpeg libsndfile1 \
     && rm -rf /var/lib/apt/lists/*
 
 # ---- API (light extras only — no torch/GPU stack; see pyproject.toml) ----
@@ -47,6 +47,18 @@ RUN apt-get update \
 COPY pyproject.toml README.md ./
 COPY auralynq ./auralynq
 RUN pip install -e ".[ingest,llm]"
+
+# ---- Voice ASR (free, torch-free): faster-whisper (CTranslate2) + soundfile. ----
+# The full `voice` extra pulls silero-vad (→torch, ~800MB) + librosa; we skip
+# those and disable VAD/diarization (VAD is only in the live-mic path, not the
+# uploaded-file path the web voice query uses). The Whisper model is baked into
+# an image layer so voice works instantly + offline at runtime (no per-cold-start
+# download on the free CPU tier).
+ENV HF_HOME=/app/hfcache
+RUN pip install "faster-whisper>=1.0" "soundfile>=0.12" \
+    && mkdir -p /app/hfcache \
+    && python -c "from faster_whisper import WhisperModel; WhisperModel('base', device='cpu', compute_type='int8')"
+
 COPY scripts ./scripts
 COPY examples ./examples
 
@@ -79,6 +91,11 @@ ENV AURALYNQ_HF_SPACE=true \
     AURALYNQ_VECTOR__BACKEND=memory \
     AURALYNQ_EMBEDDING__PROVIDER=hash \
     AURALYNQ_LLM__PROVIDER=extractive \
+    AURALYNQ_VOICE__ASR_PROVIDER=faster_whisper \
+    AURALYNQ_VOICE__ASR_MODEL=base \
+    AURALYNQ_VOICE__VAD=false \
+    AURALYNQ_VOICE__DIARIZE=false \
+    AURALYNQ_VOICE__TTS_PROVIDER=null \
     AURALYNQ_VISUAL__ENABLED=true \
     AURALYNQ_SERVE__API_KEY= \
     AURALYNQ_INTERNAL_API_URL=http://127.0.0.1:8000 \
