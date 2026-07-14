@@ -1560,3 +1560,30 @@ def _silence(seconds: float = 0.5, sr: int = 16_000) -> bytes:
 
 
 app = create_app()
+
+
+def _warm_voice_models() -> None:  # pragma: no cover - deployment warmup
+    """Preload ASR/TTS models in a background thread at startup so the first
+    voice request doesn't pay the cold-load cost (and 5xx on a slow tier)."""
+    try:
+        s = get_settings()
+        if s.voice.asr_provider == "null" and s.voice.tts_provider == "null":
+            return
+
+        import threading
+
+        def _run() -> None:
+            try:
+                from auralynq.voice.factory import build_asr, build_tts
+
+                build_asr()
+                build_tts()
+            except Exception:
+                pass
+
+        threading.Thread(target=_run, daemon=True).start()
+    except Exception:
+        pass
+
+
+_warm_voice_models()

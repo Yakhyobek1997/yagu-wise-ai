@@ -26,7 +26,7 @@ _log = get_logger("auralynq.voice.loop")
 # TTS is fast and pleasant (no markdown symbols or citation markers read aloud).
 import re as _re
 
-_SPEECH_MAX_CHARS = 480
+_SPEECH_MAX_CHARS = 260
 
 
 def _clean_for_speech(text: str) -> str:
