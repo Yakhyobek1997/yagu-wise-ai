@@ -76,6 +76,7 @@ from auralynq.serving.schemas import (
     QueryResponse,
     RAGStrategiesResponse,
     StatusResponse,
+    SpeakRequest,
     SuggestionsResponse,
     VoiceResponse,
 )
@@ -919,7 +920,9 @@ def create_app() -> FastAPI:
 
     # ------------------------------------------------------------- voice ---
     @app.post("/voice", response_model=VoiceResponse)
-    async def voice(request: Request, file: UploadFile = File(...)) -> VoiceResponse:
+    async def voice(
+        request: Request, file: UploadFile = File(...), voice: str = ""
+    ) -> VoiceResponse:
         s = get_settings()
         safe = _SAFE_NAME.sub("_", Path(file.filename or "audio.wav").name)
         tmp = s.storage_dir / "voice_in"
@@ -943,7 +946,7 @@ def create_app() -> FastAPI:
                     fh.write(chunk)
             from auralynq.voice.loop import run_voice_turn
 
-            res = run_voice_turn(audio_path=dest, speak=True)
+            res = run_voice_turn(audio_path=dest, speak=True, voice=voice or None)
         finally:
             # Securely unlink the transient audio buffer regardless of outcome.
             dest.unlink(missing_ok=True)
@@ -965,6 +968,23 @@ def create_app() -> FastAPI:
         out = get_settings().storage_dir / "tts_out.wav"
         if not out.exists():
             raise AuralynqError("no_audio", status_code=404)
+        return FileResponse(str(out), media_type="audio/wav")
+
+    @app.post("/speak")
+    async def speak(req: SpeakRequest) -> FileResponse:
+        """Text-to-speech for an on-screen answer (the 'hear the answer' button).
+
+        Reads a cleaned excerpt of the text in the selected voice. Falls back to
+        the offline tone if no TTS model is installed."""
+        s = get_settings()
+        text = (req.text or "").strip()
+        if not text:
+            raise AuralynqError("empty_text", detail="no text to speak", status_code=400)
+        from auralynq.voice.factory import build_tts
+        from auralynq.voice.loop import _speech_excerpt
+
+        out = s.storage_dir / "speak_out.wav"
+        build_tts().synthesize(_speech_excerpt(text, max_chars=1600), out, voice=req.voice or None)
         return FileResponse(str(out), media_type="audio/wav")
 
     @app.websocket("/ws/voice")

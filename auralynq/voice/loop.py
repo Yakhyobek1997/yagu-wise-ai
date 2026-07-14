@@ -76,6 +76,7 @@ def run_voice_turn(
     text: str | None = None,
     speak: bool = True,
     final_k: int | None = None,
+    voice: str | None = None,
 ) -> VoiceTurnResult:
     """Run one voice turn. Provide ``audio_path`` (preferred) or ``text``."""
     s = get_settings()
@@ -108,7 +109,7 @@ def run_voice_turn(
     if speak and result.answer:
         tts = build_tts()
         out_path = s.storage_dir / "tts_out.wav"
-        tts_res = tts.synthesize(_speech_excerpt(result.answer), out_path)
+        tts_res = tts.synthesize(_speech_excerpt(result.answer), out_path, voice=voice)
         out.audio_out_path = str(tts_res.audio_path)
         out.tts_provider = tts_res.provider
     return out

@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useState, useEffect, useCallback } from "react";
-import { audioUrl, sendVoice } from "@/lib/api";
+import { audioUrl, sendVoice, getVoice, setVoice, VOICES } from "@/lib/api";
 
 // The product promise is "Talk to Your Data" — voice is central, so this control
 // is a prominent, polished mic with explicit, honest states.
@@ -15,6 +15,12 @@ const STATE_META: Record<VoiceState, { label: string; hint: string }> = {
 };
 
 const BAR_COUNT = 24;
+
+// A tiny valid silent WAV used to "unlock" the shared <audio> element within a
+// user gesture, so the spoken answer can autoplay after the async transcribe
+// (which loses the gesture context and would otherwise be blocked by browsers).
+const SILENT_WAV =
+  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
 
 function WaveformBars({ analyserRef }: { analyserRef: React.MutableRefObject<AnalyserNode | null> }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -87,12 +93,21 @@ export function VoiceRecorder({
   const chunksRef = useRef<Blob[]>([]);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
+  const audioElRef = useRef<HTMLAudioElement | null>(null);
+  const [voice, setVoiceState] = useState<string>(() => getVoice());
 
   const busy = state === "transcribing";
 
   async function start() {
     if (busy) return;
     setPartial("");
+    // Unlock the shared audio element within this user gesture so the spoken
+    // answer can play back later, once transcription completes.
+    const el = audioElRef.current;
+    if (el) {
+      el.src = SILENT_WAV;
+      el.play().catch(() => {});
+    }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
@@ -124,10 +139,12 @@ export function VoiceRecorder({
         setState("transcribing");
         try {
           const blob = new Blob(chunksRef.current, { type: "audio/webm" });
-          const r = await sendVoice(blob);
+          const r = await sendVoice(blob, voice);
           setPartial(r.transcript || "");
           onResult(r);
-          const a = new Audio(audioUrl());
+          // Reuse the gesture-unlocked element so the answer actually plays.
+          const a = audioElRef.current ?? new Audio();
+          a.src = audioUrl();
           setState("speaking");
           a.onended = () => setState("idle");
           a.onerror = () => setState("idle");
@@ -155,6 +172,7 @@ export function VoiceRecorder({
 
   return (
     <div className={`flex items-center gap-3 ${compact ? "" : "flex-wrap"}`}>
+      <audio ref={audioElRef} className="hidden" />
       <button
         type="button"
         onMouseDown={start}
@@ -187,6 +205,23 @@ export function VoiceRecorder({
       <div className="min-w-0">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-fg">{meta.label}</span>
+          <select
+            value={voice}
+            onChange={(e) => {
+              setVoice(e.target.value);
+              setVoiceState(e.target.value);
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
+            aria-label="Answer voice"
+            title="Voice for spoken answers"
+            className="rounded border border-edge bg-panel2 px-1 py-0.5 text-[11px] text-fg3"
+          >
+            {VOICES.map((v) => (
+              <option key={v.value} value={v.value}>
+                {v.label}
+              </option>
+            ))}
+          </select>
         </div>
         {active ? (
           <div className="mt-0.5" aria-hidden>

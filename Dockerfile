@@ -62,8 +62,8 @@ RUN pip install "faster-whisper>=1.0" "soundfile>=0.12" \
     && pip install --index-url https://download.pytorch.org/whl/cpu torch \
     && pip install "kokoro>=0.9" \
     && mkdir -p /app/hfcache \
-    && python -c "from faster_whisper import WhisperModel; WhisperModel('small', device='cpu', compute_type='int8')" \
-    && python -c "from kokoro import KPipeline; p=KPipeline(lang_code='a'); [c for _,_,c in p('warm up', voice='af_heart')]"
+    && python -c "from faster_whisper import WhisperModel; WhisperModel('base.en', device='cpu', compute_type='int8')" \
+    && python -c "from kokoro import KPipeline; p=KPipeline(lang_code='a'); [c for _,_,c in p('warm up', voice='af_heart')]; [c for _,_,c in p('warm up', voice='am_michael')]"
 
 COPY scripts ./scripts
 COPY examples ./examples
@@ -98,7 +98,7 @@ ENV AURALYNQ_HF_SPACE=true \
     AURALYNQ_EMBEDDING__PROVIDER=hash \
     AURALYNQ_LLM__PROVIDER=extractive \
     AURALYNQ_VOICE__ASR_PROVIDER=faster_whisper \
-    AURALYNQ_VOICE__ASR_MODEL=small \
+    AURALYNQ_VOICE__ASR_MODEL=base.en \
     AURALYNQ_VOICE__VAD=false \
     AURALYNQ_VOICE__DIARIZE=false \
     AURALYNQ_VOICE__TTS_PROVIDER=kokoro \

@@ -30,7 +30,7 @@ class TTSProvider(abc.ABC):
     name = "base"
 
     @abc.abstractmethod
-    def synthesize(self, text: str, out_path: Path) -> TTSResult: ...
+    def synthesize(self, text: str, out_path: Path, voice: str | None = None) -> TTSResult: ...
 
 
 class NullTTS(TTSProvider):
@@ -41,7 +41,7 @@ class NullTTS(TTSProvider):
     def __init__(self, sample_rate: int = 16_000) -> None:
         self.sample_rate = sample_rate
 
-    def synthesize(self, text: str, out_path: Path) -> TTSResult:
+    def synthesize(self, text: str, out_path: Path, voice: str | None = None) -> TTSResult:
         out_path = Path(out_path)
         out_path.parent.mkdir(parents=True, exist_ok=True)
         # Duration proportional to text length, capped — purely indicative.
@@ -72,10 +72,11 @@ class KokoroTTS(TTSProvider):  # pragma: no cover - optional heavy path
         self.sample_rate = sample_rate
         _log.info("tts.kokoro.loaded", voice=voice)
 
-    def synthesize(self, text: str, out_path: Path) -> TTSResult:
+    def synthesize(self, text: str, out_path: Path, voice: str | None = None) -> TTSResult:
         import numpy as np
         import soundfile as sf
 
-        audio = np.concatenate([chunk for _, _, chunk in self._pipe(text, voice=self.voice)])
+        v = voice or self.voice
+        audio = np.concatenate([chunk for _, _, chunk in self._pipe(text, voice=v)])
         sf.write(str(out_path), audio, self.sample_rate)
         return TTSResult(Path(out_path), self.sample_rate, len(audio) / self.sample_rate, "kokoro")

@@ -203,6 +203,11 @@ class VoiceResponse(BaseModel):
     request_id: str = ""
 
 
+class SpeakRequest(BaseModel):
+    text: str
+    voice: str | None = None
+
+
 class HealthResponse(BaseModel):
     status: str
     version: str

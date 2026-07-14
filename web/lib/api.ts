@@ -410,12 +410,40 @@ export async function ingestFile(file: File) {
   return r.json();
 }
 
-export async function sendVoice(blob: Blob) {
+// --- Voice preference (male / female TTS voice) --------------------------
+const VOICE_KEY = "auralynq_voice";
+export const VOICES: { label: string; value: string }[] = [
+  { label: "Female", value: "af_heart" },
+  { label: "Male", value: "am_michael" },
+];
+export function getVoice(): string {
+  if (typeof window === "undefined") return VOICES[0].value;
+  return window.localStorage.getItem(VOICE_KEY) || VOICES[0].value;
+}
+export function setVoice(v: string) {
+  if (typeof window !== "undefined") window.localStorage.setItem(VOICE_KEY, v);
+}
+
+export async function sendVoice(blob: Blob, voice?: string) {
   const fd = new FormData();
   fd.append("file", new File([blob], "speech.webm", { type: blob.type }));
-  const r = await fetch(`${API_BASE}/voice`, { method: "POST", body: fd });
+  const v = voice ?? getVoice();
+  const url = `${API_BASE}/voice${v ? `?voice=${encodeURIComponent(v)}` : ""}`;
+  const r = await fetch(url, { method: "POST", body: fd });
   if (!r.ok) throw new Error(`voice failed: ${r.status}`);
   return r.json();
+}
+
+// Text-to-speech for an on-screen answer ("hear the answer"). Returns an object
+// URL for an <audio> element; revoke it when playback ends.
+export async function speak(text: string, voice?: string): Promise<string> {
+  const r = await fetch(`${API_BASE}/speak`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text, voice: voice ?? getVoice() }),
+  });
+  if (!r.ok) throw new Error(`speak failed: ${r.status}`);
+  return URL.createObjectURL(await r.blob());
 }
 
 export async function evalReport() {

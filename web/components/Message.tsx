@@ -5,8 +5,57 @@ import { Citations } from "@/components/Citations";
 import { ConfidenceBar } from "@/components/ConfidenceBar";
 import { Markdown } from "@/components/Markdown";
 import { CopyButton } from "@/components/CopyButton";
+import { useState, useRef } from "react";
+import { speak } from "@/lib/api";
 import { InsufficientEvidence } from "@/components/InsufficientEvidence";
 import { CorpusInventory } from "@/components/CorpusInventory";
+
+const _SILENT_WAV =
+  "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
+
+// "Hear the answer" — synthesizes the on-screen text (selected voice) and plays
+// it. Play is triggered by the click, so no autoplay block; the element is
+// primed with a silent clip first to survive the short TTS round-trip.
+function HearButton({ text }: { text: string }) {
+  const [status, setStatus] = useState<"idle" | "loading" | "playing">("idle");
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  async function onClick() {
+    const a = audioRef.current ?? new Audio();
+    audioRef.current = a;
+    if (status === "playing") {
+      a.pause();
+      setStatus("idle");
+      return;
+    }
+    try {
+      a.src = _SILENT_WAV;
+      a.play().catch(() => {});
+      setStatus("loading");
+      const url = await speak(text);
+      a.src = url;
+      a.onended = () => setStatus("idle");
+      a.onerror = () => setStatus("idle");
+      await a.play();
+      setStatus("playing");
+    } catch {
+      setStatus("idle");
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Hear the answer"
+      title="Hear the answer"
+      className="inline-flex items-center gap-1 text-xs text-fg3 transition hover:text-brand"
+    >
+      <span aria-hidden>{status === "loading" ? "…" : status === "playing" ? "⏸" : "🔊"}</span>
+      {status === "playing" ? "Stop" : "Hear"}
+    </button>
+  );
+}
 
 export interface Turn {
   role: "user" | "assistant";
@@ -206,6 +255,7 @@ export function Message({
         {!streaming && !empty && !turn.error && (
           <div className="mt-2.5 flex items-center gap-4 opacity-0 transition-opacity duration-150 group-hover:opacity-100 focus-within:opacity-100">
             <CopyButton getText={() => turn.text} label="Copy" />
+            {turn.text && <HearButton text={turn.text} />}
             {hasCitations && (
               <span className="text-xs text-fg3">
                 {turn.citations!.length} source{turn.citations!.length === 1 ? "" : "s"}
