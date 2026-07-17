@@ -2,6 +2,12 @@
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
+  // The single-container /api rewrite proxy defaults to a 30s upstream timeout,
+  // which kills non-streaming endpoints (/query, /voice) while the local CPU
+  // LLM is still generating. Allow long-running requests.
+  experimental: {
+    proxyTimeout: 300_000,
+  },
   env: {
     NEXT_PUBLIC_API_BASE: process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000",
   },
