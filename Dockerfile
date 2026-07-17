@@ -35,7 +35,7 @@ WORKDIR /app
 # only for the pre-built Next.js standalone server (no build tools needed
 # here — the build already happened in the web-builder stage).
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl poppler-utils nodejs npm ffmpeg libsndfile1 espeak-ng \
+    && apt-get install -y --no-install-recommends curl poppler-utils nodejs npm ffmpeg libsndfile1 espeak-ng build-essential cmake \
     && rm -rf /var/lib/apt/lists/*
 
 # ---- API (light extras only — no torch/GPU stack; see pyproject.toml) ----
@@ -66,12 +66,14 @@ RUN pip install "faster-whisper>=1.0" "soundfile>=0.12" \
     && python -c "from kokoro import KPipeline; p=KPipeline(lang_code='a'); [c for _,_,c in p('warm up', voice='af_heart')]; [c for _,_,c in p('warm up', voice='am_michael')]"
 
 # ---- Local generative LLM (free, in-container): llama-cpp-python + GGUF. ----
-# Prebuilt CPU wheel (no compiler in the slim image); Qwen2.5-1.5B-Instruct
-# Q4_K_M (~1.1 GB, ungated) baked into the layer so runtime stays offline.
-# Sized for the paid cpu-upgrade tier (8 vCPU / 32 GB): ~20-30 tok/s.
-RUN pip install --only-binary :all: llama-cpp-python \
-        --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu \
-    && python -c "from huggingface_hub import hf_hub_download; hf_hub_download('Qwen/Qwen2.5-1.5B-Instruct-GGUF', 'qwen2.5-1.5b-instruct-q4_k_m.gguf')"
+# Compiled FROM SOURCE with AVX2/FMA/F16C (the generic prebuilt CPU wheel is
+# baseline-x86 and prefill-bound on the paid multi-core tier). GGML_NATIVE=OFF
+# so we never emit instructions a differing runtime node lacks. Qwen2.5-3B-
+# Instruct Q4_K_M (~2.1 GB) — a 3B follows the "cite every claim with [n]"
+# instruction far more reliably than 1.5B. Model baked in for offline runtime.
+RUN CMAKE_ARGS="-DGGML_NATIVE=OFF -DGGML_AVX=ON -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON" \
+        pip install --no-cache-dir llama-cpp-python \
+    && python -c "from huggingface_hub import hf_hub_download; hf_hub_download('Qwen/Qwen2.5-3B-Instruct-GGUF', 'qwen2.5-3b-instruct-q4_k_m.gguf')"
 
 COPY scripts ./scripts
 COPY examples ./examples
@@ -110,8 +112,8 @@ ENV HF_HUB_OFFLINE=1 \
     AURALYNQ_VECTOR__BACKEND=memory \
     AURALYNQ_EMBEDDING__PROVIDER=hash \
     AURALYNQ_LLM__PROVIDER=slm \
-    AURALYNQ_LLM__SLM_REPO=Qwen/Qwen2.5-1.5B-Instruct-GGUF \
-    AURALYNQ_LLM__SLM_FILENAME=qwen2.5-1.5b-instruct-q4_k_m.gguf \
+    AURALYNQ_LLM__SLM_REPO=Qwen/Qwen2.5-3B-Instruct-GGUF \
+    AURALYNQ_LLM__SLM_FILENAME=qwen2.5-3b-instruct-q4_k_m.gguf \
     AURALYNQ_LLM__MAX_TOKENS=512 \
     AURALYNQ_VOICE__ASR_PROVIDER=faster_whisper \
     AURALYNQ_VOICE__ASR_MODEL=base.en \
