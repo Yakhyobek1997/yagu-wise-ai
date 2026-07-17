@@ -72,8 +72,9 @@ RUN pip install "faster-whisper>=1.0" "soundfile>=0.12" \
 # image, no build timeout. Qwen2.5-3B-Instruct Q4_K_M (~2.1 GB) follows the
 # "cite every claim with [n]" instruction far more reliably than 1.5B. Model
 # baked in for offline runtime.
-COPY wheels/llama_cpp_python-0.3.34-py3-none-linux_x86_64.whl /tmp/llama_cpp.whl
-RUN pip install --no-cache-dir /tmp/llama_cpp.whl && rm /tmp/llama_cpp.whl \
+COPY wheels/llama_cpp_python-0.3.34-py3-none-linux_x86_64.whl /tmp/wheels/
+RUN pip install --no-cache-dir /tmp/wheels/llama_cpp_python-0.3.34-py3-none-linux_x86_64.whl \
+    && rm -rf /tmp/wheels \
     && python -c "from huggingface_hub import hf_hub_download; hf_hub_download('Qwen/Qwen2.5-3B-Instruct-GGUF', 'qwen2.5-3b-instruct-q4_k_m.gguf')"
 
 COPY scripts ./scripts
