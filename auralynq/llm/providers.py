@@ -69,6 +69,36 @@ class OllamaLLM(LLM):
                     break
 
 
+def _container_cpus() -> int:
+    """CPUs actually available to this process, honoring the container's cgroup
+    CPU quota (cgroup v2 ``cpu.max`` then v1 ``cfs_quota``), falling back to
+    scheduling affinity, then the host count. Prevents thread oversubscription
+    inside a quota-limited container where ``os.cpu_count()`` reports host cores."""
+    import math
+    import os
+
+    try:  # cgroup v2
+        with open("/sys/fs/cgroup/cpu.max") as f:
+            quota, period = f.read().split()
+        if quota != "max":
+            return max(1, math.floor(int(quota) / int(period)))
+    except Exception:
+        pass
+    try:  # cgroup v1
+        with open("/sys/fs/cgroup/cpu/cpu.cfs_quota_us") as f:
+            quota = int(f.read())
+        with open("/sys/fs/cgroup/cpu/cpu.cfs_period_us") as f:
+            period = int(f.read())
+        if quota > 0 and period > 0:
+            return max(1, math.floor(quota / period))
+    except Exception:
+        pass
+    try:
+        return len(os.sched_getaffinity(0))
+    except Exception:
+        return os.cpu_count() or 4
+
+
 class SLMLlm(LLM):  # pragma: no cover - requires llama-cpp-python install
     """Local GGUF Small Language Model via llama-cpp-python.
 
@@ -84,15 +114,14 @@ class SLMLlm(LLM):  # pragma: no cover - requires llama-cpp-python install
     name = "slm"
 
     def __init__(self, model_path: str, n_gpu_layers: int = 0, n_ctx: int = 4096) -> None:
-        import os
-
         from llama_cpp import Llama  # type: ignore[import-untyped]
 
-        # Use every available core for both prefill and decode. On CPU the
-        # dominant cost is prompt eval over the (large) evidence context — the
-        # default single-batch, half-core settings leave a paid multi-core box
-        # mostly idle and push time-to-first-token to tens of seconds.
-        n_threads = os.cpu_count() or 4
+        # Use every core the CONTAINER actually has for prefill + decode. On CPU
+        # the dominant cost is prompt eval over the (large) evidence context.
+        # NB: os.cpu_count() reports the *host* cores (e.g. 64) inside a cgroup-
+        # limited container (e.g. 8 vCPU) — oversubscribing thrashes and is
+        # slower, so we read the cgroup CPU quota instead.
+        n_threads = _container_cpus()
         self._llm = Llama(
             model_path=model_path,
             n_ctx=n_ctx,
