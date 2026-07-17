@@ -35,7 +35,7 @@ WORKDIR /app
 # only for the pre-built Next.js standalone server (no build tools needed
 # here — the build already happened in the web-builder stage).
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl poppler-utils nodejs npm ffmpeg libsndfile1 espeak-ng build-essential cmake \
+    && apt-get install -y --no-install-recommends curl poppler-utils nodejs npm ffmpeg libsndfile1 espeak-ng \
     && rm -rf /var/lib/apt/lists/*
 
 # ---- API (light extras only — no torch/GPU stack; see pyproject.toml) ----
@@ -66,13 +66,14 @@ RUN pip install "faster-whisper>=1.0" "soundfile>=0.12" \
     && python -c "from kokoro import KPipeline; p=KPipeline(lang_code='a'); [c for _,_,c in p('warm up', voice='af_heart')]; [c for _,_,c in p('warm up', voice='am_michael')]"
 
 # ---- Local generative LLM (free, in-container): llama-cpp-python + GGUF. ----
-# Compiled FROM SOURCE with AVX2/FMA/F16C (the generic prebuilt CPU wheel is
-# baseline-x86 and prefill-bound on the paid multi-core tier). GGML_NATIVE=OFF
-# so we never emit instructions a differing runtime node lacks. Qwen2.5-3B-
-# Instruct Q4_K_M (~2.1 GB) — a 3B follows the "cite every claim with [n]"
-# instruction far more reliably than 1.5B. Model baked in for offline runtime.
-RUN CMAKE_ARGS="-DGGML_NATIVE=OFF -DGGML_AVX=ON -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON" \
-        pip install --no-cache-dir llama-cpp-python \
+# Install a PREBUILT AVX2/FMA/F16C wheel (compiled in a matching python:3.11-slim
+# and committed under wheels/). HF's build node can't finish a source compile in
+# its time window, so we bring our own optimized binary — no toolchain in the
+# image, no build timeout. Qwen2.5-3B-Instruct Q4_K_M (~2.1 GB) follows the
+# "cite every claim with [n]" instruction far more reliably than 1.5B. Model
+# baked in for offline runtime.
+COPY wheels/llama_cpp_python-0.3.34-py3-none-linux_x86_64.whl /tmp/llama_cpp.whl
+RUN pip install --no-cache-dir /tmp/llama_cpp.whl && rm /tmp/llama_cpp.whl \
     && python -c "from huggingface_hub import hf_hub_download; hf_hub_download('Qwen/Qwen2.5-3B-Instruct-GGUF', 'qwen2.5-3b-instruct-q4_k_m.gguf')"
 
 COPY scripts ./scripts
