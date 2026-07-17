@@ -84,18 +84,27 @@ class SLMLlm(LLM):  # pragma: no cover - requires llama-cpp-python install
     name = "slm"
 
     def __init__(self, model_path: str, n_gpu_layers: int = 0, n_ctx: int = 4096) -> None:
+        import os
+
         from llama_cpp import Llama  # type: ignore[import-untyped]
 
+        # Use every available core for both prefill and decode. On CPU the
+        # dominant cost is prompt eval over the (large) evidence context — the
+        # default single-batch, half-core settings leave a paid multi-core box
+        # mostly idle and push time-to-first-token to tens of seconds.
+        n_threads = os.cpu_count() or 4
         self._llm = Llama(
             model_path=model_path,
             n_ctx=n_ctx,
             n_gpu_layers=n_gpu_layers,
+            n_threads=n_threads,
+            n_batch=512,
             verbose=False,
             chat_format="chatml",  # compatible with Qwen, Phi-3, LLaMA-3 chat GGUFs
         )
         self.model_path = model_path
         self.n_gpu_layers = n_gpu_layers
-        _log.info("slm.loaded", model=model_path, n_gpu_layers=n_gpu_layers)
+        _log.info("slm.loaded", model=model_path, n_gpu_layers=n_gpu_layers, n_threads=n_threads)
 
     def _messages(self, prompt: str, system: str | None) -> list[dict]:
         msgs: list[dict] = []
