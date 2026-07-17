@@ -89,7 +89,12 @@ USER auralynq
 # Safe-by-default posture for a public Space — see env.example for the full
 # list and docs/getting-started/huggingface-space.md for the design notes.
 # Every one of these can be overridden via Space Variables/Secrets.
-ENV AURALYNQ_HF_SPACE=true \
+# HF_HUB_OFFLINE: ASR/TTS models are baked into the image above — never let a
+# runtime model load block on (rate-limited, unauthenticated) hub HEAD calls.
+# A stalled load during a relaunch is exactly what "workload not healthy after
+# 30 min" looks like on the free tier.
+ENV HF_HUB_OFFLINE=1 \
+    AURALYNQ_HF_SPACE=true \
     AURALYNQ_DEMO_MODE=true \
     AURALYNQ_PUBLIC_DEMO=true \
     AURALYNQ_ALLOW_UPLOADS=false \
