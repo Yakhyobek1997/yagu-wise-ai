@@ -35,7 +35,7 @@ WORKDIR /app
 # only for the pre-built Next.js standalone server (no build tools needed
 # here — the build already happened in the web-builder stage).
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl poppler-utils nodejs npm ffmpeg libsndfile1 espeak-ng \
+    && apt-get install -y --no-install-recommends curl poppler-utils nodejs npm ffmpeg libsndfile1 espeak-ng zstd \
     && rm -rf /var/lib/apt/lists/*
 
 # ---- API (light extras only — no torch/GPU stack; see pyproject.toml) ----
@@ -83,9 +83,12 @@ RUN pip install --no-cache-dir /tmp/wheels/llama_cpp_python-0.3.34-py3-none-linu
 # layer at OLLAMA_MODELS so runtime is offline. `ollama serve` is started by
 # entrypoint.sh.
 ENV OLLAMA_MODELS=/app/ollama_models
-RUN curl -fsSL https://ollama.com/download/ollama-linux-amd64.tgz | tar -xz -C /usr/local \
+RUN curl -fsSL https://github.com/ollama/ollama/releases/download/v0.32.1/ollama-linux-amd64.tar.zst -o /tmp/ollama.tar.zst \
+    && tar --use-compress-program=unzstd -xf /tmp/ollama.tar.zst -C /usr && rm /tmp/ollama.tar.zst \
     && mkdir -p /app/ollama_models \
-    && bash -c 'OLLAMA_HOST=127.0.0.1:11434 ollama serve & SRV=$!; sleep 8; ollama pull qwen2.5:3b; kill "$SRV"'
+    && bash -c 'OLLAMA_HOST=127.0.0.1:11434 /usr/bin/ollama serve & SRV=$!; \
+        for i in $(seq 1 30); do curl -fsS http://127.0.0.1:11434/api/tags >/dev/null 2>&1 && break; sleep 1; done; \
+        /usr/bin/ollama pull qwen2.5:3b; kill "$SRV"'
 
 COPY scripts ./scripts
 COPY examples ./examples
