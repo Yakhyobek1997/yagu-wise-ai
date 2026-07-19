@@ -143,7 +143,7 @@ ENV HF_HUB_OFFLINE=1 \
     PORT=7860
 
 EXPOSE 7860
-HEALTHCHECK --interval=15s --timeout=5s --retries=5 \
+HEALTHCHECK --interval=15s --timeout=10s --retries=6 --start-period=240s \
     CMD curl -fsS "http://127.0.0.1:${PORT:-7860}/api/health" || exit 1
 
 CMD ["/app/entrypoint.sh"]

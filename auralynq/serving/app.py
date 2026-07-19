@@ -1562,14 +1562,17 @@ def _silence(seconds: float = 0.5, sr: int = 16_000) -> bytes:
 app = create_app()
 
 
-def _warm_voice_models() -> None:  # pragma: no cover - deployment warmup
-    """Preload ASR/TTS models in a background thread at startup so the first
-    voice request doesn't pay the cold-load cost (and 5xx on a slow tier)."""
-    try:
-        s = get_settings()
-        if s.voice.asr_provider == "null" and s.voice.tts_provider == "null":
-            return
+def _warm_models() -> None:  # pragma: no cover - deployment warmup
+    """Preload ASR/TTS and the LLM in a background thread at startup so the first
+    request doesn't pay the cold-load cost. For the local GGUF/ollama LLM this
+    load can take 60-80s (model → VRAM); doing it off the request path keeps that
+    from starving the health check into a restart loop. Space-only (gated on
+    AURALYNQ_HF_SPACE) so it never runs under tests/local dev."""
+    import os
 
+    if os.getenv("AURALYNQ_HF_SPACE") != "true":
+        return
+    try:
         import threading
 
         def _run() -> None:
@@ -1580,10 +1583,18 @@ def _warm_voice_models() -> None:  # pragma: no cover - deployment warmup
                 build_tts()
             except Exception:
                 pass
+            try:
+                # A one-token generation loads the model into VRAM (ollama) /
+                # RAM (GGUF) and pins it there (OLLAMA_KEEP_ALIVE=-1).
+                from auralynq.llm.factory import get_llm
+
+                get_llm().generate("Hello", max_tokens=1)
+            except Exception:
+                pass
 
         threading.Thread(target=_run, daemon=True).start()
     except Exception:
         pass
 
 
-_warm_voice_models()
+_warm_models()
