@@ -8,6 +8,21 @@ set -euo pipefail
 DATA_DIR="${AURALYNQ_DATA_DIR:-/data/auralynq}"
 mkdir -p "$DATA_DIR"
 
+# Local LLM server (Ollama) — self-contained, uses the GPU when the Space runs
+# on GPU hardware and falls back to CPU otherwise. The model is baked into the
+# image (OLLAMA_MODELS). If ollama isn't installed/serving, the app's provider
+# resolution falls back to the local GGUF (slm) or extractive — never fatal.
+if command -v ollama >/dev/null 2>&1; then
+  OLLAMA_HOST=127.0.0.1:11434 ollama serve &
+  OLLAMA_PID=$!
+  trap 'kill "$OLLAMA_PID" 2>/dev/null || true' EXIT INT TERM
+  echo "[entrypoint] waiting for ollama..."
+  for _ in $(seq 1 40); do
+    curl -fsS "http://127.0.0.1:11434/api/tags" >/dev/null 2>&1 && { echo "[entrypoint] ollama ready"; break; }
+    sleep 1
+  done
+fi
+
 # Demo mode: seed and index the public demo corpus on first boot only, so a
 # Space restart doesn't re-index for no reason. Never touches an existing
 # index. Safe to skip entirely if AURALYNQ_DEMO_MODE=false.
@@ -21,7 +36,7 @@ fi
 
 python -m uvicorn auralynq.serving.app:app --host 127.0.0.1 --port 8000 &
 API_PID=$!
-trap 'kill "$API_PID" 2>/dev/null || true' EXIT INT TERM
+trap 'kill "$API_PID" "${OLLAMA_PID:-}" 2>/dev/null || true' EXIT INT TERM
 
 echo "[entrypoint] waiting for the API to become healthy..."
 for _ in $(seq 1 30); do

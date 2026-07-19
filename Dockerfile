@@ -77,6 +77,16 @@ RUN pip install --no-cache-dir /tmp/wheels/llama_cpp_python-0.3.34-py3-none-linu
     && rm -rf /tmp/wheels \
     && python -c "from huggingface_hub import hf_hub_download; hf_hub_download('Qwen/Qwen2.5-3B-Instruct-GGUF', 'qwen2.5-3b-instruct-q4_k_m.gguf')"
 
+# ---- Ollama (GPU path): self-contained CUDA runtime, auto-detects the T4. ----
+# The provider is `auto`: ollama (GPU) is preferred, with the CPU GGUF above as
+# a fallback if the GPU/ollama is ever unavailable. Model baked into an image
+# layer at OLLAMA_MODELS so runtime is offline. `ollama serve` is started by
+# entrypoint.sh.
+ENV OLLAMA_MODELS=/app/ollama_models
+RUN curl -fsSL https://ollama.com/download/ollama-linux-amd64.tgz | tar -xz -C /usr/local \
+    && mkdir -p /app/ollama_models \
+    && bash -c 'OLLAMA_HOST=127.0.0.1:11434 ollama serve & SRV=$!; sleep 8; ollama pull qwen2.5:3b; kill "$SRV"'
+
 COPY scripts ./scripts
 COPY examples ./examples
 
