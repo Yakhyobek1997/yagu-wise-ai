@@ -34,7 +34,13 @@ if [ "${AURALYNQ_DEMO_MODE:-false}" = "true" ] && [ ! -f "$DATA_DIR/index/last_i
     || echo "[entrypoint] demo indexing failed; continuing without a pre-built index"
 fi
 
-python -m uvicorn auralynq.serving.app:app --host 127.0.0.1 --port 8000 &
+# Multiple workers: the /query endpoints are async but the LLM call to Ollama is
+# a blocking HTTP call, which would freeze a single event loop (and the health
+# check / proxy) for the duration. Extra workers keep the API responsive when one
+# is busy generating. Ollama is a shared external process, so the model is loaded
+# once regardless of worker count.
+python -m uvicorn auralynq.serving.app:app --host 127.0.0.1 --port 8000 \
+  --workers "${AURALYNQ_API_WORKERS:-2}" --timeout-keep-alive 75 &
 API_PID=$!
 trap 'kill "$API_PID" "${OLLAMA_PID:-}" 2>/dev/null || true' EXIT INT TERM
 
