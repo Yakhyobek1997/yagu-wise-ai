@@ -424,6 +424,13 @@ t("chat page resets workspace state on new query", () => {
   has(page, "setShowWorkspace(false)");
 });
 
+t("source scope reports parent changes from an effect", () => {
+  const scope = read("components/SourceScope.tsx");
+  has(scope, "useEffect(() => {");
+  has(scope, "[docs.length, included, onChange]");
+  assert.ok(!scope.includes("emit(next)"), "SourceScope must not update its parent from a local state updater");
+});
+
 t("InlineSourceStrip has two buttons: preview and view source workspace", () => {
   const page = read("app/chat/page.tsx");
   has(page, "onOpenWorkspace");

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Menu, Mic2, X } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-const REPO = "https://github.com/MHHamdan/YaguWiseAi";
+const REPO = "https://github.com/Yakhyobek1997/yagu-wise-ai";
 
 const LINKS = [
   { href: "#features", label: "Features" },

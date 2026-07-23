@@ -33,23 +33,21 @@ export function SourceScope({
     };
   }, [refreshKey]);
 
-  // Report scope up: all-selected → null (whole corpus), else the id list.
-  const emit = (next: Set<string>) => {
-    onChange(next.size === docs.length ? null : Array.from(next));
-  };
+  // Report scope after rendering so the parent is never updated from a state updater.
+  useEffect(() => {
+    onChange(included.size === docs.length ? null : Array.from(included));
+  }, [docs.length, included, onChange]);
 
   const toggle = (id: string) => {
     setIncluded((prev) => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
-      emit(next);
       return next;
     });
   };
   const setAll = (all: boolean) => {
     const next = all ? new Set(docs.map((d) => d.doc_id)) : new Set<string>();
     setIncluded(next);
-    emit(next);
   };
 
   if (docs.length === 0) return null;
