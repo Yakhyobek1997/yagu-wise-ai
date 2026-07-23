@@ -5,15 +5,15 @@ import json
 import wave
 
 import pytest
-from auralynq.pipeline import build_index
-from auralynq.serving.app import create_app
+from yaguwiseai.pipeline import build_index
+from yaguwiseai.serving.app import create_app
 from fastapi.testclient import TestClient
 
 
 @pytest.fixture
 def client(corpus_dir):
     build_index(corpus_dir)
-    from auralynq.agent import runner
+    from yaguwiseai.agent import runner
 
     runner._CACHE.clear()
     app = create_app()
@@ -70,8 +70,8 @@ def test_ingest_rejects_unsupported_file_type(client):
 
 
 def test_ingest_disabled_when_allow_uploads_false(corpus_dir, monkeypatch):
-    monkeypatch.setenv("AURALYNQ_ALLOW_UPLOADS", "false")
-    from auralynq.config import reload_settings
+    monkeypatch.setenv("YAGUWISEAI_ALLOW_UPLOADS", "false")
+    from yaguwiseai.config import reload_settings
 
     reload_settings()
     build_index(corpus_dir)
@@ -117,7 +117,7 @@ def test_version_endpoint(client):
     r = client.get("/version")
     assert r.status_code == 200
     body = r.json()
-    assert body["name"] == "auralynq"
+    assert body["name"] == "yaguwiseai"
     assert body["version"]
     assert body["api"] == "v1"
 
@@ -141,8 +141,8 @@ def _assert_error_envelope(body: dict, status_code: int, r) -> None:
     assert err["trace_id"] == r.headers.get("X-Request-ID", err["trace_id"])
 
 
-def test_error_envelope_on_auralynq_error(client):
-    # /corpus/clear/confirm with a wrong phrase raises AuralynqError("wrong_phrase", ...)
+def test_error_envelope_on_yaguwiseai_error(client):
+    # /corpus/clear/confirm with a wrong phrase raises YaguWiseAiError("wrong_phrase", ...)
     r = client.post("/corpus/clear/confirm", json={"phrase": "not the phrase"})
     assert r.status_code == 400
     _assert_error_envelope(r.json(), 400, r)
@@ -168,7 +168,7 @@ def test_error_envelope_on_validation_error(client):
 
 def test_error_envelope_on_unhandled_exception(corpus_dir, monkeypatch):
     build_index(corpus_dir)
-    from auralynq.rag import strategy_registry
+    from yaguwiseai.rag import strategy_registry
 
     def _boom(*args, **kwargs):
         raise RuntimeError("synthetic failure for error-envelope test")

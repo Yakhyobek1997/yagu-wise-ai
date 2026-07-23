@@ -18,7 +18,7 @@ repos:
   - repo: local
     hooks:
       - id: name-audit
-        name: Auralynq name audit
+        name: YaguWiseAi name audit
         entry: python scripts/name_audit.py
         language: system
         pass_filenames: false

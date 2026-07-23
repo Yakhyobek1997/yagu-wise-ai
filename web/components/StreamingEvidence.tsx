@@ -18,7 +18,7 @@ function rgba(rgb: string, a: number): string {
 /**
  * Progressive-evidence strip shown while an answer streams (Perplexity's finding:
  * visible evidence assembling beats a bare spinner). Once the SSE `meta` event
- * arrives, retrieval is already done — so we render the real retrieved source
+ * arrives, retrieval is already done - so we render the real retrieved source
  * candidates as number-matched cards *above* the forming answer, then the final
  * event narrows them to the actually-cited subset. Falls back to detected-entity
  * chips before sources are known.

@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parent.parent
 FORBIDDEN = [
     r"\bVoiceRAG\b",
     r"\bAuralynx\b",
-    r"\bAuraLynq\b",  # wrong casing
+    r"\b" + "Aura" + "Lynq" + r"\b",  # legacy spelling
     r"\bAurLynq\b",
     r"\bTalkRAG\b",
 ]
@@ -82,8 +82,8 @@ def main() -> int:
 
     # Canonical presence checks.
     required = {
-        "pyproject.toml": ['name = "auralynq"'],
-        "README.md": ["Auralynq", "Talk to Your Data"],
+        "pyproject.toml": ['name = "yaguwiseai"'],
+        "README.md": ["YaguWiseAi", "Talk to Your Data"],
     }
     for rel, needles in required.items():
         fp = ROOT / rel
@@ -100,7 +100,7 @@ def main() -> int:
         for v in violations:
             print(f"  - {v}")
         return 1
-    print("✓ Name audit passed: Auralynq naming is consistent.")
+    print("✓ Name audit passed: YaguWiseAi naming is consistent.")
     return 0
 
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproducible end-to-end Auralynq demo (`make demo`).
+"""Reproducible end-to-end YaguWiseAi demo (`make demo`).
 
 Runs the full pipeline locally at $0 with only HUGGINGFACE_TOKEN (optional):
   1. ensure sample data exists (download_data)
@@ -11,8 +11,8 @@ Runs the full pipeline locally at $0 with only HUGGINGFACE_TOKEN (optional):
 
 from __future__ import annotations
 
-from auralynq.config import get_settings
-from auralynq.telemetry import configure_logging
+from yaguwiseai.config import get_settings
+from yaguwiseai.telemetry import configure_logging
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
@@ -48,10 +48,10 @@ def main() -> None:
     s = get_settings()
     configure_logging(level="WARNING")
     s.ensure_dirs()
-    console.rule("[bold cyan]Auralynq — Talk to Your Data[/]")
+    console.rule("[bold cyan]YaguWiseAi — Talk to Your Data[/]")
 
     # 1-2. data + index
-    from auralynq.pipeline import build_index
+    from yaguwiseai.pipeline import build_index
 
     from scripts.download_data import download
 
@@ -68,8 +68,8 @@ def main() -> None:
         st.add_row(k, str(v))
     console.print(st)
 
-    from auralynq.agent import runner
-    from auralynq.agent.runner import answer_question
+    from yaguwiseai.agent import runner
+    from yaguwiseai.agent.runner import answer_question
 
     runner._CACHE.clear()
 
@@ -84,7 +84,7 @@ def main() -> None:
     # 5. voice turn on the synthetic lecture audio
     audio = corpus / "lecture_pathrag.wav"
     if audio.exists():
-        from auralynq.voice.loop import run_voice_turn
+        from yaguwiseai.voice.loop import run_voice_turn
 
         console.rule("[bold magenta]Voice turn[/]")
         v = run_voice_turn(audio_path=audio, speak=True)

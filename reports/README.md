@@ -16,5 +16,5 @@ make bench    # -> reports/bench_report.json
 | `golden_baseline.json` | first `make eval` | frozen baseline for the drift check |
 
 The numbers in `README.md` were measured in the fully-offline `$0` configuration
-(hashing embeddings + extractive LLM). Install `auralynq[all]` and rerun for
+(hashing embeddings + extractive LLM). Install `yaguwiseai[all]` and rerun for
 real-model quality.

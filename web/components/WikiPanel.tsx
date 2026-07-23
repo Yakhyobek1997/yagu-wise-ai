@@ -99,7 +99,7 @@ export function WikiPanel({ refreshKey }: { refreshKey?: number }) {
       {state.enabled && lint && (lint.contradiction_count > 0 || lint.orphan_pages.length > 0) && (
         <div className="flex flex-wrap gap-1.5">
           {lint.contradiction_count > 0 && (
-            <span className="pill pill-warn" title="New sources contradicted prior claims — see the flagged pages">
+            <span className="pill pill-warn" title="New sources contradicted prior claims - see the flagged pages">
               <AlertTriangle className="h-3 w-3" aria-hidden /> {lint.contradiction_count} contradiction
               {lint.contradiction_count === 1 ? "" : "s"} flagged
             </span>
@@ -116,12 +116,12 @@ export function WikiPanel({ refreshKey }: { refreshKey?: number }) {
       {!state.enabled ? (
         <div className="card-inset text-xs text-fg3">
           The compounding wiki is off. Enable it with{" "}
-          <code className="rounded bg-ink/60 px-1 py-0.5 font-mono text-fg2">AURALYNQ_WIKI__ENABLED=true</code>{" "}
-          and re-ingest — Auralynq will synthesize durable, cited entity pages from the knowledge graph.
+          <code className="rounded bg-ink/60 px-1 py-0.5 font-mono text-fg2">YAGUWISEAI_WIKI__ENABLED=true</code>{" "}
+          and re-ingest - YaguWiseAi will synthesize durable, cited entity pages from the knowledge graph.
         </div>
       ) : state.pages.length === 0 ? (
         <div className="card-inset text-xs text-fg3">
-          No wiki pages yet. Ingest documents and Auralynq will compile entity pages here.
+          No wiki pages yet. Ingest documents and YaguWiseAi will compile entity pages here.
         </div>
       ) : (
         <ul className="space-y-1">

@@ -91,7 +91,7 @@ function PhoenixCard({ url }: { url?: string | null }) {
         </span>
       </div>
       <p className="mt-1 text-[11px] text-fg3">
-        Set <code className="text-brand">AURALYNQ_TELEMETRY__PHOENIX_ENDPOINT</code> and start the
+        Set <code className="text-brand">YAGUWISEAI_TELEMETRY__PHOENIX_ENDPOINT</code> and start the
         Phoenix container to view full distributed traces.
       </p>
     </div>
@@ -134,7 +134,7 @@ export function TracePanel({
           </span>
           <p className="text-sm font-medium text-fg">Run a query to see the trace.</p>
           <p className="max-w-xs text-xs text-fg3">
-            Every step — intent, retrieval, graph expansion, reranking, sufficiency, generation —
+            Every step - intent, retrieval, graph expansion, reranking, sufficiency, generation -
             with status, latency and provider.
           </p>
         </div>
@@ -173,7 +173,7 @@ export function TracePanel({
         <Stat label="Hallu. risk" value={risk} cls={RISK_CLS[risk]} />
       </div>
       <div className="flex flex-wrap items-center gap-2 text-xs">
-        <span className="pill pill-neutral">route · {meta?.route || "—"}</span>
+        <span className="pill pill-neutral">route · {meta?.route || "-"}</span>
         <span className={`pill ${abstained ? "pill-warn" : "pill-ok"}`}>
           <span className={`inline-block h-1.5 w-1.5 rounded-full ${abstained ? "bg-warn" : "bg-ok"}`} />
           {abstained ? "abstained" : "answered"}

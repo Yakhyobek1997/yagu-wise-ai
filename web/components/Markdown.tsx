@@ -17,7 +17,7 @@ function closeOpenFence(md: string): string {
 // rehype plugin: split text nodes on `[n]` markers that match a real citation,
 // emitting <cite data-marker="n"> nodes we render as interactive chips. Skips
 // text inside code/pre so code with brackets is untouched. Driven by the
-// citation set — never fuzzy string-matching against source text.
+// citation set - never fuzzy string-matching against source text.
 function rehypeCitations(valid: Set<number>) {
   const SKIP = new Set(["code", "pre"]);
   return (tree: unknown) => {
@@ -95,7 +95,7 @@ export function Markdown({
   if (byMarker.size > 0 && !streaming) rehype.push([rehypeCitations, new Set(byMarker.keys())]);
 
   return (
-    <div className="prose-auralynq">
+    <div className="prose-yaguwiseai">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={rehype}

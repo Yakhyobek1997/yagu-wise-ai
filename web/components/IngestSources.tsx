@@ -14,7 +14,7 @@ interface SourceTile {
 
 const TILES: SourceTile[] = [
   { id: "upload", label: "Upload files", desc: "PDF · DOCX · HTML · MD · TXT · audio", icon: <Upload className="h-4 w-4" />, status: "available" },
-  { id: "voice", label: "Voice note", desc: "WAV · MP3 · M4A — transcribed + diarized", icon: <Mic className="h-4 w-4" />, status: "available" },
+  { id: "voice", label: "Voice note", desc: "WAV · MP3 · M4A - transcribed + diarized", icon: <Mic className="h-4 w-4" />, status: "available" },
   { id: "folder", label: "Watch folder", desc: "Auto-reindex a local directory", icon: <FolderSync className="h-4 w-4" />, status: "available" },
   { id: "url", label: "Web URL", desc: "Scrape + index a page", icon: <Globe className="h-4 w-4" />, status: "planned" },
   { id: "cloud", label: "Cloud connectors", desc: "Drive · Slack · Notion", icon: <Cloud className="h-4 w-4" />, status: "planned" },
@@ -23,8 +23,8 @@ const TILES: SourceTile[] = [
 /**
  * Ingest source tile-grid (Onyx pattern, adapted honestly to a local-first RAG):
  * available sources are actionable; not-yet-built ones are shown as disabled
- * "Planned" tiles — the same available/planned discipline the RAG strategy
- * selector uses — rather than faking connectors that don't exist.
+ * "Planned" tiles - the same available/planned discipline the RAG strategy
+ * selector uses - rather than faking connectors that don't exist.
  */
 export function IngestSources({ onUpload }: { onUpload: () => void }) {
   return (

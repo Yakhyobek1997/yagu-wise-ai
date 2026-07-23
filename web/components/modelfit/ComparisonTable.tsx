@@ -75,13 +75,13 @@ export function ComparisonTable({ scores }: { scores: ModelFitScore[] }) {
     const rows = scores.map((s) => {
       const re   = s.resource_estimate;
       const model = s.model_id.replace(/^(ollama:|hf:|local:)/, "");
-      const toks  = s.benchmark?.avg_tok_per_sec != null ? String(s.benchmark.avg_tok_per_sec) : "—";
-      const vram  = re ? `${re.estimated_vram_gb} GB` : "—";
+      const toks  = s.benchmark?.avg_tok_per_sec != null ? String(s.benchmark.avg_tok_per_sec) : "-";
+      const vram  = re ? `${re.estimated_vram_gb} GB` : "-";
       const fit   = re?.fit_level?.replace("_", " ") ?? "unknown";
       const speed = `${Math.round(s.speed_fit)}${s.estimate_used ? "*" : ""}`;
       return `| ${model} | ${s.best_quantization} | ${Math.round(s.overall_score)} | ${Math.round(s.hardware_fit)} | ${speed} | ${Math.round(s.rag_fit)} | ${vram} | ${toks} | ${fit} | ${s.label} |`;
     });
-    const md = [`## Auralynq ModelFit Comparison`, ``, header, sep, ...rows, ``, `\\* speed score uses estimates — run benchmark for measured tok/s`].join("\n");
+    const md = [`## YaguWiseAi ModelFit Comparison`, ``, header, sep, ...rows, ``, `\\* speed score uses estimates - run benchmark for measured tok/s`].join("\n");
     const blob = new Blob([md], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -150,11 +150,11 @@ export function ComparisonTable({ scores }: { scores: ModelFitScore[] }) {
                   </td>
                   <td className="py-1.5 pr-3 text-right">{Math.round(s.rag_fit)}</td>
                   <td className="py-1.5 pr-3 font-mono">
-                    {re ? `${re.estimated_vram_gb} GB` : "—"}
+                    {re ? `${re.estimated_vram_gb} GB` : "-"}
                     <span className="text-zinc-600 ml-0.5">est.</span>
                   </td>
                   <td className="py-1.5 pr-3 font-mono">
-                    {re ? `${re.estimated_disk_gb} GB` : "—"}
+                    {re ? `${re.estimated_disk_gb} GB` : "-"}
                   </td>
                   <td className="py-1.5 pr-3 font-mono">
                     {s.benchmark?.avg_tok_per_sec != null ? (
@@ -175,7 +175,7 @@ export function ComparisonTable({ scores }: { scores: ModelFitScore[] }) {
           </tbody>
         </table>
         <p className="text-[10px] text-zinc-600 mt-1">
-          * speed score uses estimates — run benchmark for measured tok/s
+          * speed score uses estimates - run benchmark for measured tok/s
         </p>
       </div>
     </div>

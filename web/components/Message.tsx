@@ -13,7 +13,7 @@ import { CorpusInventory } from "@/components/CorpusInventory";
 const _SILENT_WAV =
   "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
 
-// "Hear the answer" — synthesizes the on-screen text (selected voice) and plays
+// "Hear the answer" - synthesizes the on-screen text (selected voice) and plays
 // it. Play is triggered by the click, so no autoplay block; the element is
 // primed with a silent clip first to survive the short TTS round-trip.
 function HearButton({ text }: { text: string }) {
@@ -90,7 +90,7 @@ function ModelFitChip({ mf }: { mf: ModelFitSnapshot }) {
     <Link
       href="/modelfit"
       className="chip mt-2 !text-[11px] hover:border-edge2 transition-colors"
-      title={`ModelFit: ${mf.fit_level ?? "scored"} — open ModelFit Index`}
+      title={`ModelFit: ${mf.fit_level ?? "scored"} - open ModelFit Index`}
     >
       <span className="text-fg3">model</span>
       <span className="max-w-[120px] truncate font-mono text-fg2">{modelShort}</span>

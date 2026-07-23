@@ -5,7 +5,7 @@ license: <spdx-id, e.g. apache-2.0>            # MUST match the base model's lic
 base_model: <org/base-model>                    # e.g. meta-llama/Llama-3.1-8B-Instruct
 library_name: peft                              # for a LoRA/QLoRA adapter; omit for a full model
 tags:
-  - auralynq
+  - yaguwiseai
   - rag
   - retrieval-augmented-generation
   # - lora   / - qlora   (if an adapter)
@@ -16,7 +16,7 @@ language:
 # <Model / Adapter name>
 
 <One-paragraph description: what this is, whether it's a full fine-tune or a
-LoRA/QLoRA adapter, and what it's for within Auralynq.>
+LoRA/QLoRA adapter, and what it's for within YaguWiseAi.>
 
 - **Type:** <full fine-tune | LoRA adapter | QLoRA adapter>
 - **Base model:** `<org/base-model>`
@@ -27,7 +27,7 @@ LoRA/QLoRA adapter, and what it's for within Auralynq.>
 
 <What the model is meant to do: e.g. citation-faithful RAG answering,
 abstention on insufficient evidence, grounding-aware generation. Name the
-Auralynq strategy/config it's meant to be used with.>
+YaguWiseAi strategy/config it's meant to be used with.>
 
 **Out of scope / not intended for:** <e.g. use without retrieval; standalone
 open-domain QA; any high-stakes decision without human review.>
@@ -52,7 +52,7 @@ open-domain QA; any high-stakes decision without human review.>
 
 ## Evaluation
 
-> Fill this **only** with numbers from a real run. For Auralynq's own
+> Fill this **only** with numbers from a real run. For YaguWiseAi's own
 > metrics, generate them with `make bench-rag` (groundedness, citation
 > coverage, abstention accuracy) and quote the report's provenance block
 > (commit + hardware + dataset). Delete any row you didn't actually measure.
@@ -65,13 +65,13 @@ open-domain QA; any high-stakes decision without human review.>
 | <other> | <...> | <...> | <...> |
 
 **Estimated vs. measured:** state clearly which numbers are measured vs.
-estimated. Auralynq never presents an estimate as a measurement.
+estimated. YaguWiseAi never presents an estimate as a measurement.
 
 ## Hardware & quantization for inference
 
 - **Recommended quantization:** <e.g. q4_k>
 - **Approx. VRAM:** <x.x GB> — mark whether this is estimated or measured.
-- Cross-reference: `auralynq-modelfit score --model <...>` for a
+- Cross-reference: `yaguwiseai-modelfit score --model <...>` for a
   hardware-fit estimate.
 
 ## Limitations & risks

@@ -1,12 +1,12 @@
 /**
- * Client-side hardware detection — reads the *visitor's own device* from browser
+ * Client-side hardware detection - reads the *visitor's own device* from browser
  * APIs, so the hardware readout is real per-device instead of reporting the
  * server that happens to host the API.
  *
  * Browser detection is necessarily coarser than the server-side probe
- * (auralynq/modelfit/hardware.py): there is no way to read an exact CPU model or
- * true total RAM from a web page. We surface what is reliably available —
- * logical cores, GPU (via WebGL), OS/arch — and mark the rest as approximate or
+ * (yaguwiseai/modelfit/hardware.py): there is no way to read an exact CPU model or
+ * true total RAM from a web page. We surface what is reliably available -
+ * logical cores, GPU (via WebGL), OS/arch - and mark the rest as approximate or
  * unavailable rather than guessing. Every field carries a `sources` flag so the
  * UI can be honest about what was actually measured.
  */
@@ -15,7 +15,7 @@ export interface ClientHardware {
   os: string; // "macOS" | "Windows" | "Linux" | "iOS" | "Android" | "unknown"
   arch: string; // "arm64" | "x86_64" | ""
   cpuCores: number | null; // navigator.hardwareConcurrency (logical)
-  ramGb: number | null; // navigator.deviceMemory — coarse, Chromium-only
+  ramGb: number | null; // navigator.deviceMemory - coarse, Chromium-only
   ramIsLowerBound: boolean; // Chrome caps deviceMemory at 8 → "8 GB or more"
   gpu: string | null; // parsed WebGL UNMASKED_RENDERER
   gpuVendor: string | null; // "Apple" | "NVIDIA" | "AMD" | "Intel" | null

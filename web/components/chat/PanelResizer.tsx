@@ -7,7 +7,7 @@ const MAX_VW = 0.72; // inspector may take up to 72% of the viewport
 
 /**
  * Draggable divider between the chat column and the inspector. Drag left to grow
- * the inspector (right side), drag right to grow the chat (left side) — the chat
+ * the inspector (right side), drag right to grow the chat (left side) - the chat
  * is `1fr`, so one handle flexes both. Writes `--inspector-width` live (the grid
  * template reads it) and persists it. Double-click resets to the default.
  */
@@ -64,7 +64,7 @@ export function PanelResizer() {
     <div
       role="separator"
       aria-orientation="vertical"
-      aria-label="Resize inspector — drag, or double-click to reset"
+      aria-label="Resize inspector - drag, or double-click to reset"
       onPointerDown={onDown}
       onPointerMove={onMove}
       onPointerUp={onUp}

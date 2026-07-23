@@ -16,14 +16,14 @@ import json
 import statistics
 from pathlib import Path
 
-from auralynq.config import get_settings
-from auralynq.eval.datasets import GoldenItem
-from auralynq.eval.provenance import report_provenance
-from auralynq.eval.report import _agentic, _retrieval_variants
-from auralynq.pipeline import build_index
-from auralynq.telemetry import get_logger
+from yaguwiseai.config import get_settings
+from yaguwiseai.eval.datasets import GoldenItem
+from yaguwiseai.eval.provenance import report_provenance
+from yaguwiseai.eval.report import _agentic, _retrieval_variants
+from yaguwiseai.pipeline import build_index
+from yaguwiseai.telemetry import get_logger
 
-_log = get_logger("auralynq.bench_hotpotqa")
+_log = get_logger("yaguwiseai.bench_hotpotqa")
 
 
 def _load_hf_golden() -> list[GoldenItem]:

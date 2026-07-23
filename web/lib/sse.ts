@@ -1,7 +1,7 @@
-// Pure SSE (Server-Sent Events) frame parsing — extracted so it is unit-testable
-// without a browser/network. The Auralynq API (sse-starlette) terminates lines
+// Pure SSE (Server-Sent Events) frame parsing - extracted so it is unit-testable
+// without a browser/network. The YaguWiseAi API (sse-starlette) terminates lines
 // with CRLF and emits keepalive comment lines (": ping …"), so a naive
-// `split("\n\n")` never splits the stream — which previously left the chat UI
+// `split("\n\n")` never splits the stream - which previously left the chat UI
 // with no rendered answer. These helpers handle CRLF + multi-line `data:` frames.
 
 export interface SSEParseResult<T> {

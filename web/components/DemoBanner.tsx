@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import type { DeploymentMode } from "@/lib/api";
 
-const DISMISS_KEY = "auralynq.demoBanner.dismissed.v1";
+const DISMISS_KEY = "yaguwiseai.demoBanner.dismissed.v1";
 
 /**
  * A compact, dismissible banner that tells a public/demo visitor what kind of
@@ -22,7 +22,7 @@ export function DemoBanner({ mode }: { mode: DeploymentMode | null }) {
     try {
       setDismissed(sessionStorage.getItem(DISMISS_KEY) === "1");
     } catch {
-      /* private mode — just show it */
+      /* private mode - just show it */
     }
   }, []);
 
@@ -34,9 +34,9 @@ export function DemoBanner({ mode }: { mode: DeploymentMode | null }) {
   const parts: string[] = [];
   if (mode.demo || mode.publicDemo) parts.push("Running in demo mode");
   if (mode.offlineFallback)
-    parts.push(`offline fallback (${mode.offlineProviders.join(" + ")}) — answers verify the pipeline, not model quality`);
+    parts.push(`offline fallback (${mode.offlineProviders.join(" + ")}) - answers verify the pipeline, not model quality`);
   if (mode.uploadsDisabled) parts.push("document uploads are disabled");
-  if (mode.hfSpace) parts.push("on a Hugging Face Space — storage is ephemeral and resets on restart");
+  if (mode.hfSpace) parts.push("on a Hugging Face Space - storage is ephemeral and resets on restart");
 
   const dismiss = () => {
     setDismissed(true);
@@ -67,7 +67,7 @@ export function DemoBanner({ mode }: { mode: DeploymentMode | null }) {
           <>
             {" "}
             <a
-              href="https://github.com/MHHamdan/Auralynq/blob/main/docs/getting-started/huggingface-space.md"
+              href="https://github.com/MHHamdan/YaguWiseAi/blob/main/docs/getting-started/huggingface-space.md"
               target="_blank"
               rel="noreferrer"
               className="underline decoration-dotted hover:text-brand"

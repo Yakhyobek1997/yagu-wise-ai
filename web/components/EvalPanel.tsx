@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { evalReport, evalLast, postEvalFeedback, exportEvalRun, runEval, type EvalMetrics } from "@/lib/api";
 
-const FEEDBACK_KEY = "auralynq.feedback.v1";
+const FEEDBACK_KEY = "yaguwiseai.feedback.v1";
 type Vote = "helpful" | "not-helpful" | "citation-ok" | "citation-wrong" | "unsupported";
 
 const FEEDBACK: { id: Vote; label: string; good?: boolean }[] = [
@@ -115,7 +115,7 @@ export function EvalPanel() {
       try { localStorage.setItem(FEEDBACK_KEY, JSON.stringify(next)); } catch { /* ignore */ }
       return next;
     });
-    setFlash("Thanks — feedback recorded");
+    setFlash("Thanks - feedback recorded");
     setTimeout(() => setFlash(null), 1800);
   }
 
@@ -218,7 +218,7 @@ export function EvalPanel() {
         {running && (
           <div className="flex items-center gap-2 py-3 text-xs text-fg3">
             <span className="animate-spin">⟳</span>
-            Running queries against corpus — this may take 30–60 s…
+            Running queries against corpus - this may take 30–60 s…
           </div>
         )}
 
@@ -321,7 +321,7 @@ export function EvalPanel() {
               <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" aria-hidden />
               <span>
                 <span className="font-medium text-fg">{p.name}</span>{" "}
-                <span className="text-fg3">— {p.body}</span>
+                <span className="text-fg3">- {p.body}</span>
               </span>
             </li>
           ))}

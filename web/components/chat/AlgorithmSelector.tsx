@@ -8,13 +8,13 @@ const LATENCY_CLS: Record<string, string> = {
   slow: "text-bad",
 };
 
-const STRATEGY_LS_KEY = "auralynq.rag_strategy.v1";
+const STRATEGY_LS_KEY = "yaguwiseai.rag_strategy.v1";
 
 export function loadStoredStrategy(): string {
   try {
-    return localStorage.getItem(STRATEGY_LS_KEY) || "auralynq_rag";
+    return localStorage.getItem(STRATEGY_LS_KEY) || "yaguwiseai_rag";
   } catch {
-    return "auralynq_rag";
+    return "yaguwiseai_rag";
   }
 }
 
@@ -45,7 +45,7 @@ function StrategyRow({
   defaultId: string;
   onSelect: (id: string) => void;
 }) {
-  const isDefault = s.id === defaultId || s.id === "auralynq_rag";
+  const isDefault = s.id === defaultId || s.id === "yaguwiseai_rag";
   const selectable = s.status !== "planned" && s.available;
   const dimmed = !selectable;
 
@@ -111,7 +111,7 @@ export function AlgorithmSelector({
 }) {
   const [open, setOpen] = useState(false);
   const [strategies, setStrategies] = useState<RAGStrategyInfo[]>([]);
-  const [defaultId, setDefaultId] = useState("auralynq_rag");
+  const [defaultId, setDefaultId] = useState("yaguwiseai_rag");
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -133,7 +133,7 @@ export function AlgorithmSelector({
 
   const current = strategies.find(s => s.id === value);
   const displayName = current?.name || value.replace(/_/g, " ");
-  const isDefault = value === defaultId || value === "auralynq_rag";
+  const isDefault = value === defaultId || value === "yaguwiseai_rag";
 
   // Group strategies by status
   const groups: Record<StatusGroup, RAGStrategyInfo[]> = {
@@ -175,7 +175,7 @@ export function AlgorithmSelector({
         >
           <div className="sticky top-0 border-b border-edge bg-panel px-3 py-2">
             <p className="text-xs font-semibold text-fg">RAG Algorithm</p>
-            <p className="text-[10px] text-fg3">Choose how Auralynq retrieves and answers</p>
+            <p className="text-[10px] text-fg3">Choose how YaguWiseAi retrieves and answers</p>
           </div>
 
           {(Object.keys(GROUP_CONFIG) as StatusGroup[]).map(group => {

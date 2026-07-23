@@ -6,12 +6,12 @@ PDF). Machine-readable form: [`questions.json`](questions.json).
 
 | ID | Category | Question |
 |---|---|---|
-| q1 | factoid | What is Auralynq? |
+| q1 | factoid | What is YaguWiseAi? |
 | q2 | factoid | What does the 'span' grounding stage mean? |
-| q3 | summary | Summarize how Auralynq's retrieval architecture works. |
+| q3 | summary | Summarize how YaguWiseAi's retrieval architecture works. |
 | q4 | citation verification | Which RAG strategies are listed as Available in the strategy comparison table? |
 | q5 | **visual grounding click-through** | According to the sample benchmark report, what is the nDCG@10 for the hybrid strategy? |
-| q6 | **insufficient evidence** | What was Auralynq's total revenue in Q4 2025? |
+| q6 | **insufficient evidence** | What was YaguWiseAi's total revenue in Q4 2025? |
 | q7 | **ModelFit recommendation command** | Which CLI command recommends the best local model for a RAG task, and what does it print? |
 | q8 | **strategy comparison** | Compare the hybrid and PathRAG rows in both the strategy table and the benchmark report. |
 | q9 | factoid | What five sub-scores make up the composite ModelFit score, and what are their weights? |
@@ -33,7 +33,7 @@ abstention (see caveat there).
 **q7 (ModelFit command)** exercises the CLI rather than the corpus:
 
 ```bash
-auralynq-modelfit recommend --task rag --limit 5
+yaguwiseai-modelfit recommend --task rag --limit 5
 ```
 
 is the command; the corpus documents ModelFit's composite scoring formula so

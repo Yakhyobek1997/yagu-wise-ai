@@ -49,13 +49,13 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: auralynq-api
+          - name: yaguwiseai-api
             dockerfile: containers/api.Dockerfile
             context: .
-          - name: auralynq-web
+          - name: yaguwiseai-web
             dockerfile: containers/web.Dockerfile
             context: web
-          - name: auralynq-caddy
+          - name: yaguwiseai-caddy
             dockerfile: containers/caddy.Dockerfile
             context: .
     steps:
@@ -96,7 +96,7 @@ jobs:
           provenance: false
           build-args: |
             NEXT_PUBLIC_API_BASE=/api
-            AURALYNQ_CERT_HOST=localhost
+            YAGUWISEAI_CERT_HOST=localhost
           tags: |
             ${{ env.REGISTRY }}/${{ steps.meta.outputs.ns }}/${{ matrix.name }}:${{ steps.meta.outputs.version }}
             ${{ env.REGISTRY }}/${{ steps.meta.outputs.ns }}/${{ matrix.name }}:${{ steps.meta.outputs.minor }}

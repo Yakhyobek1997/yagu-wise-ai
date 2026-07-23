@@ -14,9 +14,9 @@ short_description: <one line, <60 chars>
 # <Space title>
 
 > A **ready-to-copy, already-filled** version of this template lives at
-> [`deploy/huggingface/README_SPACE_TEMPLATE.md`](https://github.com/MHHamdan/Auralynq/blob/main/deploy/huggingface/README_SPACE_TEMPLATE.md),
+> [`deploy/huggingface/README_SPACE_TEMPLATE.md`](https://github.com/MHHamdan/YaguWiseAi/blob/main/deploy/huggingface/README_SPACE_TEMPLATE.md),
 > alongside the Dockerfile, entrypoint, and env reference. Prefer that one for
-> the standard Auralynq demo Space; use this generic template only if you're
+> the standard YaguWiseAi demo Space; use this generic template only if you're
 > building a customized Space and want the section skeleton.
 
 <One paragraph: what this Space demonstrates and who it's for.>
@@ -38,13 +38,13 @@ click-through, ModelFit page, etc.>
 
 ## Configuration — Variables vs. Secrets
 
-- **Variables** (visible in Space settings): `AURALYNQ_DEMO_MODE`,
-  `AURALYNQ_ALLOW_UPLOADS`, `NEXT_PUBLIC_API_BASE`, … — never a key/token.
+- **Variables** (visible in Space settings): `YAGUWISEAI_DEMO_MODE`,
+  `YAGUWISEAI_ALLOW_UPLOADS`, `NEXT_PUBLIC_API_BASE`, … — never a key/token.
 - **Secrets** (encrypted): `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`,
-  `COHERE_API_KEY`, `AURALYNQ_SERVE__API_KEY`, `HUGGINGFACE_TOKEN`.
+  `COHERE_API_KEY`, `YAGUWISEAI_SERVE__API_KEY`, `HUGGINGFACE_TOKEN`.
 
 Full list with safe defaults:
-[`deploy/huggingface/env.example`](https://github.com/MHHamdan/Auralynq/blob/main/deploy/huggingface/env.example).
+[`deploy/huggingface/env.example`](https://github.com/MHHamdan/YaguWiseAi/blob/main/deploy/huggingface/env.example).
 
 ## How to duplicate
 
@@ -64,5 +64,5 @@ only; single demo corpus; no persistence; etc. — be honest.>
 
 ## Source & license
 
-Source: <https://github.com/MHHamdan/Auralynq>. License: Apache-2.0 (code).
+Source: <https://github.com/MHHamdan/YaguWiseAi>. License: Apache-2.0 (code).
 Demo data: <its own license, e.g. CC0-1.0>.

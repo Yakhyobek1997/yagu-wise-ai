@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from auralynq.embeddings import get_embedder
-from auralynq.retrieval.models import Filter
-from auralynq.vectorstore.memory_store import MemoryStore
+from yaguwiseai.embeddings import get_embedder
+from yaguwiseai.retrieval.models import Filter
+from yaguwiseai.vectorstore.memory_store import MemoryStore
 
 
 def _populate(tmp_path, chunks):

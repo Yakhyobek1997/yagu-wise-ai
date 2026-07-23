@@ -1,6 +1,6 @@
 # Hugging Face Space packaging
 
-Artifacts for running Auralynq as a single-container Hugging Face Space
+Artifacts for running YaguWiseAi as a single-container Hugging Face Space
 (Docker SDK). Nothing here publishes anything automatically — every step
 below is a manual, explicit action you take in your own Hugging Face
 account.
@@ -22,8 +22,8 @@ Space rebuild is slower to iterate on than a local container.
 
 ```bash
 # from the repository root
-podman build -f deploy/huggingface/Dockerfile -t auralynq-space .
-podman run --rm -p 7860:7860 auralynq-space
+podman build -f deploy/huggingface/Dockerfile -t yaguwiseai-space .
+podman run --rm -p 7860:7860 yaguwiseai-space
 ```
 
 Then check:
@@ -56,14 +56,14 @@ Open `http://localhost:7860` in a browser and try a question from
 ## Known caveats (read before enabling persistent storage or uploads)
 
 - **Persistent storage ownership.** The container runs as a non-root user
-  (`auralynq`, uid 10001). If you attach Hugging Face Persistent Storage at
+  (`yaguwiseai`, uid 10001). If you attach Hugging Face Persistent Storage at
   `/data`, HF may mount it with different ownership than the container
   expects, which can cause permission errors on first boot. This has **not
   been verified against a real HF persistent-storage mount** in this change
   — treat it as untested until you've confirmed it on an actual Space, and
   be ready to `chmod`/`chown` the mount in a startup step if needed.
 - **Uploads + no persistence = uploads vanish on restart.** If you set
-  `AURALYNQ_ALLOW_UPLOADS=true` without persistent storage, uploaded
+  `YAGUWISEAI_ALLOW_UPLOADS=true` without persistent storage, uploaded
   documents live only as long as the container runs — say so in your Space
   README if you enable this, so users aren't surprised.
 - **Public, unauthenticated Space + uploads enabled** means anyone can add

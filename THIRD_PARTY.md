@@ -1,14 +1,14 @@
 # Third-Party Attributions
 
-Auralynq is built on open components. This file attributes algorithms, papers,
+YaguWiseAi is built on open components. This file attributes algorithms, papers,
 datasets, models, and libraries, with license notes. All integrations are
 optional extras except the lightweight core listed in `pyproject.toml`.
 
 ## Algorithms & papers
 
-| Item | Reference | Use in Auralynq | Notes |
+| Item | Reference | Use in YaguWiseAi | Notes |
 |------|-----------|-----------------|-------|
-| **PathRAG** | Chen et al., *PathRAG: Pruning Graph-based Retrieval Augmented Generation with Relational Paths* (2025) | Graph retrieval under `auralynq/retrieval/pathrag/` | Clean-room implementation from the paper. Flow-based pruning, path reliability, path-to-text. No third-party code vendored. |
+| **PathRAG** | Chen et al., *PathRAG: Pruning Graph-based Retrieval Augmented Generation with Relational Paths* (2025) | Graph retrieval under `yaguwiseai/retrieval/pathrag/` | Clean-room implementation from the paper. Flow-based pruning, path reliability, path-to-text. No third-party code vendored. |
 | Reciprocal Rank Fusion | Cormack et al., 2009 | `retrieval/hybrid/fusion.py` | Standard RRF. |
 | Maximal Marginal Relevance | Carbonell & Goldstein, 1998 | `retrieval/hybrid/mmr.py` | De-duplication / diversity. |
 | Lost in the Middle | Liu et al., 2023 | `retrieval/hybrid/reorder.py` | Context reordering to mitigate mid-context recall loss. |
@@ -18,13 +18,13 @@ optional extras except the lightweight core listed in `pyproject.toml`.
 
 | Model | License | Role | Env to enable |
 |-------|---------|------|---------------|
-| `BAAI/bge-m3` | MIT | Dense+sparse multilingual embeddings | `pip install 'auralynq[embeddings]'` |
-| `BAAI/bge-reranker-v2-m3` | Apache-2.0 | Cross-encoder reranking | `auralynq[embeddings]` |
-| faster-whisper (CTranslate2 Whisper) | MIT / Whisper MIT | ASR | `auralynq[voice]` |
-| WhisperX | BSD-4-Clause-ish (see repo) | Word alignment | `auralynq[voice]` |
-| pyannote.audio | MIT (gated weights need `HUGGINGFACE_TOKEN`) | Diarization | `auralynq[voice]` + token |
-| Silero VAD | MIT | Voice activity detection | `auralynq[voice]` |
-| Kokoro-82M | Apache-2.0 | TTS | `auralynq[voice]` |
+| `BAAI/bge-m3` | MIT | Dense+sparse multilingual embeddings | `pip install 'yaguwiseai[embeddings]'` |
+| `BAAI/bge-reranker-v2-m3` | Apache-2.0 | Cross-encoder reranking | `yaguwiseai[embeddings]` |
+| faster-whisper (CTranslate2 Whisper) | MIT / Whisper MIT | ASR | `yaguwiseai[voice]` |
+| WhisperX | BSD-4-Clause-ish (see repo) | Word alignment | `yaguwiseai[voice]` |
+| pyannote.audio | MIT (gated weights need `HUGGINGFACE_TOKEN`) | Diarization | `yaguwiseai[voice]` + token |
+| Silero VAD | MIT | Voice activity detection | `yaguwiseai[voice]` |
+| Kokoro-82M | Apache-2.0 | TTS | `yaguwiseai[voice]` |
 
 ## Libraries
 

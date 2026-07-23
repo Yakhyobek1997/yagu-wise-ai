@@ -1,31 +1,31 @@
 # MCP — the streamable-HTTP MCP server (7 tools) for remote agents/IDEs. Stateless
-# against Qdrant; scales horizontally. Bearer auth via AURALYNQ_MCP_API_KEY.
+# against Qdrant; scales horizontally. Bearer auth via YAGUWISEAI_MCP_API_KEY.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auralynq-mcp
-  namespace: auralynq
-  labels: { app.kubernetes.io/name: auralynq-mcp, app.kubernetes.io/part-of: auralynq }
+  name: yaguwiseai-mcp
+  namespace: yaguwiseai
+  labels: { app.kubernetes.io/name: yaguwiseai-mcp, app.kubernetes.io/part-of: yaguwiseai }
 spec:
   replicas: 2
   selector:
-    matchLabels: { app.kubernetes.io/name: auralynq-mcp }
+    matchLabels: { app.kubernetes.io/name: yaguwiseai-mcp }
   template:
     metadata:
-      labels: { app.kubernetes.io/name: auralynq-mcp, app.kubernetes.io/part-of: auralynq }
+      labels: { app.kubernetes.io/name: yaguwiseai-mcp, app.kubernetes.io/part-of: yaguwiseai }
     spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 10001
       containers:
         - name: mcp
-          image: ghcr.io/mhhamdan/auralynq-api:0.1.0
-          args: ["python", "-m", "auralynq.mcp_server.server", "--transport", "streamable-http"]
+          image: ghcr.io/mhhamdan/yaguwiseai-api:0.1.0
+          args: ["python", "-m", "yaguwiseai.mcp_server.server", "--transport", "streamable-http"]
           ports:
             - { name: http, containerPort: 8765 }
           envFrom:
-            - configMapRef: { name: auralynq-config }
-            - secretRef: { name: auralynq-secrets }
+            - configMapRef: { name: yaguwiseai-config }
+            - secretRef: { name: yaguwiseai-secrets }
           readinessProbe:
             tcpSocket: { port: 8765 }
             initialDelaySeconds: 10
@@ -42,10 +42,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: auralynq-mcp
-  namespace: auralynq
-  labels: { app.kubernetes.io/name: auralynq-mcp, app.kubernetes.io/part-of: auralynq }
+  name: yaguwiseai-mcp
+  namespace: yaguwiseai
+  labels: { app.kubernetes.io/name: yaguwiseai-mcp, app.kubernetes.io/part-of: yaguwiseai }
 spec:
-  selector: { app.kubernetes.io/name: auralynq-mcp }
+  selector: { app.kubernetes.io/name: yaguwiseai-mcp }
   ports:
     - { name: http, port: 8765, targetPort: 8765 }

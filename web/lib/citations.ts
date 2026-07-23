@@ -1,8 +1,8 @@
 // Shared citation presentation so an inline [n] chip, its source card, and the
 // bounding-box highlight in the Source Workspace all use the SAME color and the
-// SAME relevance language — the "number-matched" pattern (Perplexity/NotebookLM).
+// SAME relevance language - the "number-matched" pattern (Perplexity/NotebookLM).
 
-// 8-hue palette — kept in lockstep with SourceWorkspaceModal's highlight palette
+// 8-hue palette - kept in lockstep with SourceWorkspaceModal's highlight palette
 // so chip [n] color == highlight box color == source card accent.
 export const CITATION_PALETTE = [
   "rgb(59,130,246)", // blue

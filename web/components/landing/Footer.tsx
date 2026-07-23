@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const REPO = "https://github.com/MHHamdan/Auralynq";
+const REPO = "https://github.com/MHHamdan/YaguWiseAi";
 
 export function Footer() {
   return (
@@ -9,8 +9,8 @@ export function Footer() {
         <div className="flex items-center gap-2 font-semibold text-fg">
           <span aria-hidden>🎙️</span>
           <span>
-            <span className="text-brand">Aura</span>
-            <span className="text-brand2">lynq</span>
+            <span className="text-brand">Yagu</span>
+            <span className="text-brand2">Wise AI</span>
           </span>
           <span className="ml-2 font-normal text-fg3">Talk to Your Data</span>
         </div>

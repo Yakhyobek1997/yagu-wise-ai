@@ -56,14 +56,14 @@ export function AppBar({
           <Link
             href="/"
             className="flex items-center gap-2 font-bold tracking-tight text-fg"
-            aria-label="Auralynq home"
+            aria-label="YaguWiseAi home"
           >
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-brand/30 to-brand2/30 text-brand ring-1 ring-brand/20">
               <WaveformLogo className="h-4 w-4" />
             </span>
             <span className="hidden text-base sm:inline">
-              <span className="text-brand">Aura</span>
-              <span className="text-brand2">lynq</span>
+              <span className="text-brand">Yagu</span>
+              <span className="text-brand2">Wise AI</span>
             </span>
           </Link>
 
@@ -93,7 +93,7 @@ export function AppBar({
           <Link
             href="/modelfit"
             className="hidden items-center gap-1.5 rounded-lg border border-edge px-2.5 py-1 text-xs text-fg3 transition hover:border-sky-700 hover:text-sky-400 sm:inline-flex"
-            title="ModelFit Index — hardware-aware model selection"
+            title="ModelFit Index - hardware-aware model selection"
           >
             <svg viewBox="0 0 16 16" fill="currentColor" className="h-3 w-3" aria-hidden>
               <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H3a1 1 0 01-1-1v-2zM6 7a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1H7a1 1 0 01-1-1V7zM10 3a1 1 0 011-1h2a1 1 0 011 1v10a1 1 0 01-1 1h-2a1 1 0 01-1-1V3z" />

@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import pytest
-from auralynq.eval.asr_eval import evaluate_asr, word_error_rate
-from auralynq.eval.bench import run_bench
-from auralynq.eval.provenance import report_provenance
-from auralynq.eval.ragas_eval import proxy_scores
-from auralynq.eval.report import run_eval
-from auralynq.eval.retrieval_metrics import aggregate, mrr, ndcg_at_k, recall_at_k
+from yaguwiseai.eval.asr_eval import evaluate_asr, word_error_rate
+from yaguwiseai.eval.bench import run_bench
+from yaguwiseai.eval.provenance import report_provenance
+from yaguwiseai.eval.ragas_eval import proxy_scores
+from yaguwiseai.eval.report import run_eval
+from yaguwiseai.eval.retrieval_metrics import aggregate, mrr, ndcg_at_k, recall_at_k
 
 _PROVENANCE_KEYS = {"git_commit", "generated_at", "hardware", "dataset_version"}
 
@@ -55,7 +55,7 @@ def test_ragas_proxy_bounds():
 
 def test_run_eval_smoke_writes_report(corpus_dir, monkeypatch):
     # point data_dir corpus at our fixture corpus
-    from auralynq.config import get_settings
+    from yaguwiseai.config import get_settings
 
     s = get_settings()
     monkeypatch.setattr(s, "data_dir", corpus_dir.parent)
@@ -72,7 +72,7 @@ def test_run_eval_smoke_writes_report(corpus_dir, monkeypatch):
 
 
 def test_run_bench(corpus_dir, monkeypatch):
-    from auralynq.config import get_settings
+    from yaguwiseai.config import get_settings
 
     s = get_settings()
     report = run_bench(k=5, n_queries=8, write_report=True)

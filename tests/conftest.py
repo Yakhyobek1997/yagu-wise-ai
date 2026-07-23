@@ -5,28 +5,28 @@ from __future__ import annotations
 import pathlib
 
 import pytest
-from auralynq.config import reload_settings
-from auralynq.ingest.models import Chunk, SourceType
-from auralynq.utils import seed_everything
+from yaguwiseai.config import reload_settings
+from yaguwiseai.ingest.models import Chunk, SourceType
+from yaguwiseai.utils import seed_everything
 
 
 @pytest.fixture(autouse=True)
 def _isolated_env(tmp_path, monkeypatch):
     """Force fully-local fallbacks and a temp data dir for every test."""
-    monkeypatch.setenv("AURALYNQ_EMBEDDING__PROVIDER", "hash")
-    monkeypatch.setenv("AURALYNQ_VECTOR__BACKEND", "memory")
-    monkeypatch.setenv("AURALYNQ_LLM__PROVIDER", "extractive")
-    monkeypatch.setenv("AURALYNQ_VOICE__ASR_PROVIDER", "null")
-    monkeypatch.setenv("AURALYNQ_VOICE__TTS_PROVIDER", "null")
-    monkeypatch.setenv("AURALYNQ_DATA_DIR", str(tmp_path / "data"))
-    monkeypatch.setenv("AURALYNQ_REPORTS_DIR", str(tmp_path / "reports"))
+    monkeypatch.setenv("YAGUWISEAI_EMBEDDING__PROVIDER", "hash")
+    monkeypatch.setenv("YAGUWISEAI_VECTOR__BACKEND", "memory")
+    monkeypatch.setenv("YAGUWISEAI_LLM__PROVIDER", "extractive")
+    monkeypatch.setenv("YAGUWISEAI_VOICE__ASR_PROVIDER", "null")
+    monkeypatch.setenv("YAGUWISEAI_VOICE__TTS_PROVIDER", "null")
+    monkeypatch.setenv("YAGUWISEAI_DATA_DIR", str(tmp_path / "data"))
+    monkeypatch.setenv("YAGUWISEAI_REPORTS_DIR", str(tmp_path / "reports"))
     # Silence logs in tests (also avoids structlog's cached stream being closed
     # across repeated in-process CLI invocations under CliRunner).
-    monkeypatch.setenv("AURALYNQ_LOG_LEVEL", "CRITICAL")
+    monkeypatch.setenv("YAGUWISEAI_LOG_LEVEL", "CRITICAL")
     # Neutralize any secrets/overrides a populated `.env` would inject, so the
     # offline suite is deterministic on a developer/CI machine *and* on a
     # configured server (auth open, no commercial providers, default CORS).
-    monkeypatch.setenv("AURALYNQ_SERVE__API_KEY", "")
+    monkeypatch.setenv("YAGUWISEAI_SERVE__API_KEY", "")
     for _secret in (
         "OPENAI_API_KEY",
         "ANTHROPIC_API_KEY",
@@ -39,13 +39,13 @@ def _isolated_env(tmp_path, monkeypatch):
         monkeypatch.setenv(_secret, "")
     # Ignore a host `.env` entirely during tests (env vars above are the source
     # of truth). pydantic-settings will skip a non-existent file.
-    monkeypatch.setenv("AURALYNQ_DOTENV_DISABLED", "1")
+    monkeypatch.setenv("YAGUWISEAI_DOTENV_DISABLED", "1")
     reload_settings()
     seed_everything(42)
     # reset cached singletons that read settings
-    from auralynq.embeddings import factory as ef
-    from auralynq.serving.corpus import invalidate_corpus_cache
-    from auralynq.vectorstore import factory as vf
+    from yaguwiseai.embeddings import factory as ef
+    from yaguwiseai.serving.corpus import invalidate_corpus_cache
+    from yaguwiseai.vectorstore import factory as vf
 
     ef.get_embedder.cache_clear()
     vf.get_store.cache_clear()
@@ -89,7 +89,7 @@ def corpus_dir(tmp_path) -> pathlib.Path:
         "retrieval, then relational path expansion, then flow-based pruning to "
         "keep only reliable paths. Paths are scored by reliability and rendered "
         "to text with golden-region ordering.\n\n"
-        "## Hybrid retrieval\n\nAuralynq fuses dense and sparse vectors with "
+        "## Hybrid retrieval\n\nYaguWiseAi fuses dense and sparse vectors with "
         "reciprocal rank fusion, then reranks with a cross-encoder and applies "
         "maximal marginal relevance.\n",
         encoding="utf-8",

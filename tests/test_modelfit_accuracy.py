@@ -5,9 +5,9 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-import auralynq.modelfit.hardware as hw_mod
+import yaguwiseai.modelfit.hardware as hw_mod
 import pytest
-from auralynq.modelfit.resource_estimator import estimate_resources
+from yaguwiseai.modelfit.resource_estimator import estimate_resources
 
 # ── Verdict logic ─────────────────────────────────────────────────────────────
 
@@ -139,7 +139,7 @@ def test_detect_nvidia_parses_free_used(monkeypatch):
 
 
 def test_total_vram_free_property():
-    from auralynq.modelfit.hardware import GPUInfo, HardwareProfile
+    from yaguwiseai.modelfit.hardware import GPUInfo, HardwareProfile
 
     hw = HardwareProfile(
         gpus=[
@@ -151,7 +151,7 @@ def test_total_vram_free_property():
 
 
 def test_total_vram_free_none_when_unreported():
-    from auralynq.modelfit.hardware import GPUInfo, HardwareProfile
+    from yaguwiseai.modelfit.hardware import GPUInfo, HardwareProfile
 
     hw = HardwareProfile(gpus=[GPUInfo("apple", "M3", 24.0, "metal", 0, integrated=True)])
     assert hw.total_vram_free_gb is None

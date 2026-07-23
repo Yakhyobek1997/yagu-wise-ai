@@ -9,11 +9,11 @@ export const MODES: { id: ChatMode; label: string; hint: string; enabled: boolea
   { id: "corpus",    label: "Ask corpus", hint: "Grounded answer from your indexed documents",              enabled: true  },
   { id: "summarize", label: "Summarize",  hint: "Summarize the topic across the corpus",                    enabled: true  },
   { id: "inventory", label: "Inventory",  hint: "What's in your collection (docs, types, languages)",       enabled: true  },
-  { id: "web",       label: "Web",        hint: "Disabled — enable a web provider to use",                  enabled: false },
+  { id: "web",       label: "Web",        hint: "Disabled - enable a web provider to use",                  enabled: false },
 ];
 
 const PLACEHOLDER: Record<ChatMode, string> = {
-  corpus:    "Ask Auralynq about your documents…",
+  corpus:    "Ask YaguWiseAi about your documents…",
   summarize: "Summarize a topic (e.g. 'key findings on infection control')…",
   inventory: "Ask about your collection (e.g. 'any Arabic documents?')…",
   web:       "Web search is disabled",

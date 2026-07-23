@@ -11,11 +11,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Auralynq — Talk to Your Data",
+  title: "YaguWiseAi - Talk to Your Data",
   description:
-    "Local-first, agentic, voice-enabled RAG with PathRAG graph retrieval. Grounded, cited answers — at $0 by default.",
+    "Local-first, agentic, voice-enabled RAG with PathRAG graph retrieval. Grounded, cited answers - at $0 by default.",
   openGraph: {
-    title: "Auralynq — Talk to Your Data",
+    title: "YaguWiseAi - Talk to Your Data",
     description:
       "Local-first, agentic, voice-enabled RAG with PathRAG graph retrieval. Grounded, cited answers.",
     type: "website",

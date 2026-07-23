@@ -1,5 +1,5 @@
 /**
- * Auralynq ModelFit Index — API client
+ * YaguWiseAi ModelFit Index - API client
  */
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000";

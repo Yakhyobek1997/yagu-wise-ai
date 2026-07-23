@@ -1,20 +1,20 @@
 from __future__ import annotations
 
 import pytest
-from auralynq.mcp_server.tools import (
+from yaguwiseai.mcp_server.tools import (
     TOOLS,
     graph_path_query,
     ingest_documents,
     search,
     talk_to_data,
 )
-from auralynq.pipeline import build_index
+from yaguwiseai.pipeline import build_index
 
 
 @pytest.fixture
 def indexed(corpus_dir):
     build_index(corpus_dir)
-    from auralynq.agent import runner
+    from yaguwiseai.agent import runner
 
     runner._CACHE.clear()
     return corpus_dir
@@ -50,18 +50,18 @@ def test_talk_to_data_tool(indexed):
 
 
 def test_ingest_documents_tool(tmp_path):
-    (tmp_path / "x.md").write_text("# X\n\nAuralynq indexes Qdrant vectors.", encoding="utf-8")
+    (tmp_path / "x.md").write_text("# X\n\nYaguWiseAi indexes Qdrant vectors.", encoding="utf-8")
     out = ingest_documents(str(tmp_path))
     assert out["documents"] >= 1
 
 
 def test_mcp_transport_resolution(monkeypatch):
-    from auralynq.mcp_server.server import _resolve_transport
+    from yaguwiseai.mcp_server.server import _resolve_transport
 
-    monkeypatch.delenv("AURALYNQ_MCP_TRANSPORT", raising=False)
+    monkeypatch.delenv("YAGUWISEAI_MCP_TRANSPORT", raising=False)
     assert _resolve_transport([]) == "stdio"  # default
     assert _resolve_transport(["--transport", "streamable-http"]) == "streamable-http"
-    monkeypatch.setenv("AURALYNQ_MCP_TRANSPORT", "sse")
+    monkeypatch.setenv("YAGUWISEAI_MCP_TRANSPORT", "sse")
     assert _resolve_transport([]) == "sse"  # env honored
     # CLI flag overrides env
     assert _resolve_transport(["--transport", "stdio"]) == "stdio"

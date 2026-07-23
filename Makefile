@@ -1,4 +1,4 @@
-# Auralynq — Talk to Your Data. Podman-first, local at $0.
+# YaguWiseAi — Talk to Your Data. Podman-first, local at $0.
 .DEFAULT_GOAL := help
 SHELL := /usr/bin/env bash
 
@@ -59,7 +59,7 @@ push: ## Push versioned images to the registry (GHCR; needs `registry login`)
 
 .PHONY: version
 version: ## Print the resolved image version + tags
-	@bash -c 'source scripts/image_env.sh; echo "version: $$AURALYNQ_VERSION"; echo "tags   : $$(image_tags)"; echo "registry: $$AURALYNQ_REGISTRY/$$AURALYNQ_IMAGE_NAMESPACE"'
+	@bash -c 'source scripts/image_env.sh; echo "version: $$YAGUWISEAI_VERSION"; echo "tags   : $$(image_tags)"; echo "registry: $$YAGUWISEAI_REGISTRY/$$YAGUWISEAI_IMAGE_NAMESPACE"'
 
 .PHONY: stack-up up
 stack-up up: ## Start Qdrant, API, worker, web UI, Phoenix (hardened ordering)
@@ -90,7 +90,7 @@ status: ## Show local run container status
 	./scripts/run_local.sh status
 
 .PHONY: fresh
-fresh: ## Wipe corpus volumes (auralynq-data + auralynq-qdrant) and start clean
+fresh: ## Wipe corpus volumes (yaguwiseai-data + yaguwiseai-qdrant) and start clean
 	./scripts/run_local.sh fresh
 
 # ----------------------------------------------------------------- data -----
@@ -104,20 +104,20 @@ data-full: ## Download full datasets
 
 .PHONY: index
 index: ## Build vector index + knowledge graph from ingested data
-	$(PY) -m auralynq.cli index --input data/corpus
+	$(PY) -m yaguwiseai.cli index --input data/corpus
 
 # ------------------------------------------------------------- run/demo -----
 .PHONY: run
 run: ## Ask a sample question end-to-end (CLI)
-	$(PY) -m auralynq.cli ask "What is Auralynq and how does PathRAG work?"
+	$(PY) -m yaguwiseai.cli ask "What is YaguWiseAi and how does PathRAG work?"
 
 .PHONY: serve
 serve: ## Start the FastAPI backend
-	$(PY) -m auralynq.cli serve
+	$(PY) -m yaguwiseai.cli serve
 
 .PHONY: mcp
-mcp: ## Start the auralynq-mcp server (stdio)
-	$(PY) -m auralynq.mcp_server.server
+mcp: ## Start the yaguwiseai-mcp server (stdio)
+	$(PY) -m yaguwiseai.mcp_server.server
 
 .PHONY: demo
 demo: ## Reproducible end-to-end demo (ingest -> index -> ask, text + voice)
@@ -132,7 +132,7 @@ demo-data: ## Copy the safe, license-clear public demo corpus into data/corpus/
 
 .PHONY: demo-index
 demo-index: demo-data ## Index the public demo corpus (vector index + knowledge graph)
-	$(PY) -m auralynq.cli index --input data/corpus
+	$(PY) -m yaguwiseai.cli index --input data/corpus
 
 .PHONY: demo-query
 demo-query: ## Ask every question in examples/demo_corpus/questions.json
@@ -145,26 +145,26 @@ test: ## Run the test suite
 
 .PHONY: coverage
 coverage: ## Run tests with coverage (core threshold enforced)
-	$(PYTEST) --cov=auralynq --cov-report=term-missing --cov-report=xml \
+	$(PYTEST) --cov=yaguwiseai --cov-report=term-missing --cov-report=xml \
 		--cov-fail-under=80 \
 		tests/
 
 .PHONY: lint
 lint: ## Ruff lint + format check
-	$(RUFF) check auralynq tests scripts
-	$(RUFF) format --check auralynq tests scripts
+	$(RUFF) check yaguwiseai tests scripts
+	$(RUFF) format --check yaguwiseai tests scripts
 
 .PHONY: fmt
 fmt: ## Auto-format with ruff
-	$(RUFF) check --fix auralynq tests scripts
-	$(RUFF) format auralynq tests scripts
+	$(RUFF) check --fix yaguwiseai tests scripts
+	$(RUFF) format yaguwiseai tests scripts
 
 .PHONY: typecheck
 typecheck: ## mypy type check
-	$(MYPY) auralynq
+	$(MYPY) yaguwiseai
 
 .PHONY: name-audit
-name-audit: ## Verify consistent Auralynq naming across the repo
+name-audit: ## Verify consistent YaguWiseAi naming across the repo
 	$(PY) scripts/name_audit.py
 
 .PHONY: check-docs
@@ -174,11 +174,11 @@ check-docs: ## Verify doc links, referenced make targets, and env.example vars
 # ----------------------------------------------------------- eval/bench -----
 .PHONY: eval
 eval: ## Run evaluation harness, write reports/
-	$(PY) -m auralynq.cli eval --report
+	$(PY) -m yaguwiseai.cli eval --report
 
 .PHONY: bench
 bench: ## Benchmark Qdrant recall/latency/memory trade-offs
-	$(PY) -m auralynq.cli bench --report
+	$(PY) -m yaguwiseai.cli bench --report
 
 .PHONY: bench-rag
 bench-rag: ## RAG-quality benchmark (groundedness/citation/abstention); needs Ollama + MODEL

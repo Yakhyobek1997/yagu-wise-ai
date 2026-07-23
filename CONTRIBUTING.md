@@ -1,6 +1,6 @@
-# Contributing to Auralynq
+# Contributing to YaguWiseAi
 
-Thanks for your interest. Auralynq is local-first and runs at $0 by default.
+Thanks for your interest. YaguWiseAi is local-first and runs at $0 by default.
 
 ## Dev setup
 
@@ -16,8 +16,8 @@ make lint typecheck # ruff + mypy
 - **Lightweight core.** New runtime deps go in an optional extra in `pyproject.toml` unless they are tiny and pure-Python. Import heavy/optional deps lazily inside functions.
 - **Always ship a fallback.** Any provider must degrade to a deterministic offline path so tests and the demo run without models or keys (see ADR-0003).
 - **Typed + tested.** Public APIs are typed; `mypy` must stay clean. Core retrieval/agent/eval code keeps ≥80% coverage.
-- **Deterministic.** Seed randomness via `auralynq.config`. No wall-clock-dependent behavior in tests.
-- **Naming.** Product = Auralynq; package/CLI/services = `auralynq`. Run `make name-audit` before opening a PR.
+- **Deterministic.** Seed randomness via `yaguwiseai.config`. No wall-clock-dependent behavior in tests.
+- **Naming.** Product = YaguWiseAi; package/CLI/services = `yaguwiseai`. Run `make name-audit` before opening a PR.
 - **Honest docs.** Never hand-write benchmark numbers; they come from `make eval`/`make bench` into `reports/`.
 
 ## Commit style

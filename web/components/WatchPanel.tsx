@@ -62,8 +62,8 @@ export function WatchPanel({ onSynced }: { onSynced?: () => void }) {
       {!status?.enabled ? (
         <div className="card-inset text-xs text-fg3">
           Auto-reindex is off. Enable it with{" "}
-          <code className="rounded bg-ink/60 px-1 py-0.5 font-mono text-fg2">AURALYNQ_WATCH__ENABLED=true</code>{" "}
-          — then drop files into a watched folder and Auralynq keeps the index in sync automatically
+          <code className="rounded bg-ink/60 px-1 py-0.5 font-mono text-fg2">YAGUWISEAI_WATCH__ENABLED=true</code>{" "}
+          - then drop files into a watched folder and YaguWiseAi keeps the index in sync automatically
           (adds, edits and deletes).
         </div>
       ) : (

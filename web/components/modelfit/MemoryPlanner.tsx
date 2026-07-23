@@ -15,7 +15,7 @@ function fmtCtx(n: number): string {
  * Live memory planner (LM Studio's best interaction): drag the context length
  * and watch the estimated VRAM + will-it-run verdict update. Debounce-calls the
  * authoritative backend estimator (never a client-side guess) so the numbers
- * stay honest — no model is touched, this is pure estimation.
+ * stay honest - no model is touched, this is pure estimation.
  */
 export function MemoryPlanner({
   modelId,

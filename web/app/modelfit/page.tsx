@@ -97,7 +97,7 @@ export default function ModelFitPage() {
           ← Chat
         </Link>
         <h1 className="text-lg font-bold tracking-tight">
-          Auralynq <span className="text-sky-400">ModelFit</span> Index
+          YaguWiseAi <span className="text-sky-400">ModelFit</span> Index
         </h1>
         <span className="hidden text-xs text-zinc-500 sm:inline">
           Hardware-aware model selection for local RAG

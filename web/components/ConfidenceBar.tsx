@@ -1,9 +1,9 @@
 "use client";
 
-// Calibrated confidence breakdown — three orthogonal signals from the backend:
-//   1. Retrieval quality  — mean chunk score / 0.7 reference (score_quality)
-//   2. Citation coverage  — fraction of retrieved contexts the LLM actually cited
-//   3. Semantic coverage  — cosine(query_emb, mean_context_emb) from FAIR-RAG SEA
+// Calibrated confidence breakdown - three orthogonal signals from the backend:
+//   1. Retrieval quality  - mean chunk score / 0.7 reference (score_quality)
+//   2. Citation coverage  - fraction of retrieved contexts the LLM actually cited
+//   3. Semantic coverage  - cosine(query_emb, mean_context_emb) from FAIR-RAG SEA
 //
 // Theory: a single scalar confidence hides which signal is weak. Showing the
 // breakdown lets the user decide whether to trust, rephrase, or ingest more data.

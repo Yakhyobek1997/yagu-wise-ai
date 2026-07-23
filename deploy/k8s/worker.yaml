@@ -5,29 +5,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auralynq-worker
-  namespace: auralynq
-  labels: { app.kubernetes.io/name: auralynq-worker, app.kubernetes.io/part-of: auralynq }
+  name: yaguwiseai-worker
+  namespace: yaguwiseai
+  labels: { app.kubernetes.io/name: yaguwiseai-worker, app.kubernetes.io/part-of: yaguwiseai }
 spec:
   replicas: 1
   selector:
-    matchLabels: { app.kubernetes.io/name: auralynq-worker }
+    matchLabels: { app.kubernetes.io/name: yaguwiseai-worker }
   template:
     metadata:
-      labels: { app.kubernetes.io/name: auralynq-worker, app.kubernetes.io/part-of: auralynq }
+      labels: { app.kubernetes.io/name: yaguwiseai-worker, app.kubernetes.io/part-of: yaguwiseai }
     spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 10001
       containers:
         - name: worker
-          image: ghcr.io/mhhamdan/auralynq-api:0.1.0
-          args: ["python", "-m", "auralynq.serving.worker"]
+          image: ghcr.io/mhhamdan/yaguwiseai-api:0.1.0
+          args: ["python", "-m", "yaguwiseai.serving.worker"]
           envFrom:
-            - configMapRef: { name: auralynq-config }
-            - secretRef: { name: auralynq-secrets }
+            - configMapRef: { name: yaguwiseai-config }
+            - secretRef: { name: yaguwiseai-secrets }
           livenessProbe:
-            exec: { command: ["sh", "-c", "pgrep -f auralynq.serving.worker"] }
+            exec: { command: ["sh", "-c", "pgrep -f yaguwiseai.serving.worker"] }
             periodSeconds: 30
           resources:
             requests: { cpu: "100m", memory: "256Mi" }

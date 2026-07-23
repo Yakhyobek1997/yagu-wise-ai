@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import json
 
-from auralynq.config import get_settings
+from yaguwiseai.config import get_settings
 
 
 def _provenance_line(report: dict) -> str:
@@ -135,7 +135,7 @@ def run(write_report: bool = True) -> str:
     s = get_settings()
     s.ensure_dirs()
     sections = [
-        "# Auralynq Benchmark Tables\n",
+        "# YaguWiseAi Benchmark Tables\n",
         "Generated from `reports/*.json` — see each section's provenance line "
         "for the exact commit, timestamp, and dataset that produced it. "
         "Nothing below is hand-written.\n",

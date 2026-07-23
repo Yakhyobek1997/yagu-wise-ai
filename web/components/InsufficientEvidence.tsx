@@ -2,7 +2,7 @@
 import type { InsufficientReason } from "@/lib/api";
 import { displaySource } from "@/lib/format";
 
-/** Trustworthy abstention card — explains *why* Auralynq held back and what to
+/** Trustworthy abstention card - explains *why* YaguWiseAi held back and what to
  * do next. Soft, informative styling (not an alarming error). */
 export function InsufficientEvidence({
   reason,
@@ -27,7 +27,7 @@ export function InsufficientEvidence({
             Not enough evidence in your indexed documents
           </p>
           <p className="mt-1 text-sm leading-relaxed text-fg2">
-            Auralynq found related snippets, but they don&apos;t support a reliable answer — so it
+            YaguWiseAi found related snippets, but they don&apos;t support a reliable answer - so it
             held back instead of guessing.
           </p>
         </div>
@@ -57,7 +57,7 @@ export function InsufficientEvidence({
       {reason.retrieved_snippets.length > 0 ? (
         <details className="card-inset text-sm">
           <summary className="cursor-pointer font-medium text-fg2">
-            Top retrieved snippets ({reason.retrieved_snippets.length}) — why they fell short
+            Top retrieved snippets ({reason.retrieved_snippets.length}) - why they fell short
           </summary>
           <p className="mt-2 text-xs text-fg3">{reason.why_insufficient}</p>
           <ul className="mt-2 space-y-2">

@@ -1,4 +1,4 @@
-"""End-to-end MCP protocol test: drive the auralynq-mcp server over stdio.
+"""End-to-end MCP protocol test: drive the yaguwiseai-mcp server over stdio.
 
 Unlike test_mcp.py (which calls the transport-agnostic tool functions directly),
 this spins up the real server process and talks to it through the MCP stdio
@@ -27,18 +27,18 @@ async def _run(corpus_dir, question):
     env = dict(os.environ)
     env.update(
         {
-            "AURALYNQ_DATA_DIR": str(corpus_dir.parent),
-            "AURALYNQ_VECTOR__BACKEND": "memory",
-            "AURALYNQ_EMBEDDING__PROVIDER": "hash",
-            "AURALYNQ_LLM__PROVIDER": "extractive",
-            "AURALYNQ_VOICE__ASR_PROVIDER": "null",
-            "AURALYNQ_VOICE__TTS_PROVIDER": "null",
-            "AURALYNQ_LOG_LEVEL": "CRITICAL",
-            "AURALYNQ_DOTENV_DISABLED": "1",
+            "YAGUWISEAI_DATA_DIR": str(corpus_dir.parent),
+            "YAGUWISEAI_VECTOR__BACKEND": "memory",
+            "YAGUWISEAI_EMBEDDING__PROVIDER": "hash",
+            "YAGUWISEAI_LLM__PROVIDER": "extractive",
+            "YAGUWISEAI_VOICE__ASR_PROVIDER": "null",
+            "YAGUWISEAI_VOICE__TTS_PROVIDER": "null",
+            "YAGUWISEAI_LOG_LEVEL": "CRITICAL",
+            "YAGUWISEAI_DOTENV_DISABLED": "1",
         }
     )
     params = StdioServerParameters(
-        command=sys.executable, args=["-m", "auralynq.mcp_server.server"], env=env
+        command=sys.executable, args=["-m", "yaguwiseai.mcp_server.server"], env=env
     )
     async with stdio_client(params) as (read, write):
         async with ClientSession(read, write) as session:

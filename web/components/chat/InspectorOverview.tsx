@@ -94,7 +94,7 @@ export function InspectorOverview({
         </button>
       </section>
 
-      {/* first-run checklist — only before any document is indexed */}
+      {/* first-run checklist - only before any document is indexed */}
       {summary && !summary.indexed && <FirstRunChecklist onIngest={onIngest} />}
 
       {/* system status */}
@@ -134,7 +134,7 @@ export function InspectorOverview({
           </div>
           <p className="mt-2 text-[11px] text-fg3">
             {recent.status === "insufficient_evidence"
-              ? "Auralynq abstained — not enough evidence."
+              ? "YaguWiseAi abstained - not enough evidence."
               : "Open the Trace and Evidence tabs above for the full breakdown."}
           </p>
         </section>
@@ -183,23 +183,23 @@ function Stat({ value, label }: { value: string | number; label: string }) {
   );
 }
 
-// First-run onboarding: the six things worth trying, in order. Guidance only —
+// First-run onboarding: the six things worth trying, in order. Guidance only -
 // we don't track completion (that would need cross-app event plumbing); the
 // point is to orient a brand-new visitor, so it's shown only until the first
 // document is indexed.
 const FIRST_RUN_STEPS: { label: string; hint: string }[] = [
-  { label: "Upload a document", hint: "Ingest panel — a PDF, DOCX, TXT/MD, or audio file" },
+  { label: "Upload a document", hint: "Ingest panel - a PDF, DOCX, TXT/MD, or audio file" },
   { label: "Ask a question", hint: "Type or speak a question about what you uploaded" },
-  { label: "Click a citation", hint: "Every answer cites its sources — click one to verify" },
+  { label: "Click a citation", hint: "Every answer cites its sources - click one to verify" },
   { label: "Open the Source Workspace", hint: "See the exact page + highlighted span behind a claim" },
   { label: "Try ModelFit", hint: "The ModelFit page ranks local models for your hardware" },
-  { label: "Run a benchmark", hint: "make eval / make bench — reproducible, written to reports/" },
+  { label: "Run a benchmark", hint: "make eval / make bench - reproducible, written to reports/" },
 ];
 
 function FirstRunChecklist({ onIngest }: { onIngest: () => void }) {
   return (
     <section className="card-inset" aria-label="First-run checklist">
-      <h3 className="mb-2 text-sm font-semibold text-fg">First run — try these</h3>
+      <h3 className="mb-2 text-sm font-semibold text-fg">First run - try these</h3>
       <ol className="space-y-1.5">
         {FIRST_RUN_STEPS.map((step, i) => (
           <li key={step.label} className="flex items-start gap-2 text-xs">

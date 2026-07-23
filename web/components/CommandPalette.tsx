@@ -15,7 +15,7 @@ export interface Cmd {
 
 /**
  * Token-styled command palette (cmdk). Cmd/Ctrl-K opens it; type to filter,
- * Enter to run. No competitor in the teardown ships one — a fast keyboard
+ * Enter to run. No competitor in the teardown ships one - a fast keyboard
  * surface across our multi-tab workspace. cmdk uses Radix Dialog underneath, so
  * focus-trap / Escape / scroll-lock come for free.
  */

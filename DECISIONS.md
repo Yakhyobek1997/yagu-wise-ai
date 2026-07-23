@@ -1,4 +1,4 @@
-# Architecture Decision Records — Auralynq
+# Architecture Decision Records — YaguWiseAi
 
 Short ADRs. Each: **Context → Decision → Rationale → Alternatives rejected.**
 
@@ -8,7 +8,7 @@ Short ADRs. Each: **Context → Decision → Rationale → Alternatives rejected
 
 **Context.** The product must use one consistent name across package, CLI, services, UI, and docs.
 
-**Decision.** Product = **Auralynq**. Python package / modules / folders / CLI / services = `auralynq`. MCP server = `auralynq-mcp`. Container prefix = `auralynq-*`. Tagline = "Talk to Your Data". **PathRAG** is preserved only as the name of the graph-retrieval algorithm/paper.
+**Decision.** Product = **YaguWiseAi**. Python package / modules / folders / CLI / services = `yaguwiseai`. MCP server = `yaguwiseai-mcp`. Container prefix = `yaguwiseai-*`. Tagline = "Talk to Your Data". **PathRAG** is preserved only as the name of the graph-retrieval algorithm/paper.
 
 **Rationale.** Single source of truth prevents drift; a repo-wide name audit (`make name-audit`) enforces it.
 
@@ -74,7 +74,7 @@ Short ADRs. Each: **Context → Decision → Rationale → Alternatives rejected
 
 **Context.** Graph retrieval must implement PathRAG (Chen et al., 2025) with flow-based pruning.
 
-**Decision.** PathRAG lives only under `auralynq/retrieval/pathrag/`. We implement node retrieval → relational path expansion (bounded hops) → resource-flow-based path pruning → path-reliability scoring → deterministic path-to-text prompting with golden-region (most-reliable-at-edges) ordering. The algorithm is a clean-room implementation from the paper; attribution + license notes in `THIRD_PARTY.md`.
+**Decision.** PathRAG lives only under `yaguwiseai/retrieval/pathrag/`. We implement node retrieval → relational path expansion (bounded hops) → resource-flow-based path pruning → path-reliability scoring → deterministic path-to-text prompting with golden-region (most-reliable-at-edges) ordering. The algorithm is a clean-room implementation from the paper; attribution + license notes in `THIRD_PARTY.md`.
 
 **Rationale.** Clear module boundary, testable scoring, no licensing entanglement.
 
@@ -135,7 +135,7 @@ Short ADRs. Each: **Context → Decision → Rationale → Alternatives rejected
 **Context.** The serving layer needs a production auth story, but the headline
 promise is a zero-friction local `$0` demo. These pull in opposite directions.
 
-**Decision.** Auth is gated by `AURALYNQ_SERVE__API_KEY`. Empty (default) ⇒ the API
+**Decision.** Auth is gated by `YAGUWISEAI_SERVE__API_KEY`. Empty (default) ⇒ the API
 is open — the local demo and tests are unaffected. When set, an `AuthMiddleware`
 requires `Authorization: Bearer <key>` on all endpoints except `/health` and
 `/metrics` (and CORS pre-flight), returning a structured 401. Tokens are compared
@@ -162,18 +162,18 @@ key into the client bundle.
 
 **Decision.**
 - **Network surface:** only the **web UI** and **API** publish on `0.0.0.0`.
-  **Qdrant and Phoenix** bind to `${AURALYNQ_BIND_INTERNAL:-127.0.0.1}` — on this
+  **Qdrant and Phoenix** bind to `${YAGUWISEAI_BIND_INTERNAL:-127.0.0.1}` — on this
   host the podman bridge gateway (`10.88.0.1`/cni-podman0), reachable by containers
   (via `host.containers.internal`) and host tooling, but **not** from the external
   NIC. Default `127.0.0.1` keeps a clean host secure out of the box.
-- **API auth:** `AURALYNQ_SERVE__API_KEY` (empty == open). The browser never holds
+- **API auth:** `YAGUWISEAI_SERVE__API_KEY` (empty == open). The browser never holds
   the key: the **web container runs a same-origin `/api/*` proxy** (Next.js route
   handler) that injects `Authorization: Bearer` server-side and streams responses.
   So `NEXT_PUBLIC_API_BASE=/api` — no IP and no secret are baked into the bundle.
 - **Least privilege:** api/worker drop the `user: "0:0"` override and run as the
-  image's non-root `auralynq` (uid 10001); all services get
+  image's non-root `yaguwiseai` (uid 10001); all services get
   `security_opt: ["no-new-privileges"]`, `restart: unless-stopped`, and
-  healthchecks. Named volumes (`auralynq-data`, `auralynq-reports`) initialize with
+  healthchecks. Named volumes (`yaguwiseai-data`, `yaguwiseai-reports`) initialize with
   the image's non-root owner so writes succeed without host-ownership clashes.
 
 **Rationale.** Satisfies "expose only UI+API", "enable API auth", and "never expose
@@ -196,8 +196,8 @@ ports. Production remote access needs TLS, ideally a single public entrypoint.
 
 **Decision.** Add a **Caddy** reverse-proxy service as the ONLY container published
 on `0.0.0.0` (default `:8443`). It terminates TLS and forwards to the web container
-(`auralynq-web:3000`), which serves the UI and proxies `/api/*` to the API. web,
-api, qdrant, phoenix only bind to `${AURALYNQ_BIND_INTERNAL:-127.0.0.1}` (loopback)
+(`yaguwiseai-web:3000`), which serves the UI and proxies `/api/*` to the API. web,
+api, qdrant, phoenix only bind to `${YAGUWISEAI_BIND_INTERNAL:-127.0.0.1}` (loopback)
 plus the shared container network. TLS uses a **self-signed cert baked into the
 Caddy image** (`containers/caddy.Dockerfile`) with the server IP + localhost as
 SANs, served via an explicit `tls /certs/site.crt /certs/site.key` directive —
@@ -207,7 +207,7 @@ UDP buffer). `flush_interval -1` keeps SSE streaming + WebSocket voice unbuffere
 
 **Rationale.** One public TLS port; the browser only ever talks to Caddy; the API
 key never leaves the server (web `/api` proxy injects it). For a real domain, set
-`AURALYNQ_SITE_ADDRESS=https://your.domain` + `AURALYNQ_TLS=internal` (or ACME).
+`YAGUWISEAI_SITE_ADDRESS=https://your.domain` + `YAGUWISEAI_TLS=internal` (or ACME).
 
 **Alternatives rejected.** `tls internal` for a bare-IP site (handshake fails — no
 leaf cert for IP SNI); HTTP/3 (broken UDP buffer on rootless); terminating TLS in
@@ -231,7 +231,7 @@ the whole point of rootless Podman is to avoid sudo.
 `dnsname` all support) and append the `dnsname` plugin if absent. `scripts/stack_up.sh`
 does this idempotently before `up`. With DNS restored, all services share
 podman-compose's default network and address peers by **container_name**
-(`auralynq-qdrant` / `auralynq-api` / `auralynq-web`) — eliminating the bridge-IP
+(`yaguwiseai-qdrant` / `yaguwiseai-api` / `yaguwiseai-web`) — eliminating the bridge-IP
 guessing and shared-netns hacks. `dnsname` requires the `dnsmasq` binary (present)
 and the plugin binary at `/usr/lib/cni/dnsname` (present; the rootless plugin dir
 is set in `~/.config/containers/containers.conf`).
@@ -250,16 +250,16 @@ the compose service name, on this version).
 
 ## ADR-0015 — MCP as a first-class microservice (stdio + streamable-HTTP)
 
-**Context.** The MCP server exposes Auralynq's 7 tools but was stdio-only — usable
+**Context.** The MCP server exposes YaguWiseAi's 7 tools but was stdio-only — usable
 by a local client that spawns the process, not by remote clients. The product goal
 is to "serve production-ready around the world" as composable microservices.
 
 **Decision.** Keep the transport-agnostic tool functions
-(`auralynq/mcp_server/tools.py`) as the single source of truth, and make the server
-**transport-selectable** via `--transport` / `AURALYNQ_MCP_TRANSPORT`:
+(`yaguwiseai/mcp_server/tools.py`) as the single source of truth, and make the server
+**transport-selectable** via `--transport` / `YAGUWISEAI_MCP_TRANSPORT`:
 `stdio` (default, local), `streamable-http` (remote microservice on
-`AURALYNQ_MCP_HOST:PORT`, default `:8765`), or `sse` (legacy). A dedicated
-`auralynq-mcp` container in `compose.yml` runs the HTTP transport (internal-only;
+`YAGUWISEAI_MCP_HOST:PORT`, default `:8765`), or `sse` (legacy). A dedicated
+`yaguwiseai-mcp` container in `compose.yml` runs the HTTP transport (internal-only;
 front with the Caddy TLS proxy for public exposure). An integration test drives
 the real stdio protocol end-to-end (client → server → tool) and auto-skips when
 the optional SDK is absent.
@@ -286,8 +286,8 @@ unacceptable for public deployment.
 `streamable_http_app()` / `sse_app()` (served via uvicorn in `_serve_http`). It
 requires `Authorization: Bearer <key>` when a key is configured, returning a
 structured 401 otherwise; comparison is constant-time (`hmac.compare_digest`).
-Key resolution: `AURALYNQ_MCP_API_KEY` (dedicated) wins, else
-`AURALYNQ_SERVE__API_KEY` (reuse the HTTP API key). Empty ⇒ open. The **stdio
+Key resolution: `YAGUWISEAI_MCP_API_KEY` (dedicated) wins, else
+`YAGUWISEAI_SERVE__API_KEY` (reuse the HTTP API key). Empty ⇒ open. The **stdio
 transport is never gated** (it is local — the client spawns the process), so the
 zero-config Claude Desktop flow is unaffected.
 
@@ -308,16 +308,16 @@ TLS are complementary).
 **Context.** "Serve production-ready around the world" needs deployable, pinnable,
 traceable images — not a single mutable `:latest`. The repo lives on GitHub.
 
-**Decision.** Publish three OCI-labelled images (`auralynq-api`, `auralynq-web`,
-`auralynq-caddy`) to **GitHub Container Registry** (`ghcr.io/<owner>/…`). The
-version is the single source `auralynq.__version__`; every build carries four
+**Decision.** Publish three OCI-labelled images (`yaguwiseai-api`, `yaguwiseai-web`,
+`yaguwiseai-caddy`) to **GitHub Container Registry** (`ghcr.io/<owner>/…`). The
+version is the single source `yaguwiseai.__version__`; every build carries four
 tags: **`X.Y.Z`** (immutable release), **`X.Y`** (latest patch of a minor),
 **`<git-sha>`** (exact provenance), and **`latest`** (convenience). Tooling:
 `scripts/image_env.sh` (shared config), `scripts/build_images.sh`,
 `scripts/push_images.sh`, and `make images|push|version`. The authoritative
 publish path is CI: `.github/workflows/release.yml` builds + pushes on a `v*` git
 tag using the workflow's `GITHUB_TOKEN` (`packages: write`) — no manual login.
-`compose.yml` references `${AURALYNQ_IMAGE_PREFIX:-auralynq-}<svc>:${AURALYNQ_IMAGE_TAG:-X.Y.Z}`
+`compose.yml` references `${YAGUWISEAI_IMAGE_PREFIX:-yaguwiseai-}<svc>:${YAGUWISEAI_IMAGE_TAG:-X.Y.Z}`
 so it runs locally-built images by default and a pinned GHCR version when set.
 
 **Rationale.** Immutable + minor + sha + latest covers reproducible deploys,
@@ -341,7 +341,7 @@ depends_on graph; `COMPOSE_PROFILES` is ignored), and a single-host compose file
 isn't where independent autoscaling happens anyway.
 
 **Decision.** Split by **process/role over one shared image**, not by duplicated
-code or repos: `api`, `mcp`, and `worker` are the same `auralynq-api` image with
+code or repos: `api`, `mcp`, and `worker` are the same `yaguwiseai-api` image with
 different entrypoints (`uvicorn …app` / `python -m …mcp_server.server` /
 `python -m …serving.worker`); `web` is its own image. Ship **Kubernetes manifests**
 (`deploy/k8s`, kustomize) as the production scaling path: each service is its own
@@ -371,7 +371,7 @@ mirrors it to OpenTelemetry/Phoenix. Production observability for a service "ser
 worldwide" benefits from a hosted trace/eval backend (Langfuse), but it must never
 become a hard dependency or a failure point on the answer path.
 
-**Decision.** Add `auralynq/telemetry/langfuse_export.py`: a best-effort exporter
+**Decision.** Add `yaguwiseai/telemetry/langfuse_export.py`: a best-effort exporter
 that pushes a finished `Trace` to Langfuse as a trace (question input,
 answer/route/metadata output) with one nested span per agent node. It is wired at
 the end of `answer_question` and `stream_answer_question` via a `_export_langfuse`
@@ -392,7 +392,7 @@ always-on local record).
 
 ## ADR-0020 — Client-side API failover at the web proxy (local-primary, remote-backup)
 
-**Context.** Auralynq can run as a full stack on a laptop with all real provider
+**Context.** YaguWiseAi can run as a full stack on a laptop with all real provider
 keys, while a remote server (reached at `https://<server>:8443`) stays available
 as a backup. We want the laptop UI to keep answering when the laptop's own API
 container is down or wedged — without the user switching URLs or losing the
@@ -400,23 +400,23 @@ same-origin/secret-injection model (ADR-0012).
 
 **Decision.** The Next.js `/api/[...path]` proxy gained an ordered-upstream
 failover policy (`web/lib/failover.ts`, pure + unit-tested): try the
-local/primary backend (`AURALYNQ_API_INTERNAL`) first; if it is unreachable
-(connection error or time-to-first-byte over `AURALYNQ_API_PRIMARY_TIMEOUT_MS`,
+local/primary backend (`YAGUWISEAI_API_INTERNAL`) first; if it is unreachable
+(connection error or time-to-first-byte over `YAGUWISEAI_API_PRIMARY_TIMEOUT_MS`,
 default 12s) or returns a gateway-class status (502/503/504), replay the same
-request against `AURALYNQ_API_FALLBACK` (e.g. `https://<server>:8443/api`). When a
+request against `YAGUWISEAI_API_FALLBACK` (e.g. `https://<server>:8443/api`). When a
 fallback is configured the request body is buffered so it can be replayed; with no
 fallback the proxy streams the body untouched (unchanged behavior). The
 self-signed fallback cert is trusted via an `undici` `Agent`
 (`connect.rejectUnauthorized:false`) passed as the global-`fetch` dispatcher,
-enabled only when `AURALYNQ_API_FALLBACK_INSECURE_TLS=1`. The chosen upstream is
-reported in the `x-auralynq-upstream: primary|fallback|none` response header.
+enabled only when `YAGUWISEAI_API_FALLBACK_INSECURE_TLS=1`. The chosen upstream is
+reported in the `x-yaguwiseai-upstream: primary|fallback|none` response header.
 
 **Rationale.** Failover belongs at the proxy: it already terminates the
 same-origin contract and holds the bearer token, so streaming (SSE) and auth keep
 working transparently. Only gateway-class statuses trigger failover — a 4xx/500
 means the backend is up and answering, so failing over would mask real bugs.
 Bounding only time-to-first-byte (not the whole stream) lets long LLM responses
-flow while still escaping a hung backend. Empty `AURALYNQ_API_FALLBACK` is a
+flow while still escaping a hung backend. Empty `YAGUWISEAI_API_FALLBACK` is a
 no-op, so server deployments are unaffected.
 
 **Alternatives rejected.** DNS/round-robin or an external LB (heavier, loses the

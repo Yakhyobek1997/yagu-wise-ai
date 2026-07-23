@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ArrowRight } from "lucide-react";
 
 type Phase = "ingest" | "answer" | "observe";
 
@@ -42,48 +43,42 @@ export function HowItWorks() {
     <section id="how" className="relative mx-auto max-w-7xl px-4 py-14 md:px-6">
       <div className="mb-12 max-w-2xl">
         <p className="overline mb-2 text-brand2">How it works</p>
-        <h2 className="section-title">From documents to cited, observable answers</h2>
+        <h2 className="section-title">Turn your documents into trusted answers</h2>
         <p className="mt-3 text-lg text-fg2">
-          One pipeline, fully visible end to end — nothing happens off-screen.
+          A clear, traceable process from upload to citation.
         </p>
       </div>
 
-      {/* phase legend */}
       <div className="mb-6 flex flex-wrap gap-2">
         <span className="chip"><span className="h-2 w-2 rounded-full bg-brand" /> Ingest</span>
         <span className="chip"><span className="h-2 w-2 rounded-full bg-brand2" /> Answer</span>
         <span className="chip"><span className="h-2 w-2 rounded-full bg-accent" /> Observe</span>
       </div>
 
-      {/* pipeline: horizontal flow on desktop, vertical on mobile */}
       <ol className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-9">
-        {STEPS.map((s, i) => (
-          <li key={s.label} className="relative">
+        {STEPS.map((step, index) => (
+          <li key={step.label} className="relative">
             <div className="card card-hover flex h-full flex-col items-center gap-2 p-4 text-center">
               <span className="text-[10px] font-semibold text-fg3">
-                {String(i + 1).padStart(2, "0")}
+                {String(index + 1).padStart(2, "0")}
               </span>
               <span className="inline-flex rounded-lg border border-edge bg-panel2 p-2">
-                <StepGlyph tint={PHASE_TINT[s.phase]}>{s.icon}</StepGlyph>
+                <StepGlyph tint={PHASE_TINT[step.phase]}>{step.icon}</StepGlyph>
               </span>
-              <span className="text-sm font-semibold text-fg">{s.label}</span>
+              <span className="text-sm font-semibold text-fg">{step.label}</span>
             </div>
-            {/* connector arrow to the next step (desktop only) */}
-            {i < STEPS.length - 1 && (
-              <span
-                className="absolute -right-2 top-1/2 hidden -translate-y-1/2 text-fg3 lg:block"
+            {index < STEPS.length - 1 && (
+              <ArrowRight
+                className="absolute -right-2.5 top-1/2 z-10 hidden h-5 w-5 -translate-y-1/2 text-fg3 lg:block"
                 aria-hidden
-              >
-                →
-              </span>
+              />
             )}
           </li>
         ))}
       </ol>
 
       <p className="mt-6 text-sm text-fg3">
-        Type or speak a question; an adaptive router chooses fast vector search or deep PathRAG
-        graph traversal, self-checks the evidence, and streams a cited answer — with the full trace.
+        Ask by text or voice. YaguWise AI finds the evidence, checks it, and returns a cited answer.
       </p>
     </section>
   );

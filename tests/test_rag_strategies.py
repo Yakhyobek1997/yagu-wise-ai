@@ -8,44 +8,44 @@ from fastapi.testclient import TestClient
 
 @pytest.fixture
 def client():
-    from auralynq.serving.app import create_app
+    from yaguwiseai.serving.app import create_app
 
     return TestClient(create_app())
 
 
 def test_strategy_registry_lists_all():
-    from auralynq.rag import get_registry
+    from yaguwiseai.rag import get_registry
 
     registry = get_registry()
     strategies = registry.list_all()
     assert len(strategies) >= 13
     ids = {s["id"] for s in strategies}
-    assert "auralynq_rag" in ids
+    assert "yaguwiseai_rag" in ids
     assert "naive_vector" in ids
     assert "hybrid" in ids
     assert "graph_rag" in ids
     assert "raptor" in ids
 
 
-def test_strategy_registry_default_is_auralynq_rag():
-    from auralynq.rag import get_registry
+def test_strategy_registry_default_is_yaguwiseai_rag():
+    from yaguwiseai.rag import get_registry
 
     registry = get_registry()
-    assert registry.default_strategy_id == "auralynq_rag"
+    assert registry.default_strategy_id == "yaguwiseai_rag"
 
 
 def test_available_strategy_has_no_unavailable_reason():
-    from auralynq.rag import get_registry
+    from yaguwiseai.rag import get_registry
 
     registry = get_registry()
     strategies = registry.list_all()
-    auralynq = next(s for s in strategies if s["id"] == "auralynq_rag")
-    assert auralynq["available"] is True
-    assert auralynq["unavailable_reason"] is None
+    yaguwiseai = next(s for s in strategies if s["id"] == "yaguwiseai_rag")
+    assert yaguwiseai["available"] is True
+    assert yaguwiseai["unavailable_reason"] is None
 
 
 def test_planned_strategy_has_unavailable_reason():
-    from auralynq.rag import get_registry
+    from yaguwiseai.rag import get_registry
 
     registry = get_registry()
     strategies = registry.list_all()
@@ -56,10 +56,10 @@ def test_planned_strategy_has_unavailable_reason():
 
 
 def test_unknown_strategy_fallback():
-    from auralynq.rag import get_registry
+    from yaguwiseai.rag import get_registry
 
     registry = get_registry()
-    # Should fall back to auralynq_rag, but we don't call run() in unit test
+    # Should fall back to yaguwiseai_rag, but we don't call run() in unit test
     strategy = registry.get("nonexistent_id")
     assert strategy is None
 
@@ -70,7 +70,7 @@ def test_get_rag_strategies_endpoint(client):
     data = resp.json()
     assert "strategies" in data
     assert "default_strategy" in data
-    assert data["default_strategy"] == "auralynq_rag"
+    assert data["default_strategy"] == "yaguwiseai_rag"
     assert len(data["strategies"]) >= 13
 
 
@@ -110,7 +110,7 @@ def test_eval_export_run_endpoint(client):
 
 
 def test_strategy_info_has_required_fields():
-    from auralynq.rag import get_registry
+    from yaguwiseai.rag import get_registry
 
     registry = get_registry()
     for s in registry.list_all():
@@ -125,7 +125,7 @@ def test_strategy_info_has_required_fields():
 
 
 def test_hybrid_strategy_available():
-    from auralynq.rag import get_registry
+    from yaguwiseai.rag import get_registry
 
     registry = get_registry()
     strategies = registry.list_all()
@@ -135,7 +135,7 @@ def test_hybrid_strategy_available():
 
 
 def test_hybrid_rerank_requires_reranker():
-    from auralynq.rag import get_registry
+    from yaguwiseai.rag import get_registry
 
     registry = get_registry()
     strategies = registry.list_all()

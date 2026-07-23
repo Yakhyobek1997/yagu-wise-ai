@@ -113,13 +113,13 @@ function buildSummary(hardware: DiscoverHardware, entry: DiscoverEntry): string 
   if (!re) return `${name} is the best match for your ${hw}.`;
   const v = re.verdict;
   const use = `~${re.estimated_vram_gb} GB at ${entry.best_quantization}`;
-  if (v === "runs_great") return `Your ${hw} runs ${name} comfortably — ${use}, ${re.headroom_gb} GB to spare.`;
-  if (v === "runs_ok") return `Your ${hw} runs ${name} — ${use}, a tight but workable fit.`;
+  if (v === "runs_great") return `Your ${hw} runs ${name} comfortably - ${use}, ${re.headroom_gb} GB to spare.`;
+  if (v === "runs_ok") return `Your ${hw} runs ${name} - ${use}, a tight but workable fit.`;
   if (v === "runs_offload")
-    return `${name} needs ${use} — more than your ${hw}. It runs by offloading layers to system RAM (slower). A smaller model or lower quant would run fully on the GPU.`;
-  if (v === "runs_cpu") return `${name} runs on your CPU — ${use} in RAM, ${re.headroom_gb} GB to spare.`;
+    return `${name} needs ${use} - more than your ${hw}. It runs by offloading layers to system RAM (slower). A smaller model or lower quant would run fully on the GPU.`;
+  if (v === "runs_cpu") return `${name} runs on your CPU - ${use} in RAM, ${re.headroom_gb} GB to spare.`;
   if (v === "runs_cpu_tight") return `${name} runs on your CPU but leaves little RAM headroom (${use}).`;
-  return `${name} needs ${use} — too large for this machine. Pick a smaller model below.`;
+  return `${name} needs ${use} - too large for this machine. Pick a smaller model below.`;
 }
 
 // ── Main report ───────────────────────────────────────────────────────────────
@@ -169,11 +169,11 @@ export function SystemReport({
           <span className="font-semibold text-amber-200">You&apos;re on the hosted demo.</span>{" "}
           This report profiles the <span className="font-semibold">Space&apos;s server</span>{" "}
           ({hw.os}
-          {hw.arch ? ` · ${hw.arch}` : ""}) — not your own device. Models shown here would run on the
-          server, not on your machine. To profile your Mac/PC and pull models onto it, run Auralynq
+          {hw.arch ? ` · ${hw.arch}` : ""}) - not your own device. Models shown here would run on the
+          server, not on your machine. To profile your Mac/PC and pull models onto it, run YaguWiseAi
           locally (
           <a
-            href="https://github.com/MHHamdan/Auralynq"
+            href="https://github.com/MHHamdan/YaguWiseAi"
             target="_blank"
             rel="noopener noreferrer"
             className="underline hover:text-amber-100"
@@ -226,7 +226,7 @@ export function SystemReport({
             </div>
             {hw.gpus.length === 0 ? (
               <p className="text-xs text-zinc-500">
-                None detected — inference will use the CPU.
+                None detected - inference will use the CPU.
                 {hw.in_container && " (Running in a container; host GPUs may be hidden.)"}
               </p>
             ) : (

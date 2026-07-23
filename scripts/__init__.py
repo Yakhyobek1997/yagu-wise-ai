@@ -1,1 +1,1 @@
-"""Auralynq operational scripts (data download, demo, audits)."""
+"""YaguWiseAi operational scripts (data download, demo, audits)."""

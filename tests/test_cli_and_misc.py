@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from auralynq.cli import app
-from auralynq.providers import describe_providers, health_snapshot
-from auralynq.voice.asr import NullASR
-from auralynq.voice.diarize import _heuristic
-from auralynq.voice.factory import build_asr, build_tts
+from yaguwiseai.cli import app
+from yaguwiseai.providers import describe_providers, health_snapshot
+from yaguwiseai.voice.asr import NullASR
+from yaguwiseai.voice.diarize import _heuristic
+from yaguwiseai.voice.factory import build_asr, build_tts
 from typer.testing import CliRunner
 
 runner = CliRunner()
@@ -13,7 +13,7 @@ runner = CliRunner()
 def test_cli_version():
     res = runner.invoke(app, ["--version"])
     assert res.exit_code == 0
-    assert "auralynq" in res.stdout
+    assert "yaguwiseai" in res.stdout
 
 
 def test_cli_help_lists_commands():
@@ -26,7 +26,7 @@ def test_cli_help_lists_commands():
 def test_cli_ingest_and_ask(corpus_dir):
     res = runner.invoke(app, ["index", "--input", str(corpus_dir)])
     assert res.exit_code == 0, res.stdout
-    from auralynq.agent import runner as ar
+    from yaguwiseai.agent import runner as ar
 
     ar._CACHE.clear()
     res2 = runner.invoke(app, ["ask", "What is the capital of France?", "--json"])
@@ -41,7 +41,7 @@ def test_cli_info(corpus_dir):
 
 
 def test_describe_providers_resolves_fallbacks(monkeypatch):
-    import auralynq.llm.factory as lf
+    import yaguwiseai.llm.factory as lf
 
     # Force SLM unavailable so the chain reaches extractive deterministically.
     monkeypatch.setattr(lf, "_slm_available", lambda: False)
@@ -66,7 +66,7 @@ def test_factory_fallbacks():
 
 
 def test_diarize_heuristic_alternates_on_pause():
-    from auralynq.voice.asr import ASRSegment
+    from yaguwiseai.voice.asr import ASRSegment
 
     segs = [ASRSegment(0.0, 1.0, "a"), ASRSegment(3.0, 4.0, "b")]  # >1s gap
     out = _heuristic(segs)
@@ -75,7 +75,7 @@ def test_diarize_heuristic_alternates_on_pause():
 
 def test_llm_model_defaulting_for_commercial_providers():
     """Ollama-style model tags must not leak into OpenAI/Anthropic (would 404)."""
-    from auralynq.llm.factory import _model_for
+    from yaguwiseai.llm.factory import _model_for
 
     # Ollama-looking tag -> provider default
     assert _model_for("openai", "llama3.2:3b") == "gpt-4o-mini"
@@ -89,8 +89,8 @@ def test_llm_model_defaulting_for_commercial_providers():
 
 def test_resilient_llm_falls_back_on_runtime_error():
     """A provider that raises at request time must degrade to extractive, not crash."""
-    from auralynq.llm.base import LLM, Context
-    from auralynq.llm.resilient import ResilientLLM
+    from yaguwiseai.llm.base import LLM, Context
+    from yaguwiseai.llm.resilient import ResilientLLM
 
     class _Boom(LLM):
         name = "boom"
@@ -109,7 +109,7 @@ def test_resilient_llm_falls_back_on_runtime_error():
 
 
 def test_llm_model_defaulting_for_cohere():
-    from auralynq.llm.factory import _model_for
+    from yaguwiseai.llm.factory import _model_for
 
     assert _model_for("cohere", "llama3.2:3b") == "command-r-08-2024"
     assert _model_for("cohere", "command-r-plus") == "command-r-plus"
@@ -120,10 +120,10 @@ def test_llm_auto_resolves_cohere_when_only_cohere_key(monkeypatch):
     import sys
     import types
 
-    from auralynq.config import reload_settings
+    from yaguwiseai.config import reload_settings
 
     # The conftest blanks all secret envs; set just Cohere for this test.
-    monkeypatch.setenv("AURALYNQ_LLM__PROVIDER", "auto")
+    monkeypatch.setenv("YAGUWISEAI_LLM__PROVIDER", "auto")
     monkeypatch.setenv("COHERE_API_KEY", "test-cohere-key")
     monkeypatch.setenv("OPENAI_API_KEY", "")
     monkeypatch.setenv("ANTHROPIC_API_KEY", "")
@@ -142,19 +142,19 @@ def test_llm_auto_resolves_cohere_when_only_cohere_key(monkeypatch):
 
     # Auto-resolution now prefers Ollama when reachable; simulate no local Ollama
     # to exercise the cloud-provider fallback path.
-    import auralynq.llm.factory as lf
+    import yaguwiseai.llm.factory as lf
 
     monkeypatch.setattr(lf, "_ollama_reachable", lambda url: False)
     monkeypatch.setattr(lf, "_slm_available", lambda: False)
 
-    from auralynq.llm.factory import resolved_provider
+    from yaguwiseai.llm.factory import resolved_provider
 
     assert resolved_provider() == "cohere"
 
 
 def test_cohere_rerank_model_defaulting():
     """A local BGE reranker name must not be sent to Cohere's hosted reranker."""
-    from auralynq.retrieval.hybrid.rerank import _cohere_rerank_model
+    from yaguwiseai.retrieval.hybrid.rerank import _cohere_rerank_model
 
     assert _cohere_rerank_model("BAAI/bge-reranker-v2-m3") == "rerank-v3.5"
     assert _cohere_rerank_model("bge-reranker-large") == "rerank-v3.5"

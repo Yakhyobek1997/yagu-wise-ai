@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from auralynq.ingest.models import AudioSegment, Chunk, SourceType
-from auralynq.pipeline import build_index, load_graph
-from auralynq.retrieval.pathrag.builder import build_from_chunks
-from auralynq.retrieval.pathrag.graph import KnowledgeGraph
+from yaguwiseai.ingest.models import AudioSegment, Chunk, SourceType
+from yaguwiseai.pipeline import build_index, load_graph
+from yaguwiseai.retrieval.pathrag.builder import build_from_chunks
+from yaguwiseai.retrieval.pathrag.graph import KnowledgeGraph
 
 
 def _chunks():
@@ -83,7 +83,7 @@ def test_build_index_end_to_end(corpus_dir):
 
 # ---- Phase 4: entity canonicalization ------------------------------------
 def test_normalize_entity_canonicalizes_possessives():
-    from auralynq.retrieval.pathrag.graph import normalize_entity
+    from yaguwiseai.retrieval.pathrag.graph import normalize_entity
 
     assert normalize_entity("Ford") == "ford"
     assert normalize_entity("Ford's") == "ford"
@@ -94,7 +94,7 @@ def test_normalize_entity_canonicalizes_possessives():
 
 
 def test_add_entity_merges_variants_and_prefers_clean_display():
-    from auralynq.retrieval.pathrag.graph import KnowledgeGraph, normalize_entity
+    from yaguwiseai.retrieval.pathrag.graph import KnowledgeGraph, normalize_entity
 
     kg = KnowledgeGraph()
     kg.add_entity("Ford's")

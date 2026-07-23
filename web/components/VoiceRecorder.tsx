@@ -2,7 +2,7 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { audioUrl, sendVoice, getVoice, setVoice, VOICES } from "@/lib/api";
 
-// The product promise is "Talk to Your Data" — voice is central, so this control
+// The product promise is "Talk to Your Data" - voice is central, so this control
 // is a prominent, polished mic with explicit, honest states.
 type VoiceState = "idle" | "listening" | "transcribing" | "speaking" | "failed";
 
@@ -11,7 +11,7 @@ const STATE_META: Record<VoiceState, { label: string; hint: string }> = {
   listening: { label: "Listening…", hint: "Release to send" },
   transcribing: { label: "Transcribing & thinking…", hint: "Grounding your answer" },
   speaking: { label: "Speaking…", hint: "Playing the answer" },
-  failed: { label: "Voice failed — try again", hint: "Check microphone access" },
+  failed: { label: "Voice failed - try again", hint: "Check microphone access" },
 };
 
 const BAR_COUNT = 24;

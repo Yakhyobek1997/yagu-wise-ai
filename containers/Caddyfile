@@ -1,4 +1,4 @@
-# Auralynq TLS reverse proxy (ADR-0013).
+# YaguWiseAi TLS reverse proxy (ADR-0013).
 #
 # Single public HTTPS entrypoint that terminates TLS in front of the stack. The
 # browser only ever talks to Caddy; Caddy forwards everything to the web
@@ -7,8 +7,8 @@
 #
 # TLS: by default we serve a self-signed cert baked into the image (SANs include
 # the server IP + localhost) via an explicit `tls` directive — reliable for an
-# IP / no-domain host. For a real domain, set AURALYNQ_SITE_ADDRESS=https://your
-# .domain and AURALYNQ_TLS=internal-or-empty so Caddy provisions a trusted cert.
+# IP / no-domain host. For a real domain, set YAGUWISEAI_SITE_ADDRESS=https://your
+# .domain and YAGUWISEAI_TLS=internal-or-empty so Caddy provisions a trusted cert.
 
 {
 	admin off
@@ -20,18 +20,18 @@
 }
 
 # Site address defaults to ":8443". The TLS directive defaults to the baked
-# self-signed cert+key; set AURALYNQ_TLS=internal (Caddy CA) or a domain email
+# self-signed cert+key; set YAGUWISEAI_TLS=internal (Caddy CA) or a domain email
 # for ACME when deploying with a real hostname.
-{$AURALYNQ_SITE_ADDRESS::8443} {
-	tls {$AURALYNQ_TLS:/certs/site.crt /certs/site.key}
+{$YAGUWISEAI_SITE_ADDRESS::8443} {
+	tls {$YAGUWISEAI_TLS:/certs/site.crt /certs/site.key}
 
 	encode gzip
 
 	# Hard cap on incoming request bodies — prevents DoS via massive audio/file
 	# uploads before the request reaches the API layer's per-endpoint limit.
-	# Override with AURALYNQ_MAX_BODY_SIZE for environments that need larger uploads.
+	# Override with YAGUWISEAI_MAX_BODY_SIZE for environments that need larger uploads.
 	request_body {
-		max_size {$AURALYNQ_MAX_BODY_SIZE:100MB}
+		max_size {$YAGUWISEAI_MAX_BODY_SIZE:100MB}
 	}
 
 	# Deny path traversal attempts at the proxy layer.
@@ -50,7 +50,7 @@
 
 	# Stream-friendly: disable response buffering so SSE token streaming and the
 	# voice WebSocket pass through without latency/aggregation.
-	reverse_proxy {$AURALYNQ_WEB_UPSTREAM:http://web:3000} {
+	reverse_proxy {$YAGUWISEAI_WEB_UPSTREAM:http://web:3000} {
 		flush_interval -1
 	}
 }

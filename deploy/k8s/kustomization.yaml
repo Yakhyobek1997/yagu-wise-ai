@@ -1,10 +1,10 @@
-# Auralynq Kubernetes deployment (kustomize). Apply with:
+# YaguWiseAi Kubernetes deployment (kustomize). Apply with:
 #   kubectl apply -k deploy/k8s
 # Pin a released version centrally via the images: transform below.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: auralynq
+namespace: yaguwiseai
 
 resources:
   - namespace.yaml
@@ -19,12 +19,12 @@ resources:
   - ingress.yaml
 
 commonLabels:
-  app.kubernetes.io/part-of: auralynq
+  app.kubernetes.io/part-of: yaguwiseai
 
 # Central image pinning — bump the tag here to roll the whole app to a new
 # released version (images are published to GHCR by the release workflow).
 images:
-  - name: ghcr.io/mhhamdan/auralynq-api
+  - name: ghcr.io/mhhamdan/yaguwiseai-api
     newTag: "0.1.0"
-  - name: ghcr.io/mhhamdan/auralynq-web
+  - name: ghcr.io/mhhamdan/yaguwiseai-web
     newTag: "0.1.0"

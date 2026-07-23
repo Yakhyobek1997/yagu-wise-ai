@@ -159,7 +159,7 @@ function buildGroups(p: StatusPayload | null): Group[] {
     {
       key: "corpus",
       label: "Corpus",
-      value: indexed ? `${docs || "—"} document${docs === 1 ? "" : "s"} indexed` : "empty — ingest to begin",
+      value: indexed ? `${docs || "-"} document${docs === 1 ? "" : "s"} indexed` : "empty - ingest to begin",
       health: indexed ? "healthy" : "degraded",
       icon: "corpus",
     },
@@ -175,7 +175,7 @@ function buildGroups(p: StatusPayload | null): Group[] {
     {
       key: "voice",
       label: "ASR / TTS",
-      value: asr || tts ? `${asr || "—"} · ${tts || "—"}` : "offline fallback",
+      value: asr || tts ? `${asr || "-"} · ${tts || "-"}` : "offline fallback",
       health: asr || tts ? "healthy" : "degraded",
       icon: "voice",
     },

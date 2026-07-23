@@ -1,6 +1,6 @@
 "use client";
 /**
- * HardwareGate — landing-page consent → hardware scan → model recommendations.
+ * HardwareGate - landing-page consent → hardware scan → model recommendations.
  *
  * Flow:
  *  1. First visit: consent modal appears after 2 s
@@ -8,7 +8,7 @@
  *  3. Results panel: hardware strip + top-3 ranked models with Pull/Install buttons
  *  4. "Skip": stores decision, shows a subtle chip in the section to revisit later
  *
- * localStorage key: "auralynq_hw_consent"  = "granted" | "skipped"
+ * localStorage key: "yaguwiseai_hw_consent"  = "granted" | "skipped"
  *   - "granted"  → auto-scan on every page load (no modal)
  *   - "skipped"  → show the "Check hardware" chip until user explicitly allows
  */
@@ -21,7 +21,7 @@ import { detectClientHardware, clientFit, type ClientHardware } from "@/lib/clie
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-const CONSENT_KEY = "auralynq_hw_consent";
+const CONSENT_KEY = "yaguwiseai_hw_consent";
 const MODAL_DELAY_MS = 1800;
 
 // ── Tiny helpers ─────────────────────────────────────────────────────────────
@@ -245,7 +245,7 @@ function ConsentModal({
   }, [onSkip]);
 
   const items = [
-    { icon: "🖥", text: "Your device — OS, CPU cores & GPU — read in your browser" },
+    { icon: "🖥", text: "Your device - OS, CPU cores & GPU - read in your browser" },
     { icon: "⚡", text: "Approximate memory, when your browser exposes it" },
     { icon: "🌐", text: "Live model sizes from the Ollama registry (external call)" },
     { icon: "🤗", text: "Popular GGUF models on HuggingFace Hub (external call)" },
@@ -272,7 +272,7 @@ function ConsentModal({
           </div>
           <p className="text-sm text-fg2 leading-relaxed">
             To recommend the <span className="text-brand font-semibold">best AI models</span> for
-            your hardware, Auralynq will probe your system and query live model catalogs.
+            your hardware, YaguWiseAi will probe your system and query live model catalogs.
           </p>
         </div>
 
@@ -291,9 +291,9 @@ function ConsentModal({
         <div className="mx-6 mb-4 px-3 py-2 rounded-lg bg-info/5 border border-info/20">
           <p className="text-xs text-fg3 leading-relaxed">
             <span className="text-info font-semibold">Privacy:</span> Your device details are read
-            in your browser and never leave it. Only model-catalog lookups go out — to{" "}
+            in your browser and never leave it. Only model-catalog lookups go out - to{" "}
             <span className="font-mono text-fg2">registry.ollama.ai</span> and{" "}
-            <span className="font-mono text-fg2">huggingface.co</span> — and carry no personal data.
+            <span className="font-mono text-fg2">huggingface.co</span> - and carry no personal data.
           </p>
         </div>
 
@@ -378,7 +378,7 @@ function ResultsPanel({
       {clientHw && !canJudge && (
         <p className="text-xs text-fg3 -mt-3">
           Your browser doesn&apos;t expose exact RAM, so fit is estimated from OS/GPU only. Run
-          Auralynq locally for an exact hardware probe.
+          YaguWiseAi locally for an exact hardware probe.
         </p>
       )}
 
@@ -421,7 +421,7 @@ function ScanPanel({ onDone }: { onDone: (clientHw: ClientHardware | null, entri
     started.current = true;
 
     try {
-      // Step 1 — detect THIS device in the browser (real per-visitor)
+      // Step 1 - detect THIS device in the browser (real per-visitor)
       setStep("hw", { status: "running" });
       const clientHw = await detectClientHardware();
       const hwLabel = [
@@ -435,7 +435,7 @@ function ScanPanel({ onDone }: { onDone: (clientHw: ClientHardware | null, entri
       // Brief pause so user can read step 1
       await new Promise((r) => setTimeout(r, 400));
 
-      // Step 2 — live catalog (server queries Ollama + HuggingFace registries)
+      // Step 2 - live catalog (server queries Ollama + HuggingFace registries)
       setStep("catalog", { status: "running" });
       const result = await discoverModels("rag", true, false, 30);
       setStep("catalog", {
@@ -445,7 +445,7 @@ function ScanPanel({ onDone }: { onDone: (clientHw: ClientHardware | null, entri
 
       await new Promise((r) => setTimeout(r, 300));
 
-      // Step 3 — rank models against THIS device (done in ResultsPanel)
+      // Step 3 - rank models against THIS device (done in ResultsPanel)
       setStep("rank", { status: "running" });
       await new Promise((r) => setTimeout(r, 500));
       setStep("rank", { status: "done", detail: `matched to your ${clientHw.gpu ?? clientHw.os}` });
@@ -484,7 +484,7 @@ function ScanPanel({ onDone }: { onDone: (clientHw: ClientHardware | null, entri
         <div className="mt-4 rounded-lg bg-bad/10 border border-bad/30 px-3 py-2 text-sm text-bad">
           {error}
           <p className="text-xs mt-1 text-fg3">
-            Make sure the Auralynq API is running at{" "}
+            Make sure the YaguWiseAi API is running at{" "}
             <code>{process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000/api"}</code>
           </p>
         </div>
@@ -513,7 +513,7 @@ export function HardwareGate() {
     } else if (consent === "skipped") {
       setState({ phase: "skipped" });
     } else {
-      // First visit — show modal after delay
+      // First visit - show modal after delay
       timerRef.current = setTimeout(() => {
         setState({ phase: "modal" });
       }, MODAL_DELAY_MS);
@@ -555,17 +555,17 @@ export function HardwareGate() {
     );
   }
 
-  // "idle" — haven't checked storage yet, render nothing
+  // "idle" - haven't checked storage yet, render nothing
   if (state.phase === "idle") return null;
 
   return (
     <>
-      {/* Consent modal — floats above everything */}
+      {/* Consent modal - floats above everything */}
       {state.phase === "modal" && (
         <ConsentModal onAllow={allow} onSkip={skip} />
       )}
 
-      {/* Inline section — scanning or results */}
+      {/* Inline section - scanning or results */}
       {(state.phase === "scanning" || state.phase === "done") && (
         <section className="relative py-16 overflow-hidden">
           {/* ambient orbs */}

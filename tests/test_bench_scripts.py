@@ -17,7 +17,7 @@ _PROVENANCE_KEYS = {"git_commit", "generated_at", "hardware", "dataset_version"}
 
 
 def _wire_corpus(corpus_dir, monkeypatch):
-    from auralynq.config import get_settings
+    from yaguwiseai.config import get_settings
 
     s = get_settings()
     monkeypatch.setattr(s, "data_dir", corpus_dir.parent)
@@ -56,7 +56,7 @@ def test_export_paper_tables_notes_missing_reports():
 
 
 def test_export_paper_tables_includes_provenance_when_present(corpus_dir, monkeypatch):
-    from auralynq.eval.bench import run_bench
+    from yaguwiseai.eval.bench import run_bench
 
     _wire_corpus(corpus_dir, monkeypatch)
     run_bench(k=5, n_queries=8, write_report=True)

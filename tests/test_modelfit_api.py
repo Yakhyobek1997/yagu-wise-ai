@@ -9,32 +9,32 @@ from __future__ import annotations
 import json
 from types import SimpleNamespace
 
-import auralynq.modelfit.benchmark_runner as bench_mod
-import auralynq.modelfit.catalog_fetcher as fetcher_mod
-import auralynq.modelfit.community as community_mod
-import auralynq.modelfit.hardware as hw_mod
-import auralynq.modelfit.model_registry as registry_mod
+import yaguwiseai.modelfit.benchmark_runner as bench_mod
+import yaguwiseai.modelfit.catalog_fetcher as fetcher_mod
+import yaguwiseai.modelfit.community as community_mod
+import yaguwiseai.modelfit.hardware as hw_mod
+import yaguwiseai.modelfit.model_registry as registry_mod
 import pytest
-from auralynq.modelfit.benchmark_runner import (
+from yaguwiseai.modelfit.benchmark_runner import (
     BenchmarkResult,
     get_run,
     list_runs,
     run_benchmark,
 )
-from auralynq.modelfit.cli import app as cli_app
-from auralynq.modelfit.community import (
+from yaguwiseai.modelfit.cli import app as cli_app
+from yaguwiseai.modelfit.community import (
     load_community_results,
     save_community_result,
 )
-from auralynq.modelfit.hf_catalog import search_hf_models
-from auralynq.modelfit.model_metadata import ModelMetadata
-from auralynq.modelfit.model_registry import ModelRegistry, _discover_local_gguf, get_registry
-from auralynq.modelfit.ollama_catalog import (
+from yaguwiseai.modelfit.hf_catalog import search_hf_models
+from yaguwiseai.modelfit.model_metadata import ModelMetadata
+from yaguwiseai.modelfit.model_registry import ModelRegistry, _discover_local_gguf, get_registry
+from yaguwiseai.modelfit.ollama_catalog import (
     _tag_to_metadata,
     get_model_details,
     list_installed_models,
 )
-from auralynq.modelfit.router import router as modelfit_router
+from yaguwiseai.modelfit.router import router as modelfit_router
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from typer.testing import CliRunner
@@ -206,10 +206,10 @@ def _valid_entry() -> dict:
         "model_id": "ollama:llama3.1:8b",
         "quantization": "q4_k",
         "hardware": {"cpu_model": "Intel Core i9", "ram_gb": 32},
-        "benchmark_version": "auralynq-modelfit-0.1",
+        "benchmark_version": "yaguwiseai-modelfit-0.1",
         "task": "rag",
         "date": "2026-06-23",
-        "source": "auralynq-benchmark-runner",
+        "source": "yaguwiseai-benchmark-runner",
         "tok_per_sec": 28.4,
     }
 
@@ -412,7 +412,7 @@ async def test_run_benchmark_rag_quality_failure_is_soft(tmp_path, monkeypatch):
     async def boom(**kwargs):
         raise RuntimeError("no corpus")
 
-    monkeypatch.setattr("auralynq.modelfit.rag_bench.run_rag_benchmark", boom)
+    monkeypatch.setattr("yaguwiseai.modelfit.rag_bench.run_rag_benchmark", boom)
     result = await run_benchmark(
         "ollama:fake:1b", task="rag", num_examples=1, output_dir=str(tmp_path)
     )
@@ -669,7 +669,7 @@ def test_api_benchmark_run_confirmed(api, monkeypatch):
     async def fake_run(**kwargs):
         return fake_result
 
-    monkeypatch.setattr("auralynq.modelfit.router.run_benchmark", fake_run)
+    monkeypatch.setattr("yaguwiseai.modelfit.router.run_benchmark", fake_run)
     r = api.post(
         "/api/modelfit/benchmark/run",
         json={"model_id": "ollama:fake:1b", "confirmed": True},

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Bring up the Auralynq stack (rootless Podman, no sudo). See ADR-0012/0013/0014.
+# Bring up the YaguWiseAi stack (rootless Podman, no sudo). See ADR-0012/0013/0014.
 #
 # Networking: this host's CNI generates conflists with cniVersion 1.0.0, but the
 # installed `firewall` plugin only supports up to 0.4.0 — so the network silently
@@ -7,7 +7,7 @@
 # `dnsname` plugin. We fix BOTH without sudo by rewriting the relevant conflist(s)
 # under ~/.config/cni/net.d to cniVersion 0.4.0 + ensuring the dnsname plugin is
 # present. With DNS working, services reach peers by container_name
-# (auralynq-qdrant / auralynq-api / auralynq-web) — see ADR-0014.
+# (yaguwiseai-qdrant / yaguwiseai-api / yaguwiseai-web) — see ADR-0014.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -40,15 +40,15 @@ PY
 echo "→ ensuring rootless CNI networks have DNS (no sudo)…"
 # The default podman network (used by podman-compose) + any project network.
 shopt -s nullglob
-for f in "${CNI_DIR}"/87-podman.conflist "${CNI_DIR}"/*podman*.conflist "${CNI_DIR}"/auralynq*.conflist; do
+for f in "${CNI_DIR}"/87-podman.conflist "${CNI_DIR}"/*podman*.conflist "${CNI_DIR}"/yaguwiseai*.conflist; do
   patch_conflist "$f"
 done
 shopt -u nullglob
 
 # Prefer an exported env var (e.g. from scripts/run_local.sh) over the .env file,
 # matching podman-compose's own precedence so the printed URL is accurate.
-bind_internal="${AURALYNQ_BIND_INTERNAL:-$(grep -E '^AURALYNQ_BIND_INTERNAL=' .env 2>/dev/null | cut -d= -f2)}"; bind_internal="${bind_internal:-127.0.0.1}"
-https_port="${AURALYNQ_HTTPS_PORT:-$(grep -E '^AURALYNQ_HTTPS_PORT=' .env 2>/dev/null | cut -d= -f2)}"; https_port="${https_port:-8443}"
+bind_internal="${YAGUWISEAI_BIND_INTERNAL:-$(grep -E '^YAGUWISEAI_BIND_INTERNAL=' .env 2>/dev/null | cut -d= -f2)}"; bind_internal="${bind_internal:-127.0.0.1}"
+https_port="${YAGUWISEAI_HTTPS_PORT:-$(grep -E '^YAGUWISEAI_HTTPS_PORT=' .env 2>/dev/null | cut -d= -f2)}"; https_port="${https_port:-8443}"
 
 # ── Host Ollama reachability (rootless) ───────────────────────────────────────
 # Containers on the rootless compose bridge cannot reach host loopback services,
@@ -57,11 +57,11 @@ https_port="${AURALYNQ_HTTPS_PORT:-$(grep -E '^AURALYNQ_HTTPS_PORT=' .env 2>/dev
 # on the host, route the containers to the host's real LAN IP instead (Ollama
 # binds 0.0.0.0, so the bridge can reach it there). Without this the API silently
 # degrades to the extractive LLM fallback even when a local GPU model is present.
-existing_base="${AURALYNQ_LLM__BASE_URL:-$(grep -E '^AURALYNQ_LLM__BASE_URL=' .env 2>/dev/null | cut -d= -f2- || true)}"
+existing_base="${YAGUWISEAI_LLM__BASE_URL:-$(grep -E '^YAGUWISEAI_LLM__BASE_URL=' .env 2>/dev/null | cut -d= -f2- || true)}"
 if [ -z "${existing_base}" ]; then
   host_ip="$(ip -4 route get 1.1.1.1 2>/dev/null | grep -oP 'src \K\S+' | head -1 || true)"
   if [ -n "${host_ip}" ] && curl -fsS -m 2 "http://${host_ip}:11434/api/tags" >/dev/null 2>&1; then
-    export AURALYNQ_LLM__BASE_URL="http://${host_ip}:11434"
+    export YAGUWISEAI_LLM__BASE_URL="http://${host_ip}:11434"
     echo "→ host Ollama reachable at ${host_ip}:11434 — routing containers there (local model, not extractive)."
   else
     echo "→ host Ollama not detected — API will use its configured/auto LLM (extractive fallback if none)."
@@ -110,7 +110,7 @@ $COMPOSE -f "$CF" "${gpu_args[@]}" up -d
 # later podman command). Patch it down to 0.4.0 + dnsname now that it exists so
 # subsequent `podman ps/logs/exec` and the next `up` run clean.
 shopt -s nullglob
-for f in "${CNI_DIR}"/*_default.conflist "${CNI_DIR}"/auralynq*.conflist; do
+for f in "${CNI_DIR}"/*_default.conflist "${CNI_DIR}"/yaguwiseai*.conflist; do
   patch_conflist "$f"
 done
 shopt -u nullglob

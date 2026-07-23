@@ -10,7 +10,7 @@ on:
     paths:
       - "containers/**"
       - "deploy/huggingface/**"
-      - "auralynq/**"
+      - "yaguwiseai/**"
       - "web/**"
       - "pyproject.toml"
       - ".github/workflows/docker.yml"
@@ -18,7 +18,7 @@ on:
     paths:
       - "containers/**"
       - "deploy/huggingface/**"
-      - "auralynq/**"
+      - "yaguwiseai/**"
       - "web/**"
       - "pyproject.toml"
       - ".github/workflows/docker.yml"
@@ -37,10 +37,10 @@ jobs:
           file: deploy/huggingface/Dockerfile
           push: false
           load: true
-          tags: auralynq-space:ci
+          tags: yaguwiseai-space:ci
       - name: Smoke-test the image boots and serves /api/health
         run: |
-          docker run -d --name space -p 7860:7860 auralynq-space:ci
+          docker run -d --name space -p 7860:7860 yaguwiseai-space:ci
           for i in $(seq 1 30); do
             if curl -fsS http://localhost:7860/api/health >/dev/null 2>&1; then
               echo "healthy"; break

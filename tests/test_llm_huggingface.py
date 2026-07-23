@@ -4,8 +4,8 @@ safety guards (explicit-only, token required, air-gap blocked)."""
 
 from __future__ import annotations
 
-from auralynq.config import reload_settings
-from auralynq.llm.factory import _model_for, build_llm, resolved_provider
+from yaguwiseai.config import reload_settings
+from yaguwiseai.llm.factory import _model_for, build_llm, resolved_provider
 
 
 def test_model_for_keeps_hf_repo_ids():
@@ -18,14 +18,14 @@ def test_model_for_keeps_hf_repo_ids():
 
 
 def test_hf_without_token_falls_back(monkeypatch):
-    monkeypatch.setenv("AURALYNQ_LLM__PROVIDER", "huggingface")
+    monkeypatch.setenv("YAGUWISEAI_LLM__PROVIDER", "huggingface")
     monkeypatch.setenv("HUGGINGFACE_TOKEN", "")
     reload_settings()
     assert build_llm().name == "extractive"
 
 
 def test_hf_with_token_builds_provider(monkeypatch):
-    monkeypatch.setenv("AURALYNQ_LLM__PROVIDER", "huggingface")
+    monkeypatch.setenv("YAGUWISEAI_LLM__PROVIDER", "huggingface")
     monkeypatch.setenv("HUGGINGFACE_TOKEN", "hf_dummy_test_token")
     reload_settings()
     llm = build_llm()  # constructs the client but makes no network call
@@ -35,17 +35,17 @@ def test_hf_with_token_builds_provider(monkeypatch):
 def test_hf_is_explicit_only_never_auto(monkeypatch):
     # A token present for gated *downloads* must not silently route generation to
     # the paid HF API under provider=auto.
-    monkeypatch.setenv("AURALYNQ_LLM__PROVIDER", "auto")
+    monkeypatch.setenv("YAGUWISEAI_LLM__PROVIDER", "auto")
     monkeypatch.setenv("HUGGINGFACE_TOKEN", "hf_dummy_test_token")
-    monkeypatch.setenv("AURALYNQ_LLM__BASE_URL", "http://127.0.0.1:1")  # no ollama
+    monkeypatch.setenv("YAGUWISEAI_LLM__BASE_URL", "http://127.0.0.1:1")  # no ollama
     reload_settings()
     assert resolved_provider() != "huggingface"
 
 
 def test_hf_blocked_when_air_gapped(monkeypatch):
-    monkeypatch.setenv("AURALYNQ_LLM__PROVIDER", "huggingface")
+    monkeypatch.setenv("YAGUWISEAI_LLM__PROVIDER", "huggingface")
     monkeypatch.setenv("HUGGINGFACE_TOKEN", "hf_dummy_test_token")
-    monkeypatch.setenv("AURALYNQ_AIR_GAPPED", "true")
+    monkeypatch.setenv("YAGUWISEAI_AIR_GAPPED", "true")
     reload_settings()
     assert resolved_provider() == "extractive"
     assert build_llm().name == "extractive"

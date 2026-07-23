@@ -4,10 +4,10 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: auralynq-api
-  namespace: auralynq
+  name: yaguwiseai-api
+  namespace: yaguwiseai
 spec:
-  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: auralynq-api }
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: yaguwiseai-api }
   minReplicas: 2
   maxReplicas: 10
   metrics:
@@ -17,10 +17,10 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: auralynq-mcp
-  namespace: auralynq
+  name: yaguwiseai-mcp
+  namespace: yaguwiseai
 spec:
-  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: auralynq-mcp }
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: yaguwiseai-mcp }
   minReplicas: 2
   maxReplicas: 8
   metrics:
@@ -30,10 +30,10 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: auralynq-web
-  namespace: auralynq
+  name: yaguwiseai-web
+  namespace: yaguwiseai
 spec:
-  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: auralynq-web }
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: yaguwiseai-web }
   minReplicas: 2
   maxReplicas: 6
   metrics:

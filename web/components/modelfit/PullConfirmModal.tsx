@@ -6,7 +6,7 @@ import { VERDICT_META } from "@/components/modelfit/verdict";
 
 // Explicit "agree to pull" gate. The user sees exactly what will be downloaded
 // (size, destination, command) and confirms with a size-labelled button before
-// anything hits the network — no silent auto-pull.
+// anything hits the network - no silent auto-pull.
 
 type PullState = "idle" | "pulling" | "done" | "error";
 
@@ -137,7 +137,7 @@ export function PullConfirmModal({
           )}
           {state === "done" && (
             <div className="flex items-center gap-2 text-sm text-emerald-400">
-              <span>✓</span> Installed — {displayName} is ready to use.
+              <span>✓</span> Installed - {displayName} is ready to use.
             </div>
           )}
           {state === "error" && <p className="text-sm text-red-400">Download failed: {error}</p>}

@@ -1,5 +1,5 @@
 ---
-title: Auralynq RAG
+title: YaguWiseAi RAG
 emoji: 🎙️
 colorFrom: blue
 colorTo: purple
@@ -10,9 +10,9 @@ license: apache-2.0
 short_description: "Voice-native agentic RAG on Llama-3.3-70B"
 ---
 
-# Auralynq RAG
+# YaguWiseAi — Talk to Your Data
 
-[Auralynq](https://github.com/MHHamdan/Auralynq) is a local-first, voice-native,
+[YaguWiseAi](https://github.com/MHHamdan/YaguWiseAi) is a local-first, voice-native,
 agentic RAG platform with span-level visual citation grounding, a PathRAG
 knowledge graph, a Compounding Wiki, and an observable retrieval pipeline.
 
@@ -28,17 +28,17 @@ Set as Space **Secrets / Variables** (applied by the deploy step):
 | Key | Value | Kind |
 |---|---|---|
 | `HUGGINGFACE_TOKEN` | *your HF token* | secret |
-| `AURALYNQ_LLM__PROVIDER` | `huggingface` | variable |
-| `AURALYNQ_LLM__MODEL` | `meta-llama/Llama-3.3-70B-Instruct` | variable |
-| `AURALYNQ_DEMO_MODE` | `true` (seeds the demo corpus on first boot) | variable |
-| `AURALYNQ_ALLOW_UPLOADS` | `false` (uploads disabled) | variable |
+| `YAGUWISEAI_LLM__PROVIDER` | `huggingface` | variable |
+| `YAGUWISEAI_LLM__MODEL` | `meta-llama/Llama-3.3-70B-Instruct` | variable |
+| `YAGUWISEAI_DEMO_MODE` | `true` (seeds the demo corpus on first boot) | variable |
+| `YAGUWISEAI_ALLOW_UPLOADS` | `false` (uploads disabled) | variable |
 
 Retrieval uses hash embeddings + an in-memory vector store in this build (no
 model downloads); switch to real embeddings by upgrading the image extras and
-setting `AURALYNQ_EMBEDDING__PROVIDER`.
+setting `YAGUWISEAI_EMBEDDING__PROVIDER`.
 
 > Generation calls are billed to the token owner's Hugging Face account. This
 > Space is **private** by default — keep it private unless you intend to let
 > others spend your Inference Providers credits.
 
-Source & docs: <https://github.com/MHHamdan/Auralynq>
+Source & docs: <https://github.com/MHHamdan/YaguWiseAi>

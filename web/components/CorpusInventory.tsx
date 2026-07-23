@@ -16,7 +16,7 @@ function sourceIcon(type: string) {
 }
 
 // Renders a corpus-inventory answer (what's *in* the collection) instead of an
-// evidence failure — for questions like "Is there any Arabic document in my
+// evidence failure - for questions like "Is there any Arabic document in my
 // collection?". Built from corpus metadata, so it's honest and instant.
 export function CorpusInventory({
   summary,
@@ -59,7 +59,7 @@ export function CorpusInventory({
               ? `${summary.indexed_document_count} document${
                   summary.indexed_document_count === 1 ? "" : "s"
                 } · ${summary.vector_count.toLocaleString()} vectors · indexed ${timeAgo(summary.last_indexed)}`
-              : "Nothing is indexed yet — upload documents to build your collection."}
+              : "Nothing is indexed yet - upload documents to build your collection."}
           </p>
         </div>
       </div>
@@ -74,7 +74,7 @@ export function CorpusInventory({
               {displaySource(lastDoc)}
             </p>
           ) : (
-            <p className="text-sm text-fg2">No upload history found — documents may have been indexed from disk.</p>
+            <p className="text-sm text-fg2">No upload history found - documents may have been indexed from disk.</p>
           )}
           {summary.last_indexed && (
             <p className="mt-1 text-xs text-fg3">Indexed {timeAgo(summary.last_indexed)}</p>

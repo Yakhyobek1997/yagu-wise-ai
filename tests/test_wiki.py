@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from auralynq.config.settings import Settings
-from auralynq.ingest.models import Chunk, SourceType
-from auralynq.retrieval.pathrag.builder import build_from_chunks
-from auralynq.wiki.generator import synthesize_wiki
-from auralynq.wiki.store import WikiStore, slug
+from yaguwiseai.config.settings import Settings
+from yaguwiseai.ingest.models import Chunk, SourceType
+from yaguwiseai.retrieval.pathrag.builder import build_from_chunks
+from yaguwiseai.wiki.generator import synthesize_wiki
+from yaguwiseai.wiki.store import WikiStore, slug
 
 
 class _StubLLM:
@@ -81,7 +81,7 @@ def test_synthesize_wiki_from_kg(tmp_path):
 
 def test_wiki_disabled_by_default():
     # Assert the declared code default (immune to a local .env that enables it).
-    from auralynq.config.settings import WikiSettings
+    from yaguwiseai.config.settings import WikiSettings
 
     assert WikiSettings.model_fields["enabled"].default is False
 
@@ -95,26 +95,26 @@ def test_min_mentions_gate(tmp_path):
 
 
 def test_wiki_retriever_matches_entity(tmp_path):
-    from auralynq.wiki.retriever import WikiRetriever
+    from yaguwiseai.wiki.retriever import WikiRetriever
 
     store = WikiStore(tmp_path / "w")
-    store.write_page("auralynq", title="Auralynq",
-                     body="## Summary\nAuralynq fuses dense and sparse vectors [1][2].",
+    store.write_page("yaguwiseai", title="YaguWiseAi",
+                     body="## Summary\nYaguWiseAi fuses dense and sparse vectors [1][2].",
                      sources=["a.md"], mentions=3)
     store.write_page("france", title="France", body="Country in Europe [1].", mentions=2)
 
-    res = WikiRetriever(tmp_path / "w").retrieve("Tell me about Auralynq", k=2)
-    assert res.chunks, "matched the Auralynq page"
+    res = WikiRetriever(tmp_path / "w").retrieve("Tell me about YaguWiseAi", k=2)
+    assert res.chunks, "matched the YaguWiseAi page"
     top = res.chunks[0]
     assert top.method == "wiki"
-    assert top.chunk.source == "Auralynq (wiki)"
+    assert top.chunk.source == "YaguWiseAi (wiki)"
     # Internal [n] markers are stripped so they don't clash with answer citations.
     assert "[1]" not in top.chunk.text and "[2]" not in top.chunk.text
     assert "fuses dense and sparse" in top.chunk.text
 
 
 def test_wiki_retriever_no_match_is_empty(tmp_path):
-    from auralynq.wiki.retriever import WikiRetriever
+    from yaguwiseai.wiki.retriever import WikiRetriever
 
     store = WikiStore(tmp_path / "w")
     store.write_page("france", title="France", body="A country.", mentions=2)
@@ -124,7 +124,7 @@ def test_wiki_retriever_no_match_is_empty(tmp_path):
 
 # ---------------------------------------------------------- Phase 3 --------
 def test_detect_contradictions_parses_json():
-    from auralynq.wiki.contradiction import detect_contradictions
+    from yaguwiseai.wiki.contradiction import detect_contradictions
 
     class J:
         def generate(self, p, *, system=None, temperature=None, max_tokens=None):
@@ -137,7 +137,7 @@ def test_detect_contradictions_parses_json():
 
 
 def test_detect_contradictions_none_and_missing_side():
-    from auralynq.wiki.contradiction import detect_contradictions
+    from yaguwiseai.wiki.contradiction import detect_contradictions
 
     class E:
         def generate(self, p, *, system=None, temperature=None, max_tokens=None):
@@ -204,13 +204,13 @@ def test_lint_orphans(tmp_path):
 
 # --------------------------------------------------------- Phase 3b -------
 def test_file_answer_creates_answer_page(tmp_path):
-    from auralynq.wiki.generator import file_answer
+    from yaguwiseai.wiki.generator import file_answer
 
     s = Settings(data_dir=tmp_path)
     s.wiki.enabled = True
     ok = file_answer(
-        "What is Auralynq?",
-        "Auralynq is a local-first RAG platform [1].",
+        "What is YaguWiseAi?",
+        "YaguWiseAi is a local-first RAG platform [1].",
         [{"source": "a.md", "locator": "p.1"}],
         0.8,
         settings=s,
@@ -220,13 +220,13 @@ def test_file_answer_creates_answer_page(tmp_path):
     answers = [p for p in store.list_pages() if p["type"] == "answer"]
     assert len(answers) == 1
     page = store.read_page(answers[0]["id"])
-    assert "Auralynq is a local-first RAG platform" in page["markdown"]
+    assert "YaguWiseAi is a local-first RAG platform" in page["markdown"]
     assert "## Sources" in page["markdown"]
     assert "a.md" in page["markdown"]
 
 
 def test_file_answer_gates(tmp_path):
-    from auralynq.wiki.generator import file_answer
+    from yaguwiseai.wiki.generator import file_answer
 
     s = Settings(data_dir=tmp_path)
     s.wiki.enabled = True
@@ -238,7 +238,7 @@ def test_file_answer_gates(tmp_path):
 
 
 def test_file_answer_is_idempotent_by_question(tmp_path):
-    from auralynq.wiki.generator import file_answer
+    from yaguwiseai.wiki.generator import file_answer
 
     s = Settings(data_dir=tmp_path)
     s.wiki.enabled = True
@@ -250,7 +250,7 @@ def test_file_answer_is_idempotent_by_question(tmp_path):
 
 
 def test_contradiction_has_flagged_at():
-    from auralynq.wiki.contradiction import Contradiction
+    from yaguwiseai.wiki.contradiction import Contradiction
 
     c = Contradiction("e", "old", "new")
     assert len(c.flagged_at) >= 10  # ISO timestamp

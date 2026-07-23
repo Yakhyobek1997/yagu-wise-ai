@@ -1,11 +1,11 @@
-// Server-side reverse proxy: forwards /api/* to the Auralynq backend and injects
+// Server-side reverse proxy: forwards /api/* to the YaguWiseAi backend and injects
 // the bearer token from a server-only env var, so the browser never holds the API
 // key (ADR-0012). Streams responses (SSE token streaming works transparently).
 //
-// Failover (ADR-0020): when AURALYNQ_API_FALLBACK is set, the request is tried
+// Failover (ADR-0020): when YAGUWISEAI_API_FALLBACK is set, the request is tried
 // against the local/primary backend first and replayed against the remote
 // fallback if the primary is unreachable or returns a gateway-class status. The
-// served upstream is reported in the `x-auralynq-upstream` response header.
+// served upstream is reported in the `x-yaguwiseai-upstream` response header.
 import { NextRequest } from "next/server";
 import { Agent } from "undici";
 import { resolveUpstreams, shouldFailover, type Upstream } from "@/lib/failover";
@@ -13,17 +13,17 @@ import { resolveUpstreams, shouldFailover, type Upstream } from "@/lib/failover"
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const API_KEY = process.env.AURALYNQ_SERVE__API_KEY || "";
-const PRIMARY = process.env.AURALYNQ_API_INTERNAL || "http://api:8000";
-const FALLBACK = process.env.AURALYNQ_API_FALLBACK || "";
-const FALLBACK_INSECURE = process.env.AURALYNQ_API_FALLBACK_INSECURE_TLS === "1";
+const API_KEY = process.env.YAGUWISEAI_SERVE__API_KEY || "";
+const PRIMARY = process.env.YAGUWISEAI_API_INTERNAL || "http://api:8000";
+const FALLBACK = process.env.YAGUWISEAI_API_FALLBACK || "";
+const FALLBACK_INSECURE = process.env.YAGUWISEAI_API_FALLBACK_INSECURE_TLS === "1";
 // Bound time-to-first-byte for the primary so a hung local backend still fails
 // over. Generous by default: a cold LLM first token can take several seconds, and
 // a dead backend refuses the connection instantly regardless of this value.
-const PRIMARY_TIMEOUT_MS = Number(process.env.AURALYNQ_API_PRIMARY_TIMEOUT_MS || "12000");
+const PRIMARY_TIMEOUT_MS = Number(process.env.YAGUWISEAI_API_PRIMARY_TIMEOUT_MS || "12000");
 
 const UPSTREAMS = resolveUpstreams(PRIMARY, FALLBACK, FALLBACK_INSECURE);
-// Dispatcher that skips TLS verification — used only for an insecure fallback
+// Dispatcher that skips TLS verification - used only for an insecure fallback
 // (the server's self-signed cert). The primary never uses it.
 const insecureAgent = new Agent({ connect: { rejectUnauthorized: false } });
 
@@ -101,7 +101,7 @@ async function proxy(req: NextRequest, path: string[]): Promise<Response> {
       const respHeaders = new Headers(r.headers);
       respHeaders.delete("content-encoding");
       respHeaders.delete("content-length");
-      respHeaders.set("x-auralynq-upstream", u.label);
+      respHeaders.set("x-yaguwiseai-upstream", u.label);
       return new Response(r.body, { status: r.status, headers: respHeaders });
     } catch (e) {
       lastErr = e;
@@ -111,7 +111,7 @@ async function proxy(req: NextRequest, path: string[]): Promise<Response> {
 
   return new Response(
     JSON.stringify({ error: "bad_gateway", detail: String(lastErr) }),
-    { status: 502, headers: { "content-type": "application/json", "x-auralynq-upstream": "none" } },
+    { status: 502, headers: { "content-type": "application/json", "x-yaguwiseai-upstream": "none" } },
   );
 }
 

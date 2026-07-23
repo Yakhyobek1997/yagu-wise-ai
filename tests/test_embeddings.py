@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
-from auralynq.embeddings import HashingEmbedder, get_embedder, resolved_provider
+from yaguwiseai.embeddings import HashingEmbedder, get_embedder, resolved_provider
 
 
 def test_hashing_embedder_is_deterministic():
@@ -61,7 +61,7 @@ def test_openai_embedder_dense_plus_derived_sparse(monkeypatch):
     fake.OpenAI = _Client
     monkeypatch.setitem(sys.modules, "openai", fake)
 
-    from auralynq.embeddings.openai_embed import OpenAIEmbedder
+    from yaguwiseai.embeddings.openai_embed import OpenAIEmbedder
 
     emb = OpenAIEmbedder(api_key="test", model="text-embedding-3-small")
     batch = emb.embed(["flow based pruning", "the cat sat"])
@@ -80,8 +80,8 @@ def test_resilient_embedder_degrades_on_runtime_error():
     """A primary embedder that raises at request time must degrade to hashing,
     stay degraded (sticky), and keep a consistent dimension — not crash."""
     import numpy as np
-    from auralynq.embeddings.base import Embedder
-    from auralynq.embeddings.resilient import ResilientEmbedder
+    from yaguwiseai.embeddings.base import Embedder
+    from yaguwiseai.embeddings.resilient import ResilientEmbedder
 
     class _Boom(Embedder):
         name = "boom"
@@ -104,8 +104,8 @@ def test_resilient_embedder_degrades_on_runtime_error():
 
 def test_resilient_embedder_passthrough_when_primary_ok():
     import numpy as np
-    from auralynq.embeddings.base import Embedder, EmbeddingBatch
-    from auralynq.embeddings.resilient import ResilientEmbedder
+    from yaguwiseai.embeddings.base import Embedder, EmbeddingBatch
+    from yaguwiseai.embeddings.resilient import ResilientEmbedder
 
     class _Good(Embedder):
         name = "good"

@@ -1,19 +1,19 @@
 from __future__ import annotations
 
 import pytest
-from auralynq.config import reload_settings
-from auralynq.pipeline import build_index
-from auralynq.serving.app import create_app
+from yaguwiseai.config import reload_settings
+from yaguwiseai.pipeline import build_index
+from yaguwiseai.serving.app import create_app
 from fastapi.testclient import TestClient
 
 
 @pytest.fixture
 def secured_client(corpus_dir, monkeypatch):
     build_index(corpus_dir)
-    from auralynq.agent import runner
+    from yaguwiseai.agent import runner
 
     runner._CACHE.clear()
-    monkeypatch.setenv("AURALYNQ_SERVE__API_KEY", "s3cret-token")
+    monkeypatch.setenv("YAGUWISEAI_SERVE__API_KEY", "s3cret-token")
     reload_settings()
     return TestClient(create_app())
 

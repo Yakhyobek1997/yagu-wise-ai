@@ -37,7 +37,7 @@ type QuantBand = (typeof QUANT_BANDS)[number];
 function quantBand(q: string): QuantBand {
   const n = Number(q.toLowerCase().match(/(?:iq|q)(\d+)/)?.[1]);
   if (!Number.isNaN(n)) return n <= 3 ? "Small" : n <= 5 ? "Balanced" : "Large";
-  return "Large"; // f16 / bf16 / fp16 / f32 — full precision
+  return "Large"; // f16 / bf16 / fp16 / f32 - full precision
 }
 
 const TASK_OPTIONS = [
@@ -177,7 +177,7 @@ function ExpandedPanel({
         </div>
       </div>
 
-      {/* Live memory planner — drag context, watch VRAM + verdict update */}
+      {/* Live memory planner - drag context, watch VRAM + verdict update */}
       {entry.model_meta.parameter_count_b != null && (
         <MemoryPlanner
           modelId={entry.model_id}
@@ -187,7 +187,7 @@ function ExpandedPanel({
         />
       )}
 
-      {/* Quantization options — grouped by fidelity, best one flagged */}
+      {/* Quantization options - grouped by fidelity, best one flagged */}
       {entry.model_meta.available_quantizations.length > 0 && (
         <div className="space-y-1.5">
           <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
@@ -325,7 +325,7 @@ function ModelRow({
           </div>
         </div>
 
-        {/* Will-it-run verdict — led prominently (our differentiator) */}
+        {/* Will-it-run verdict - led prominently (our differentiator) */}
         {re && (
           <div className="hidden shrink-0 flex-col items-end gap-0.5 sm:flex">
             {re.verdict ? (
@@ -376,7 +376,7 @@ function HardwareStrip({ hw }: { hw: DiscoverHardware }) {
   return (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl border border-zinc-800 bg-zinc-900/60 px-4 py-2.5 text-xs">
       <span className="text-zinc-500">
-        CPU <span className="text-zinc-300 font-mono">{hw.cpu || hw.os || "—"}</span>
+        CPU <span className="text-zinc-300 font-mono">{hw.cpu || hw.os || "-"}</span>
       </span>
       <span className="text-zinc-700">│</span>
       <span className="text-zinc-500">
@@ -502,7 +502,7 @@ export function DiscoverTab() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fetchedAt, setFetchedAt] = useState<number | null>(null);
-  const [elapsed, setElapsed] = useState<string>("—");
+  const [elapsed, setElapsed] = useState<string>("-");
   const [showCopy, setShowCopy] = useState(false);
   const [pullTarget, setPullTarget] = useState<DiscoverEntry | null>(null);
   // Hosted demo (HF Space): the probe reads the server, not the visitor's device.

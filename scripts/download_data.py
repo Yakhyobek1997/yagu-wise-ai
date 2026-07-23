@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dataset downloader for Auralynq.
+"""Dataset downloader for YaguWiseAi.
 
 Downloads small evaluation/demo corpora via Hugging Face ``datasets`` when
 available, with ``--sample`` (default) and ``--full`` modes, caching, and
@@ -25,10 +25,10 @@ import wave
 from pathlib import Path
 from typing import Any
 
-from auralynq.config import get_settings
-from auralynq.telemetry import configure_logging, get_logger
+from yaguwiseai.config import get_settings
+from yaguwiseai.telemetry import configure_logging, get_logger
 
-_log = get_logger("auralynq.data")
+_log = get_logger("yaguwiseai.data")
 
 # Text multi-hop QA datasets (HF ids). Each entry is best-effort; failures skip.
 TEXT_DATASETS = [
@@ -77,7 +77,7 @@ _SYNTHETIC_DOCS = {
         "expansion across the knowledge graph, then flow-based pruning that allocates "
         "a resource budget from the seeds and keeps only high-flow paths. Each path is "
         "scored by reliability and rendered to text with golden-region ordering.\n\n"
-        "## Hybrid retrieval\n\nAuralynq fuses dense and sparse vectors with reciprocal "
+        "## Hybrid retrieval\n\nYaguWiseAi fuses dense and sparse vectors with reciprocal "
         "rank fusion, reranks with a cross-encoder, and applies maximal marginal "
         "relevance to remove redundancy before answering.\n"
     ),
@@ -86,8 +86,8 @@ _SYNTHETIC_DOCS = {
         "The Seine river flows through Paris. Berlin is the capital of Germany, which is "
         "also in Europe. The Rhine flows through Germany.\n"
     ),
-    "auralynq.md": (
-        "# Auralynq\n\nAuralynq is a local-first agentic voice RAG platform. It ingests "
+    "yaguwiseai.md": (
+        "# YaguWiseAi\n\nYaguWiseAi is a local-first agentic voice RAG platform. It ingests "
         "documents and audio, builds a hybrid vector index in Qdrant and a relational "
         "knowledge graph, and answers questions through an adaptive agent that routes "
         "simple queries to hybrid retrieval and multi-hop queries to PathRAG. Answers "
@@ -119,10 +119,10 @@ _SYNTHETIC_GOLDEN = [
     },
     {
         "id": "q4",
-        "question": "What does Auralynq use to remove redundant retrieved chunks?",
+        "question": "What does YaguWiseAi use to remove redundant retrieved chunks?",
         "answer": "Maximal marginal relevance.",
         "type": "single",
-        "supporting": ["auralynq.md"],
+        "supporting": ["yaguwiseai.md"],
     },
     {
         "id": "q5",
@@ -162,7 +162,7 @@ def _write_synthetic_audio(corpus: Path) -> dict[str, Any]:
                 "start_s": 3.6,
                 "end_s": 6.0,
                 "speaker": "SPEAKER_01",
-                "text": "Auralynq cites answers with speaker labels and timestamps.",
+                "text": "YaguWiseAi cites answers with speaker labels and timestamps.",
             },
         ],
     }
@@ -187,7 +187,7 @@ def _write_synthetic(dirs: dict[str, Path]) -> dict[str, Any]:
                     {
                         "audio": "lecture_pathrag.wav",
                         "reference": "PathRAG performs flow based pruning of relational paths "
-                        "in the knowledge graph. Auralynq cites answers with "
+                        "in the knowledge graph. YaguWiseAi cites answers with "
                         "speaker labels and timestamps.",
                     }
                 ],
@@ -204,7 +204,7 @@ def _try_hf_text(spec: dict, n: int, dirs: Path) -> dict[str, Any] | None:
     try:
         from datasets import load_dataset
     except ImportError:
-        _log.info("data.datasets_missing", note="install auralynq[eval] for HF datasets")
+        _log.info("data.datasets_missing", note="install yaguwiseai[eval] for HF datasets")
         return None
     try:  # pragma: no cover - network path
         ds = load_dataset(spec["hf"], spec["config"], split=f"{spec['split']}[:{n}]")
@@ -261,7 +261,7 @@ def download(sample: bool = True, full: bool = False) -> dict[str, Any]:
 
     # Best-effort HF augmentation. HF docs land in a *separate* corpus dir so the
     # default index/eval run on the curated synthetic corpus (clean, matches the
-    # frozen golden set). Point AURALYNQ at data/corpus_hf for larger experiments.
+    # frozen golden set). Point YAGUWISEAI at data/corpus_hf for larger experiments.
     extra_golden: list[dict] = []
     for spec in TEXT_DATASETS:
         info = _try_hf_text(spec, n, dirs["corpus_hf"])
@@ -290,7 +290,7 @@ def download(sample: bool = True, full: bool = False) -> dict[str, Any]:
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Download Auralynq datasets.")
+    ap = argparse.ArgumentParser(description="Download YaguWiseAi datasets.")
     ap.add_argument("--sample", action="store_true", default=True, help="small sample (default)")
     ap.add_argument("--full", action="store_true", help="larger subsets")
     args = ap.parse_args()

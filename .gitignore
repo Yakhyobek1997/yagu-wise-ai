@@ -1,5 +1,5 @@
 # =========================
-# Auralynq - Git ignore
+# YaguWiseAi - Git ignore
 # =========================
 
 # Local project prompt / private planning
@@ -68,8 +68,8 @@ reports/*
 models/
 # ...but the research Ollama-profiles *source package* is code, not weights.
 # Un-ignore only the .py source (not __pycache__/*.pyc, which stay ignored):
-!auralynq/research/models/
-!auralynq/research/models/*.py
+!yaguwiseai/research/models/
+!yaguwiseai/research/models/*.py
 model_cache/
 .cache/
 .huggingface/
@@ -103,7 +103,7 @@ docs/paper/
 data/research/
 
 # Research code, configs, scripts, tests — local only
-auralynq/research/
+yaguwiseai/research/
 configs/research/
 scripts/research/
 tests/test_research.py

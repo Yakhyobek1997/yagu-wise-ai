@@ -1,5 +1,5 @@
 // Structural guards for the demo/offline deployment banner (Part 8). Same
-// dependency-free, source-level approach as ui.test.mjs — asserts the banner
+// dependency-free, source-level approach as ui.test.mjs - asserts the banner
 // and its backing deploymentMode() helper compose the required states without
 // needing a DOM or a running backend.
 import assert from "node:assert/strict";

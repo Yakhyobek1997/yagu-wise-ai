@@ -1,6 +1,6 @@
-# Auralynq Demo Corpus
+# YaguWiseAi Demo Corpus
 
-A small, deliberately safe corpus for trying Auralynq end-to-end — locally,
+A small, deliberately safe corpus for trying YaguWiseAi end-to-end — locally,
 in CI, or in a future Hugging Face Space — without needing any real
 documents, paid API keys, or GPU.
 
@@ -8,7 +8,7 @@ documents, paid API keys, or GPU.
 
 ```
 docs/
-  auralynq-overview.md            # Markdown, includes a comparison table
+  yaguwiseai-overview.md            # Markdown, includes a comparison table
   visual-grounding-notes.txt      # plain text
   sample-benchmark-report.pdf     # PDF with two real tables (visual grounding target)
 questions.json                    # 11 demo questions (machine-readable)
@@ -44,7 +44,7 @@ make demo-query      # ask every question in questions.json, print grounded answ
 
 This runs in the fully-offline $0 configuration by default (hash embeddings,
 in-memory vector store, extractive LLM) — no keys, no GPU, no downloads.
-Install `auralynq[embeddings]` and/or set a real `AURALYNQ_LLM__PROVIDER`
+Install `yaguwiseai[embeddings]` and/or set a real `YAGUWISEAI_LLM__PROVIDER`
 for higher-quality answers over the same corpus.
 
 To try it through the web UI instead: run `make demo-data && make demo-index`,

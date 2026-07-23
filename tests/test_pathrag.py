@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import pytest
-from auralynq.embeddings import get_embedder
-from auralynq.ingest.models import Chunk, SourceType
-from auralynq.retrieval.pathrag.builder import build_from_chunks
-from auralynq.retrieval.pathrag.retriever import PathRAGRetriever
-from auralynq.vectorstore.memory_store import MemoryStore
+from yaguwiseai.embeddings import get_embedder
+from yaguwiseai.ingest.models import Chunk, SourceType
+from yaguwiseai.retrieval.pathrag.builder import build_from_chunks
+from yaguwiseai.retrieval.pathrag.retriever import PathRAGRetriever
+from yaguwiseai.vectorstore.memory_store import MemoryStore
 
 
 @pytest.fixture
@@ -70,7 +70,7 @@ def test_pathrag_flow_pruning_bounds_paths(graph_and_store):
 
 
 def test_pathrag_empty_graph_is_safe(tmp_path):
-    from auralynq.retrieval.pathrag.graph import KnowledgeGraph
+    from yaguwiseai.retrieval.pathrag.graph import KnowledgeGraph
 
     r = PathRAGRetriever(KnowledgeGraph(), store=MemoryStore(path=tmp_path / "ms"))
     res = r.retrieve("anything at all", k=5)

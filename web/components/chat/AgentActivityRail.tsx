@@ -217,14 +217,14 @@ export function AgentActivityRail({
       {/* idle state */}
       {isIdle && (
         <p className="text-xs text-fg3">
-          Ready — ask a question to see agent activity.
+          Ready - ask a question to see agent activity.
         </p>
       )}
 
       {/* corpus empty state */}
       {phase === "corpus_empty" && (
         <p className="text-xs text-fg3">
-          No corpus indexed — upload documents to enable retrieval.
+          No corpus indexed - upload documents to enable retrieval.
         </p>
       )}
 
@@ -287,7 +287,7 @@ export function AgentActivityRail({
             </p>
           )}
 
-          {/* mini trace timeline — only when done */}
+          {/* mini trace timeline - only when done */}
           {isDone && traceSteps.length > 0 && (
             <TraceMiniTimeline steps={traceSteps} active={streaming} />
           )}
@@ -295,14 +295,14 @@ export function AgentActivityRail({
           {/* abstained note */}
           {phase === "abstained" && (
             <p className="inline-flex items-center gap-1 text-[11px] text-warn">
-              <Ban className="h-3 w-3 shrink-0" aria-hidden /> Insufficient evidence — Auralynq abstained rather than hallucinate.
+              <Ban className="h-3 w-3 shrink-0" aria-hidden /> Insufficient evidence - YaguWiseAi abstained rather than hallucinate.
             </p>
           )}
 
           {/* system route note */}
           {phase === "system_route" && (
             <p className="text-[11px] text-fg3">
-              ℹ Answered from system metadata — retrieval skipped.
+              ℹ Answered from system metadata - retrieval skipped.
             </p>
           )}
         </div>

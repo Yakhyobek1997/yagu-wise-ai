@@ -5,7 +5,7 @@
 // next/server or undici.
 
 // Gateway-class statuses mean "the upstream is down / cannot serve", as opposed
-// to a 4xx (bad request) or a plain 500 (upstream is up but the app errored) —
+// to a 4xx (bad request) or a plain 500 (upstream is up but the app errored) -
 // only these trigger failover, so we never mask real application bugs.
 export const FAILOVER_STATUSES: ReadonlySet<number> = new Set([502, 503, 504]);
 
@@ -22,7 +22,7 @@ export type Upstream = {
 const trim = (u: string): string => u.replace(/\/+$/, "");
 
 // Build the ordered upstream list. The fallback is appended only when it is set
-// and distinct from the primary, so a missing/duplicate AURALYNQ_API_FALLBACK is
+// and distinct from the primary, so a missing/duplicate YAGUWISEAI_API_FALLBACK is
 // a no-op and the proxy behaves exactly as before (single upstream, no buffering).
 export function resolveUpstreams(
   primary: string,

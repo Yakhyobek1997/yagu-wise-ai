@@ -79,7 +79,7 @@ function HighlightBox({
     <div
       role="button"
       tabIndex={0}
-      aria-label={`Citation [${ev.citation_id}] — ${ev.block_type}`}
+      aria-label={`Citation [${ev.citation_id}] - ${ev.block_type}`}
       style={{
         position: "absolute",
         left: `${(x0 * 100).toFixed(3)}%`,

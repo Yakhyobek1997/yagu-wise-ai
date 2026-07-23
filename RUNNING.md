@@ -1,4 +1,4 @@
-# Running Auralynq
+# Running YaguWiseAi
 
 Two ways to run: **containers (Podman)** for a full production-shaped stack, or
 **local CLI/dev** at $0. Below covers both, plus deploying to a **different
@@ -18,7 +18,7 @@ machine**. Podman only — no Docker, no sudo required.
 The stack is normally already running. Otherwise:
 
 ```bash
-cd /home/mhamdan/Auralynq
+cd /home/mhamdan/YaguWiseAi
 make stack-up      # start;  make stack-down to stop
 ```
 
@@ -63,7 +63,7 @@ Clone the repo (or copy just `compose.yml`, `containers/Caddyfile`,
 `scripts/`, `Makefile`):
 
 ```bash
-git clone https://github.com/MHHamdan/Auralynq.git && cd Auralynq
+git clone https://github.com/MHHamdan/YaguWiseAi.git && cd YaguWiseAi
 ```
 
 ### Step 2 — create `.env` (git-ignored; never commit it)
@@ -73,24 +73,24 @@ Replace `<SERVER>` with the new machine's IP **or** domain, and set your keys
 ```bash
 cat > .env <<'EOF'
 # --- where browsers reach it ---
-AURALYNQ_HTTPS_PORT=8443
-AURALYNQ_CERT_HOST=<SERVER>                       # IP or domain (cert SAN)
-AURALYNQ_SITE_ADDRESS=:8443                       # or https://your.domain (Let's Encrypt)
-AURALYNQ_SERVE__CORS_ORIGINS=["https://<SERVER>:8443"]
+YAGUWISEAI_HTTPS_PORT=8443
+YAGUWISEAI_CERT_HOST=<SERVER>                       # IP or domain (cert SAN)
+YAGUWISEAI_SITE_ADDRESS=:8443                       # or https://your.domain (Let's Encrypt)
+YAGUWISEAI_SERVE__CORS_ORIGINS=["https://<SERVER>:8443"]
 NEXT_PUBLIC_API_BASE=/api                         # browser → same-origin proxy
-AURALYNQ_BIND_INTERNAL=127.0.0.1                  # internal services off the public NIC
+YAGUWISEAI_BIND_INTERNAL=127.0.0.1                  # internal services off the public NIC
 
 # --- run the PUBLISHED images from GHCR (no local build needed) ---
-AURALYNQ_IMAGE_PREFIX=ghcr.io/mhhamdan/auralynq-
-AURALYNQ_IMAGE_TAG=0.1.0
+YAGUWISEAI_IMAGE_PREFIX=ghcr.io/mhhamdan/yaguwiseai-
+YAGUWISEAI_IMAGE_TAG=0.1.0
 
 # --- providers (all optional; degrade to local fallbacks) ---
-AURALYNQ_LLM__PROVIDER=cohere                     # or: auto | ollama | extractive
+YAGUWISEAI_LLM__PROVIDER=cohere                     # or: auto | ollama | extractive
 COHERE_API_KEY=...                                # your key(s)
 # OPENAI_API_KEY= / ANTHROPIC_API_KEY= / HUGGINGFACE_TOKEN=
 
 # --- API auth (recommended when public). Empty = open ---
-AURALYNQ_SERVE__API_KEY=<openssl rand -hex 24>
+YAGUWISEAI_SERVE__API_KEY=<openssl rand -hex 24>
 EOF
 ```
 
@@ -104,24 +104,24 @@ Browse to **https://<SERVER>:8443**.
 - **UI**: the Ingest panel → upload a PDF/DOCX/TXT/audio.
 - **CLI**:
   ```bash
-  podman cp mydoc.pdf auralynq-api:/app/data/corpus/
-  podman exec auralynq-api auralynq index --input /app/data/corpus
+  podman cp mydoc.pdf yaguwiseai-api:/app/data/corpus/
+  podman exec yaguwiseai-api yaguwiseai index --input /app/data/corpus
   ```
 
 ### The one gotcha: TLS cert on a new host
-The Caddy image bakes a **self-signed cert** whose SAN is `AURALYNQ_CERT_HOST`.
-The GHCR `auralynq-caddy` image was built with `localhost`, so on a new IP the
+The Caddy image bakes a **self-signed cert** whose SAN is `YAGUWISEAI_CERT_HOST`.
+The GHCR `yaguwiseai-caddy` image was built with `localhost`, so on a new IP the
 browser shows a cert warning (functionally fine — click *Advanced → Proceed*).
 For a clean cert, pick one:
 
 - **Self-signed for your IP** — rebuild just caddy locally (needs the repo):
   ```bash
-  AURALYNQ_CERT_HOST=<SERVER> podman build -t auralynq-caddy:0.1.0 \
+  YAGUWISEAI_CERT_HOST=<SERVER> podman build -t yaguwiseai-caddy:0.1.0 \
     -f containers/caddy.Dockerfile .
-  # then drop AURALYNQ_IMAGE_PREFIX for caddy, or retag/push your own
+  # then drop YAGUWISEAI_IMAGE_PREFIX for caddy, or retag/push your own
   ```
-- **Trusted (real domain)** — set `AURALYNQ_SITE_ADDRESS=https://your.domain`
-  and `AURALYNQ_TLS=internal`; Caddy auto-provisions Let's Encrypt (needs the
+- **Trusted (real domain)** — set `YAGUWISEAI_SITE_ADDRESS=https://your.domain`
+  and `YAGUWISEAI_TLS=internal`; Caddy auto-provisions Let's Encrypt (needs the
   domain's DNS → this host and ports 80/443 reachable).
 
 ### Rootless networking note
@@ -139,32 +139,32 @@ the UI **transparently fail over to the remote server** when the laptop's own AP
 is down (ADR-0020). Because it's your laptop, `localhost` works in the browser.
 
 ```bash
-git clone https://github.com/MHHamdan/Auralynq.git && cd Auralynq
+git clone https://github.com/MHHamdan/YaguWiseAi.git && cd YaguWiseAi
 
 cat > .env <<'EOF'
 # --- browser reaches the laptop locally ---
-AURALYNQ_HTTPS_PORT=8443
-AURALYNQ_CERT_HOST=localhost
-AURALYNQ_SITE_ADDRESS=:8443
-AURALYNQ_SERVE__CORS_ORIGINS=["https://localhost:8443"]
+YAGUWISEAI_HTTPS_PORT=8443
+YAGUWISEAI_CERT_HOST=localhost
+YAGUWISEAI_SITE_ADDRESS=:8443
+YAGUWISEAI_SERVE__CORS_ORIGINS=["https://localhost:8443"]
 NEXT_PUBLIC_API_BASE=/api
-AURALYNQ_BIND_INTERNAL=127.0.0.1
+YAGUWISEAI_BIND_INTERNAL=127.0.0.1
 
 # --- all your providers (real keys) ---
-AURALYNQ_LLM__PROVIDER=cohere
+YAGUWISEAI_LLM__PROVIDER=cohere
 COHERE_API_KEY=...
 OPENAI_API_KEY=...
 ANTHROPIC_API_KEY=...
 HUGGINGFACE_TOKEN=hf_...
-AURALYNQ_RERANK__PROVIDER=auto          # uses Cohere rerank when COHERE_API_KEY is set
+YAGUWISEAI_RERANK__PROVIDER=auto          # uses Cohere rerank when COHERE_API_KEY is set
 
 # --- API auth for the laptop's own API (any value; server re-injects its own) ---
-AURALYNQ_SERVE__API_KEY=...
+YAGUWISEAI_SERVE__API_KEY=...
 
 # --- automatic failover to the server backup ---
-AURALYNQ_API_FALLBACK=https://<your-server-ip>:8443/api
-AURALYNQ_API_FALLBACK_INSECURE_TLS=1    # server uses a self-signed cert
-AURALYNQ_API_PRIMARY_TIMEOUT_MS=12000   # time-to-first-byte before failing over
+YAGUWISEAI_API_FALLBACK=https://<your-server-ip>:8443/api
+YAGUWISEAI_API_FALLBACK_INSECURE_TLS=1    # server uses a self-signed cert
+YAGUWISEAI_API_PRIMARY_TIMEOUT_MS=12000   # time-to-first-byte before failing over
 EOF
 
 make stack-up        # build + start the 7-service stack locally
@@ -178,24 +178,24 @@ answers anyway — no URL change, streaming and auth preserved.
 ```bash
 # normal: served locally
 curl -sk -D- -o/dev/null -X POST https://localhost:8443/api/query \
-  -H 'content-type: application/json' -d '{"question":"hi"}' | grep -i x-auralynq-upstream
-#   x-auralynq-upstream: primary
+  -H 'content-type: application/json' -d '{"question":"hi"}' | grep -i x-yaguwiseai-upstream
+#   x-yaguwiseai-upstream: primary
 
-podman stop auralynq-api          # simulate the laptop backend going down
+podman stop yaguwiseai-api          # simulate the laptop backend going down
 curl -sk -D- -o/dev/null -X POST https://localhost:8443/api/query \
-  -H 'content-type: application/json' -d '{"question":"hi"}' | grep -i x-auralynq-upstream
-#   x-auralynq-upstream: fallback   <-- answered by the server
+  -H 'content-type: application/json' -d '{"question":"hi"}' | grep -i x-yaguwiseai-upstream
+#   x-yaguwiseai-upstream: fallback   <-- answered by the server
 
-podman start auralynq-api         # back to local
+podman start yaguwiseai-api         # back to local
 ```
 
-> The `x-auralynq-upstream` response header (`primary` | `fallback` | `none`) tells
+> The `x-yaguwiseai-upstream` response header (`primary` | `fallback` | `none`) tells
 > you which backend served any request. Failover triggers on a connection
 > error/timeout or a 502/503/504 — never on a 4xx/500, so real app errors aren't masked.
 >
 > Notes: the failover replays the request body, so it buffers POST bodies in the web
 > container (fine for queries; large ingests use more memory). The laptop's
-> `AURALYNQ_SERVE__API_KEY` need not match the server's — the fallback goes through
+> `YAGUWISEAI_SERVE__API_KEY` need not match the server's — the fallback goes through
 > the server's `/api` proxy, which overwrites it with the server's own key.
 
 ---
@@ -203,7 +203,7 @@ podman start auralynq-api         # back to local
 ## 2. Full production stack on THIS machine (from source)
 
 ```bash
-cd /home/mhamdan/Auralynq
+cd /home/mhamdan/YaguWiseAi
 make images          # build api/web/caddy locally (versioned + OCI labels)
 make stack-up        # start; make stack-down to stop; make stack-logs to tail
 ```
@@ -225,16 +225,16 @@ podman-compose -f compose.yml down && make stack-up
 make setup                 # uv venv + light deps
 make data && make index    # sample corpus → index
 make demo                  # end-to-end: typed + voice, prints cited answers
-auralynq ask "How does PathRAG prune relational paths?"
-auralynq serve             # FastAPI on :8000
-auralynq-mcp               # MCP server over stdio (Claude Desktop, IDEs)
+yaguwiseai ask "How does PathRAG prune relational paths?"
+yaguwiseai serve             # FastAPI on :8000
+yaguwiseai-mcp               # MCP server over stdio (Claude Desktop, IDEs)
 ```
 
-Or run the API and web UI as two explicit dev processes (no `auralynq serve`
+Or run the API and web UI as two explicit dev processes (no `yaguwiseai serve`
 wrapper, useful when iterating on the frontend):
 
 ```bash
-python -m uvicorn auralynq.serving.app:app --host 0.0.0.0 --port 8000
+python -m uvicorn yaguwiseai.serving.app:app --host 0.0.0.0 --port 8000
 
 cd web
 NEXT_PUBLIC_API_BASE=http://localhost:8000/api npm run dev -- --hostname 0.0.0.0 --port 3000

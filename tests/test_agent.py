@@ -1,16 +1,16 @@
 from __future__ import annotations
 
 import pytest
-from auralynq.agent.cache import SemanticCache
-from auralynq.agent.runner import answer_question, stream_answer_question
-from auralynq.pipeline import build_index
+from yaguwiseai.agent.cache import SemanticCache
+from yaguwiseai.agent.runner import answer_question, stream_answer_question
+from yaguwiseai.pipeline import build_index
 
 
 @pytest.fixture
 def indexed(corpus_dir):
     build_index(corpus_dir)
     # caches are process-global; clear between tests
-    from auralynq.agent import runner
+    from yaguwiseai.agent import runner
 
     runner._CACHE.clear()
     return corpus_dir

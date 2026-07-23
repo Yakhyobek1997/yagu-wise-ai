@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { ChatPreview } from "@/components/landing/ChatPreview";
 
-const REPO = "https://github.com/MHHamdan/Auralynq";
+const REPO = "https://github.com/MHHamdan/YaguWiseAi";
 
-// Trust / value badges — the product promise at a glance.
+// Trust / value badges - the product promise at a glance.
 const BADGES = [
   "Local-first",
   "$0 default",
@@ -48,8 +48,8 @@ export function Hero() {
             observable AI pipelines.
           </p>
           <p className="mt-3 max-w-xl leading-relaxed text-fg3">
-            Ask by text or voice and get cited, evidence-grounded answers — with the full retrieval
-            trace visible — running entirely on your own machine, at zero cost by default.
+            Ask by text or voice and get cited, evidence-grounded answers - with the full retrieval
+            trace visible - running entirely on your own machine, at zero cost by default.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">

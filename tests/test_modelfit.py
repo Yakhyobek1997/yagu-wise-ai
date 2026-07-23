@@ -1,4 +1,4 @@
-"""Tests for Auralynq ModelFit Index.
+"""Tests for YaguWiseAi ModelFit Index.
 
 Coverage:
 - Hardware profiler (with and without GPU)
@@ -14,19 +14,19 @@ Coverage:
 from __future__ import annotations
 
 import pytest
-from auralynq.modelfit.benchmark_runner import preview_benchmark
-from auralynq.modelfit.community import validate_community_result
-from auralynq.modelfit.hardware import HardwareProfile, probe_hardware
-from auralynq.modelfit.hf_catalog import get_static_hf_catalog
-from auralynq.modelfit.model_metadata import ModelMetadata
-from auralynq.modelfit.model_registry import ModelRegistry
-from auralynq.modelfit.ollama_catalog import get_static_catalog
-from auralynq.modelfit.resource_estimator import (
+from yaguwiseai.modelfit.benchmark_runner import preview_benchmark
+from yaguwiseai.modelfit.community import validate_community_result
+from yaguwiseai.modelfit.hardware import HardwareProfile, probe_hardware
+from yaguwiseai.modelfit.hf_catalog import get_static_hf_catalog
+from yaguwiseai.modelfit.model_metadata import ModelMetadata
+from yaguwiseai.modelfit.model_registry import ModelRegistry
+from yaguwiseai.modelfit.ollama_catalog import get_static_catalog
+from yaguwiseai.modelfit.resource_estimator import (
     estimate_resources,
     estimate_vram_gb,
     recommend_quantization,
 )
-from auralynq.modelfit.scoring import BenchmarkSnapshot, score_model
+from yaguwiseai.modelfit.scoring import BenchmarkSnapshot, score_model
 
 # ── Hardware profiler ─────────────────────────────────────────────────────────
 
@@ -51,7 +51,7 @@ def test_hardware_profile_no_gpu():
 
 
 def test_hardware_profile_with_gpu():
-    from auralynq.modelfit.hardware import GPUInfo
+    from yaguwiseai.modelfit.hardware import GPUInfo
 
     gpu = GPUInfo(vendor="nvidia", name="RTX 4090", vram_gb=24.0, backend="cuda")
     hw = HardwareProfile(
@@ -180,7 +180,7 @@ def test_estimate_resources_dict_schema():
 
 
 def _make_hw(vram_gb: float = 12.0, ram_gb: float = 32.0) -> HardwareProfile:
-    from auralynq.modelfit.hardware import GPUInfo
+    from yaguwiseai.modelfit.hardware import GPUInfo
 
     gpu = GPUInfo("nvidia", "RTX 3060", vram_gb, "cuda")
     return HardwareProfile(
@@ -300,10 +300,10 @@ def _valid_community_entry() -> dict:
             "ram_gb": 32,
             "gpus": [{"vendor": "nvidia", "name": "RTX 3090", "vram_gb": 24}],
         },
-        "benchmark_version": "auralynq-modelfit-0.1",
+        "benchmark_version": "yaguwiseai-modelfit-0.1",
         "task": "rag",
         "date": "2026-06-23",
-        "source": "auralynq-benchmark-runner",
+        "source": "yaguwiseai-benchmark-runner",
         "tok_per_sec": 28.4,
     }
 
@@ -349,7 +349,7 @@ def test_community_sensitive_hardware_rejected():
 
 
 def test_community_save_strips_secrets(tmp_path, monkeypatch):
-    import auralynq.modelfit.community as comm
+    import yaguwiseai.modelfit.community as comm
 
     monkeypatch.setattr(comm, "_COMMUNITY_DIR", tmp_path)
     entry = _valid_community_entry()
@@ -412,7 +412,7 @@ def test_static_hf_catalog_has_required_fields():
 
 
 def test_query_response_schema_has_model_fit_field():
-    from auralynq.serving.schemas import QueryResponse
+    from yaguwiseai.serving.schemas import QueryResponse
 
     r = QueryResponse(answer="test")
     assert hasattr(r, "model_fit")
@@ -433,8 +433,8 @@ def test_score_dict_has_estimate_used_flag():
 
 def test_community_benchmark_not_injected_without_verified_data(monkeypatch):
     """_lookup_community_benchmark returns None when no verified results exist."""
-    import auralynq.modelfit.community as comm
-    from auralynq.modelfit.scoring import _lookup_community_benchmark
+    import yaguwiseai.modelfit.community as comm
+    from yaguwiseai.modelfit.scoring import _lookup_community_benchmark
 
     monkeypatch.setattr(
         comm, "_COMMUNITY_DIR", comm._COMMUNITY_DIR.__class__("/tmp/nonexistent_modelfit_dir_xyz")
@@ -445,8 +445,8 @@ def test_community_benchmark_not_injected_without_verified_data(monkeypatch):
 
 def test_score_model_community_warning_present(monkeypatch):
     """When community data is injected, warnings mention 'community'."""
-    import auralynq.modelfit.scoring as scoring
-    from auralynq.modelfit.scoring import BenchmarkSnapshot
+    import yaguwiseai.modelfit.scoring as scoring
+    from yaguwiseai.modelfit.scoring import BenchmarkSnapshot
 
     fake_bench = BenchmarkSnapshot(avg_tok_per_sec=30.0, is_measured=True)
 
@@ -460,7 +460,7 @@ def test_score_model_community_warning_present(monkeypatch):
 
 def test_score_model_community_data_disabled(monkeypatch):
     """use_community_data=False skips community lookup."""
-    import auralynq.modelfit.scoring as scoring
+    import yaguwiseai.modelfit.scoring as scoring
 
     called = []
     monkeypatch.setattr(
@@ -477,7 +477,7 @@ def test_score_model_community_data_disabled(monkeypatch):
 
 
 def test_rag_bench_groundedness_with_overlap():
-    from auralynq.modelfit.rag_bench import _simple_groundedness
+    from yaguwiseai.modelfit.rag_bench import _simple_groundedness
 
     answer = "The document discusses climate change and temperature trends."
     contexts = ["This report covers climate change impacts including temperature trends globally."]
@@ -486,28 +486,28 @@ def test_rag_bench_groundedness_with_overlap():
 
 
 def test_rag_bench_groundedness_zero_when_no_context():
-    from auralynq.modelfit.rag_bench import _simple_groundedness
+    from yaguwiseai.modelfit.rag_bench import _simple_groundedness
 
     g = _simple_groundedness("Any answer", [])
     assert g == 0.0
 
 
 def test_rag_bench_groundedness_zero_empty_answer():
-    from auralynq.modelfit.rag_bench import _simple_groundedness
+    from yaguwiseai.modelfit.rag_bench import _simple_groundedness
 
     g = _simple_groundedness("", ["some context"])
     assert g == 0.0
 
 
 def test_rag_bench_citation_coverage_no_citations():
-    from auralynq.modelfit.rag_bench import _citation_coverage_score
+    from yaguwiseai.modelfit.rag_bench import _citation_coverage_score
 
     score = _citation_coverage_score([], ["some context"])
     assert score == 0.0
 
 
 def test_rag_bench_citation_coverage_match():
-    from auralynq.modelfit.rag_bench import _citation_coverage_score
+    from yaguwiseai.modelfit.rag_bench import _citation_coverage_score
 
     contexts = ["report.pdf\nBody of text"]
     citations = [{"source": "report.pdf"}]
@@ -516,7 +516,7 @@ def test_rag_bench_citation_coverage_match():
 
 
 def test_rag_bench_is_abstention():
-    from auralynq.modelfit.rag_bench import _is_abstention
+    from yaguwiseai.modelfit.rag_bench import _is_abstention
 
     assert _is_abstention("I don't have enough evidence to answer this question.")
     assert _is_abstention("There is no relevant evidence in the indexed documents.")
@@ -524,7 +524,7 @@ def test_rag_bench_is_abstention():
 
 
 def test_rag_bench_metrics_dataclass():
-    from auralynq.modelfit.rag_bench import RAGBenchMetrics
+    from yaguwiseai.modelfit.rag_bench import RAGBenchMetrics
 
     m = RAGBenchMetrics(groundedness=0.7, citation_coverage=0.5, abstention_accuracy=0.8)
     d = m.to_dict()
@@ -538,14 +538,14 @@ def test_rag_bench_metrics_dataclass():
 
 
 def test_build_modelfit_snapshot_cloud_returns_none():
-    from auralynq.agent.runner import _build_modelfit_snapshot
+    from yaguwiseai.agent.runner import _build_modelfit_snapshot
 
     result = _build_modelfit_snapshot("openai", "gpt-4")
     assert result is None  # cloud providers not covered
 
 
 def test_build_modelfit_snapshot_unknown_model():
-    from auralynq.agent.runner import _build_modelfit_snapshot
+    from yaguwiseai.agent.runner import _build_modelfit_snapshot
 
     # 'slm:totally-unknown-model-xyz' won't be in registry
     result = _build_modelfit_snapshot("slm", "totally-unknown-model-xyz")
@@ -555,7 +555,7 @@ def test_build_modelfit_snapshot_unknown_model():
 
 
 def test_answer_result_has_model_fit_field():
-    from auralynq.agent.runner import AnswerResult
+    from yaguwiseai.agent.runner import AnswerResult
 
     r = AnswerResult(answer="test")
     assert hasattr(r, "model_fit")
@@ -566,13 +566,13 @@ def test_answer_result_has_model_fit_field():
 
 
 def test_cli_module_importable():
-    from auralynq.modelfit import cli
+    from yaguwiseai.modelfit import cli
 
     assert hasattr(cli, "app") or hasattr(cli, "main")
 
 
 def test_cli_has_hardware_command():
-    from auralynq.modelfit.cli import app
+    from yaguwiseai.modelfit.cli import app
 
     # Typer sets name=None until registration; callback.__name__ holds the function name
     command_names = [
@@ -582,7 +582,7 @@ def test_cli_has_hardware_command():
 
 
 def test_cli_has_benchmark_command():
-    from auralynq.modelfit.cli import app
+    from yaguwiseai.modelfit.cli import app
 
     command_names = [
         c.name or (c.callback.__name__ if c.callback else "") for c in app.registered_commands
@@ -602,7 +602,7 @@ def test_benchmark_plan_rag_task_preview():
 
 def test_benchmark_result_rag_metrics_key_present():
     """BenchmarkResult.rag_metrics must contain citation_coverage and groundedness."""
-    from auralynq.modelfit.benchmark_runner import BenchmarkResult
+    from yaguwiseai.modelfit.benchmark_runner import BenchmarkResult
 
     r = BenchmarkResult(
         run_id="x",

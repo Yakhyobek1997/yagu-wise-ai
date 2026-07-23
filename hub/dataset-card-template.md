@@ -2,7 +2,7 @@
 # Hugging Face dataset-card metadata. Replace every <placeholder>.
 license: <spdx-id, e.g. cc0-1.0>       # MUST allow redistribution if you publish the data
 tags:
-  - auralynq
+  - yaguwiseai
   - rag
   - retrieval
 language:
@@ -14,7 +14,7 @@ pretty_name: <Human-readable dataset name>
 
 <One-paragraph description: what this dataset is, what task it supports
 (e.g. RAG eval, grounded document QA, abstention testing), and how it
-relates to Auralynq.>
+relates to YaguWiseAi.>
 
 ## Source & license
 
@@ -45,7 +45,7 @@ assigned, dedup, etc.>
 ## Visual grounding metadata (if applicable)
 
 If this dataset carries page-image / bounding-box grounding metadata for
-Auralynq's Source Workspace, document it here:
+YaguWiseAi's Source Workspace, document it here:
 
 - **Grounding fields:** <e.g. `page`, `normalized_bbox`, `block_type`>
 - **How produced:** <pdfplumber/pymupdf layout extraction at what DPI>

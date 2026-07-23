@@ -1,5 +1,5 @@
 /**
- * Auralynq ModelFit Index — frontend unit tests
+ * YaguWiseAi ModelFit Index - frontend unit tests
  * Tests API function signatures and basic logic only (no real fetch calls).
  */
 
@@ -196,7 +196,7 @@ test("BenchmarkResult: not_measured default for unfetched result", () => {
 
 test("HardwareCard: warnings array renders correctly", () => {
   const warnings = [
-    "No GPU detected — inference will use CPU only.",
+    "No GPU detected - inference will use CPU only.",
     "Low disk space: 5.0 GB free.",
   ];
   assert.ok(warnings.every((w) => typeof w === "string"));

@@ -17,7 +17,7 @@ export const DEFAULT_SETTINGS: UISettings = {
   newChatMode: "chat_only",
 };
 
-const LS_KEY = "auralynq.ui_settings.v1";
+const LS_KEY = "yaguwiseai.ui_settings.v1";
 
 export function loadSettings(): UISettings {
   try {
@@ -58,7 +58,7 @@ const INSPECTOR_WIDTH: Record<UISettings["inspectorSize"], string> = {
 
 // A free drag on the panel divider (PanelResizer) writes a pixel override here.
 // It wins over the size preset until the user picks a preset or resets the divider.
-export const INSPECTOR_OVERRIDE_KEY = "auralynq.inspectorWidth";
+export const INSPECTOR_OVERRIDE_KEY = "yaguwiseai.inspectorWidth";
 
 export function applySettings(s: UISettings) {
   const root = document.documentElement;

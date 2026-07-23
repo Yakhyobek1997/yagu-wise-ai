@@ -6,27 +6,27 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: auralynq
-  namespace: auralynq
-  labels: { app.kubernetes.io/part-of: auralynq }
+  name: yaguwiseai
+  namespace: yaguwiseai
+  labels: { app.kubernetes.io/part-of: yaguwiseai }
   annotations:
     # cert-manager.io/cluster-issuer: letsencrypt-prod   # uncomment with cert-manager
     nginx.ingress.kubernetes.io/proxy-buffering: "off"   # keep SSE/voice streaming
 spec:
   ingressClassName: nginx
   tls:
-    - hosts: ["auralynq.example.com"]
-      secretName: auralynq-tls
+    - hosts: ["yaguwiseai.example.com"]
+      secretName: yaguwiseai-tls
   rules:
-    - host: auralynq.example.com
+    - host: yaguwiseai.example.com
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
-              service: { name: auralynq-web, port: { number: 3000 } }
+              service: { name: yaguwiseai-web, port: { number: 3000 } }
           # Optional: expose remote MCP (bearer-authenticated) at /mcp
           # - path: /mcp
           #   pathType: Prefix
           #   backend:
-          #     service: { name: auralynq-mcp, port: { number: 8765 } }
+          #     service: { name: yaguwiseai-mcp, port: { number: 8765 } }

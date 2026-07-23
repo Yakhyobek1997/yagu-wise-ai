@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ============================================================================
-# Auralynq — Podman stack launcher for server 172.24.50.21
+# YaguWiseAi — Podman stack launcher for server 172.24.50.21
 #
 # Usage: ./start-podman.sh [--build] [--no-cache]
 #   --build      Force rebuild of all 3 images before starting
@@ -50,21 +50,21 @@ wait_tcp 127.0.0.1 11434 "Ollama"
 
 # ── 2. Stop dev services to free host debug ports ────────────────────────────
 info "Stopping any dev uvicorn / next.js processes …"
-pkill -f "uvicorn auralynq" 2>/dev/null && ok "dev API stopped" || true
+pkill -f "uvicorn yaguwiseai" 2>/dev/null && ok "dev API stopped" || true
 pkill -f "next.*300[01]" 2>/dev/null && ok "dev UI stopped" || true
 sleep 1
 
 # ── 3. Build images (api, web, caddy) ────────────────────────────────────────
 if [[ $DO_BUILD -eq 1 ]]; then
-  CERT_HOST="${AURALYNQ_CERT_HOST:-172.24.50.21}"
-  IMAGE_PREFIX="localhost/auralynq-"
+  CERT_HOST="${YAGUWISEAI_CERT_HOST:-172.24.50.21}"
+  IMAGE_PREFIX="localhost/yaguwiseai-"
   TAG="0.2.0"
 
   info "Building caddy image (cert host: $CERT_HOST) …"
   # MUST use `podman build` directly — `podman-compose build --no-cache` does NOT
   # propagate --no-cache into multi-stage layers for the api/web images.
   podman build $NO_CACHE \
-    --build-arg AURALYNQ_CERT_HOST="$CERT_HOST" \
+    --build-arg YAGUWISEAI_CERT_HOST="$CERT_HOST" \
     -f "$REPO/containers/caddy.Dockerfile" \
     -t "${IMAGE_PREFIX}caddy:${TAG}" \
     "$REPO"
@@ -91,7 +91,7 @@ fi
 # ── 4. CNI / dnsname prerequisite check ──────────────────────────────────────
 # podman-compose needs dnsname plugin for container-to-container DNS.
 if ! ls /usr/lib/cni/dnsname 2>/dev/null && ! ls /usr/libexec/cni/dnsname 2>/dev/null; then
-  info "WARNING: dnsname CNI plugin not found. Container DNS (auralynq-api, auralynq-qdrant …)"
+  info "WARNING: dnsname CNI plugin not found. Container DNS (yaguwiseai-api, yaguwiseai-qdrant …)"
   info "  may fail. Install: sudo apt install containernetworking-plugins"
   info "  Continuing anyway — will error if containers can't resolve peers by name."
 fi
@@ -112,7 +112,7 @@ ok "Caddy is up"
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  Auralynq (Podman) is ready"
+echo "  YaguWiseAi (Podman) is ready"
 echo ""
 echo "  Chat UI:     https://172.24.50.21:8443"
 echo "  ModelFit:    https://172.24.50.21:8443/modelfit"

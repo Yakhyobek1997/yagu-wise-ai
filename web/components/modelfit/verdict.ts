@@ -4,7 +4,7 @@ import type { Verdict } from "@/lib/modelfit";
 // Shared presentation for the estimator's will-it-run verdict, so the report
 // card, the pull modal, and the ranked rows all speak the same language.
 // Colors are design tokens (ok/info/warn/bad) so verdicts stay correct across
-// the dark / light / comfort themes — never raw palette classes.
+// the dark / light / comfort themes - never raw palette classes.
 export interface VerdictMeta {
   label: string;
   icon: LucideIcon;
@@ -32,7 +32,7 @@ export const VERDICT_META: Record<Verdict, VerdictMeta> = {
     textClass: "text-info",
   },
   runs_offload: {
-    label: "Runs with CPU offload — slower",
+    label: "Runs with CPU offload - slower",
     icon: AlertTriangle,
     badgeClass: "bg-warn/15 text-warn ring-1 ring-warn/40",
     barClass: "bg-warn",
@@ -46,7 +46,7 @@ export const VERDICT_META: Record<Verdict, VerdictMeta> = {
     textClass: "text-info",
   },
   runs_cpu_tight: {
-    label: "Runs on CPU — low RAM headroom",
+    label: "Runs on CPU - low RAM headroom",
     icon: AlertTriangle,
     badgeClass: "bg-warn/15 text-warn ring-1 ring-warn/40",
     barClass: "bg-warn",

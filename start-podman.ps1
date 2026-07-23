@@ -1,4 +1,4 @@
-# Auralynq -- Windows launcher (PowerShell)
+# YaguWiseAi -- Windows launcher (PowerShell)
 # Requires: Podman Desktop OR Docker Desktop + Ollama installed
 #
 # Usage:
@@ -67,58 +67,58 @@ Wait-Port -HostName "127.0.0.1" -Port 11434 -Name "Ollama"
 
 # ---- 2. Write Windows env file ----------------------------------------------
 $envContent = @"
-AURALYNQ_CERT_HOST=localhost
-AURALYNQ_SITE_ADDRESS=:8443
-AURALYNQ_HTTPS_PORT=8443
-AURALYNQ_TLS=/certs/site.crt /certs/site.key
-AURALYNQ_WEB_UPSTREAM=http://auralynq-web:3000
+YAGUWISEAI_CERT_HOST=localhost
+YAGUWISEAI_SITE_ADDRESS=:8443
+YAGUWISEAI_HTTPS_PORT=8443
+YAGUWISEAI_TLS=/certs/site.crt /certs/site.key
+YAGUWISEAI_WEB_UPSTREAM=http://yaguwiseai-web:3000
 
-AURALYNQ_BIND_INTERNAL=127.0.0.1
-AURALYNQ_API_PORT=8100
-AURALYNQ_QDRANT_HTTP_PORT=6433
-AURALYNQ_QDRANT_GRPC_PORT=6434
-AURALYNQ_WEB_PORT=3800
-AURALYNQ_PHOENIX_PORT=6006
-AURALYNQ_PHOENIX_OTLP_PORT=4317
-AURALYNQ_MCP_PORT=8765
+YAGUWISEAI_BIND_INTERNAL=127.0.0.1
+YAGUWISEAI_API_PORT=8100
+YAGUWISEAI_QDRANT_HTTP_PORT=6433
+YAGUWISEAI_QDRANT_GRPC_PORT=6434
+YAGUWISEAI_WEB_PORT=3800
+YAGUWISEAI_PHOENIX_PORT=6006
+YAGUWISEAI_PHOENIX_OTLP_PORT=4317
+YAGUWISEAI_MCP_PORT=8765
 
-AURALYNQ_LLM__PROVIDER=auto
-AURALYNQ_LLM__MODEL=qwen3:32b
-AURALYNQ_LLM__BASE_URL=http://host.containers.internal:11434
+YAGUWISEAI_LLM__PROVIDER=auto
+YAGUWISEAI_LLM__MODEL=qwen3:32b
+YAGUWISEAI_LLM__BASE_URL=http://host.containers.internal:11434
 
-AURALYNQ_EMBEDDING__PROVIDER=auto
-AURALYNQ_EMBEDDING__OLLAMA_MODEL=nomic-embed-text
+YAGUWISEAI_EMBEDDING__PROVIDER=auto
+YAGUWISEAI_EMBEDDING__OLLAMA_MODEL=nomic-embed-text
 
-AURALYNQ_VECTOR_URL=http://auralynq-qdrant:6333
-AURALYNQ_VECTOR_BACKEND=qdrant
+YAGUWISEAI_VECTOR_URL=http://yaguwiseai-qdrant:6333
+YAGUWISEAI_VECTOR_BACKEND=qdrant
 
-AURALYNQ_SERVE__API_KEY=
-AURALYNQ_SERVE__CORS_ORIGINS=["https://localhost:8443"]
+YAGUWISEAI_SERVE__API_KEY=
+YAGUWISEAI_SERVE__CORS_ORIGINS=["https://localhost:8443"]
 
-AURALYNQ_API_INTERNAL=http://auralynq-api:8000
-AURALYNQ_OTLP_ENDPOINT=http://auralynq-phoenix:4317
+YAGUWISEAI_API_INTERNAL=http://yaguwiseai-api:8000
+YAGUWISEAI_OTLP_ENDPOINT=http://yaguwiseai-phoenix:4317
 
 ANTHROPIC_API_KEY=
 OPENAI_API_KEY=
 COHERE_API_KEY=
 HUGGINGFACE_TOKEN=
 
-AURALYNQ_IMAGE_PREFIX=localhost/auralynq-
-AURALYNQ_IMAGE_TAG=0.2.0
+YAGUWISEAI_IMAGE_PREFIX=localhost/yaguwiseai-
+YAGUWISEAI_IMAGE_TAG=0.2.0
 "@
 Set-Content -Path $EnvFile -Value $envContent -Encoding UTF8
 Write-Host "OK  Created $EnvFile" -ForegroundColor Green
 
 # ---- 3. Build images --------------------------------------------------------
 if ($Build) {
-    $prefix = "localhost/auralynq-"
+    $prefix = "localhost/yaguwiseai-"
     $tag    = "0.2.0"
     $nc     = if ($NoCache) { "--no-cache" } else { $null }
 
     Write-Host "-> Building caddy image ..." -ForegroundColor Cyan
     $args = @("build")
     if ($nc) { $args += $nc }
-    $args += @("--build-arg", "AURALYNQ_CERT_HOST=localhost",
+    $args += @("--build-arg", "YAGUWISEAI_CERT_HOST=localhost",
                "-f", (Join-Path $Repo "containers\caddy.Dockerfile"),
                "-t", "${prefix}caddy:${tag}", $Repo)
     & $Engine @args
@@ -186,7 +186,7 @@ if ($up) {
 
 Write-Host ""
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host "  Auralynq is ready" -ForegroundColor Cyan
+Write-Host "  YaguWiseAi is ready" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "  Chat UI:    https://localhost:8443"
 Write-Host "  ModelFit:   https://localhost:8443/modelfit"

@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import pytest
-from auralynq.serving.app import _classify_corpus_intent, create_app
+from yaguwiseai.serving.app import _classify_corpus_intent, create_app
 from fastapi.testclient import TestClient
 
 
 @pytest.fixture()
 def client(tmp_path, monkeypatch):
-    monkeypatch.setenv("AURALYNQ_DATA_DIR", str(tmp_path))
+    monkeypatch.setenv("YAGUWISEAI_DATA_DIR", str(tmp_path))
     app = create_app()
     return TestClient(app, raise_server_exceptions=True)
 
@@ -156,9 +156,9 @@ def test_corpus_clear_confirm_correct_phrase(client, tmp_path):
 
 def test_corpus_clear_confirm_wipes_uploads(client, tmp_path):
     """clear_all must remove leftover files in the uploads directory."""
-    from auralynq.config import get_settings
+    from yaguwiseai.config import get_settings
 
-    # _isolated_env sets AURALYNQ_DATA_DIR = tmp_path / "data"
+    # _isolated_env sets YAGUWISEAI_DATA_DIR = tmp_path / "data"
     settings = get_settings()
     uploads_dir = settings.storage_dir / "uploads"
     uploads_dir.mkdir(parents=True, exist_ok=True)
@@ -202,9 +202,9 @@ def test_corpus_delete_doc_preview_unknown(client):
 
 def test_memory_store_delete_by_doc_id(tmp_path):
     import numpy as np
-    from auralynq.embeddings.base import EmbeddingBatch
-    from auralynq.ingest.models import Chunk, SourceType
-    from auralynq.vectorstore.memory_store import MemoryStore
+    from yaguwiseai.embeddings.base import EmbeddingBatch
+    from yaguwiseai.ingest.models import Chunk, SourceType
+    from yaguwiseai.vectorstore.memory_store import MemoryStore
 
     store = MemoryStore(path=tmp_path / "ms")
     dim = 4
@@ -245,7 +245,7 @@ def test_memory_store_delete_by_doc_id(tmp_path):
 
 
 def test_memory_store_delete_nonexistent_doc(tmp_path):
-    from auralynq.vectorstore.memory_store import MemoryStore
+    from yaguwiseai.vectorstore.memory_store import MemoryStore
 
     store = MemoryStore(path=tmp_path / "ms")
     removed = store.delete_by_doc_id("nonexistent")

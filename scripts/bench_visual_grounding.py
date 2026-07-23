@@ -5,7 +5,7 @@ citations through GroundingResolver, then tabulates how many resolve to
 `span` (exact bounding box) vs. `page` (page known, no box) vs. `unavailable`
 (needs reindex). Writes reports/visual_grounding_report.json with the same
 provenance block (git commit, timestamp, hardware) as eval/bench reports —
-see auralynq/eval/provenance.py.
+see yaguwiseai/eval/provenance.py.
 """
 
 from __future__ import annotations
@@ -14,12 +14,12 @@ import json
 from collections import Counter
 from typing import Any
 
-from auralynq.agent.runner import answer_question
-from auralynq.config import get_settings
-from auralynq.eval.datasets import load_golden
-from auralynq.eval.provenance import report_provenance
-from auralynq.eval.report import _ensure_index
-from auralynq.grounding.resolver import GroundingResolver
+from yaguwiseai.agent.runner import answer_question
+from yaguwiseai.config import get_settings
+from yaguwiseai.eval.datasets import load_golden
+from yaguwiseai.eval.provenance import report_provenance
+from yaguwiseai.eval.report import _ensure_index
+from yaguwiseai.grounding.resolver import GroundingResolver
 
 
 def run(write_report: bool = True) -> dict[str, Any]:

@@ -1,4 +1,4 @@
-// Stylized product mockup shown in the hero — "show the product", confidently.
+// Stylized product mockup shown in the hero - "show the product", confidently.
 export function ChatPreview() {
   return (
     <div className="glass relative w-full overflow-hidden p-0">
@@ -7,7 +7,7 @@ export function ChatPreview() {
         <span className="h-3 w-3 rounded-full bg-bad/70" />
         <span className="h-3 w-3 rounded-full bg-warn/70" />
         <span className="h-3 w-3 rounded-full bg-ok/70" />
-        <span className="ml-2 text-xs font-medium text-fg3">auralynq · /chat</span>
+        <span className="ml-2 text-xs font-medium text-fg3">yaguwiseai · /chat</span>
         <span className="pill pill-ok ml-auto">
           <span className="h-1.5 w-1.5 rounded-full bg-ok animate-pulse-soft" /> live
         </span>
@@ -50,7 +50,7 @@ export function ChatPreview() {
         {/* faux composer */}
         <div className="flex items-center gap-2 rounded-xl border border-edge bg-panel2 px-3 py-2 text-sm text-fg3">
           <span aria-hidden>🎙</span>
-          <span className="flex-1">Ask Auralynq…</span>
+          <span className="flex-1">Ask YaguWiseAi…</span>
           <span className="rounded-md bg-brand px-2.5 py-0.5 text-xs font-semibold text-[#06231e]">
             Ask
           </span>

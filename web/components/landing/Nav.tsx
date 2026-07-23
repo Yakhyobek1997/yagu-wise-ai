@@ -1,9 +1,11 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ArrowRight, Menu, Mic2, X } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-const REPO = "https://github.com/MHHamdan/Auralynq";
+const REPO = "https://github.com/MHHamdan/YaguWiseAi";
 
 const LINKS = [
   { href: "#features", label: "Features" },
@@ -16,35 +18,38 @@ const LINKS = [
 export function Nav() {
   const [open, setOpen] = useState(false);
 
-  // Close the mobile menu on Escape and lock body scroll while open.
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-edge bg-ink/80 backdrop-blur-xl">
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
-        <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight text-fg">
-          <span aria-hidden>🎙️</span>
+    <header className="sticky top-0 z-50 border-b border-edge bg-ink/85 backdrop-blur-xl">
+      <nav className="mx-auto flex h-16 max-w-[1536px] items-center justify-between px-4 sm:px-6 lg:px-8">
+        <Link href="/" className="flex items-center gap-2.5 text-lg font-bold tracking-tight text-fg">
+          <span className="grid h-8 w-8 place-items-center rounded-lg border border-edge bg-panel text-brand shadow-sm">
+            <Mic2 className="h-4 w-4" aria-hidden />
+          </span>
           <span>
-            <span className="text-brand">Aura</span>
-            <span className="text-brand2">lynq</span>
+            <span className="text-brand">Yagu</span>
+            <span className="text-brand2">Wise AI</span>
           </span>
         </Link>
 
         <div className="hidden items-center gap-7 text-sm font-medium text-fg2 md:flex">
-          {LINKS.map((l) => (
+          {LINKS.map((link) => (
             <a
-              key={l.href}
-              href={l.href}
-              target={l.external ? "_blank" : undefined}
-              rel={l.external ? "noopener noreferrer" : undefined}
+              key={link.href}
+              href={link.href}
+              target={link.external ? "_blank" : undefined}
+              rel={link.external ? "noopener noreferrer" : undefined}
               className="transition hover:text-fg"
             >
-              {l.label}
+              {link.label}
             </a>
           ))}
         </div>
@@ -52,44 +57,37 @@ export function Nav() {
         <div className="flex items-center gap-2">
           <ThemeToggle compact />
           <Link href="/chat" className="btn-cta hidden text-sm sm:inline-flex">
-            Launch app →
+            Launch app <ArrowRight className="h-4 w-4" />
           </Link>
           <button
             type="button"
-            onClick={() => setOpen((v) => !v)}
+            onClick={() => setOpen((value) => !value)}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             className="btn-ghost px-2.5 py-2 md:hidden"
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5" aria-hidden>
-              {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
-            </svg>
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </nav>
 
-      {/* Mobile disclosure menu */}
       {open && (
         <div className="border-t border-edge bg-ink/95 backdrop-blur-xl md:hidden">
-          <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-3">
-            {LINKS.map((l) => (
+          <div className="mx-auto flex max-w-[1536px] flex-col gap-1 px-4 py-3 sm:px-6">
+            {LINKS.map((link) => (
               <a
-                key={l.href}
-                href={l.href}
-                target={l.external ? "_blank" : undefined}
-                rel={l.external ? "noopener noreferrer" : undefined}
+                key={link.href}
+                href={link.href}
+                target={link.external ? "_blank" : undefined}
+                rel={link.external ? "noopener noreferrer" : undefined}
                 onClick={() => setOpen(false)}
                 className="rounded-lg px-3 py-2.5 text-sm font-medium text-fg2 transition hover:bg-panel2 hover:text-fg"
               >
-                {l.label}
+                {link.label}
               </a>
             ))}
-            <Link
-              href="/chat"
-              onClick={() => setOpen(false)}
-              className="btn-cta mt-2 justify-center text-sm"
-            >
-              Launch app →
+            <Link href="/chat" onClick={() => setOpen(false)} className="btn-cta mt-2 justify-center text-sm">
+              Launch app <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>

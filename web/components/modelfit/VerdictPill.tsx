@@ -1,7 +1,7 @@
 import { verdictMeta } from "@/components/modelfit/verdict";
 import type { Verdict } from "@/lib/modelfit";
 
-/** Prominent will-it-run verdict pill — the ModelFit differentiator no chat
+/** Prominent will-it-run verdict pill - the ModelFit differentiator no chat
  *  competitor ships. Icon + label, colored by the estimator's verdict. */
 export function VerdictPill({
   verdict,

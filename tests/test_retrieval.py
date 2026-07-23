@@ -1,17 +1,17 @@
 from __future__ import annotations
 
 import pytest
-from auralynq.embeddings import get_embedder
-from auralynq.ingest.models import Chunk, SourceType
-from auralynq.retrieval.hybrid.fusion import reciprocal_rank_fusion
-from auralynq.retrieval.hybrid.mmr import mmr_rerank
-from auralynq.retrieval.hybrid.reorder import lost_in_the_middle_reorder
-from auralynq.retrieval.hybrid.rerank import LexicalReranker
-from auralynq.retrieval.hybrid.retriever import HybridRetriever
-from auralynq.retrieval.models import ScoredChunk
-from auralynq.retrieval.naive import NaiveRetriever
-from auralynq.retrieval.router import Route, route_query
-from auralynq.vectorstore.memory_store import MemoryStore
+from yaguwiseai.embeddings import get_embedder
+from yaguwiseai.ingest.models import Chunk, SourceType
+from yaguwiseai.retrieval.hybrid.fusion import reciprocal_rank_fusion
+from yaguwiseai.retrieval.hybrid.mmr import mmr_rerank
+from yaguwiseai.retrieval.hybrid.reorder import lost_in_the_middle_reorder
+from yaguwiseai.retrieval.hybrid.rerank import LexicalReranker
+from yaguwiseai.retrieval.hybrid.retriever import HybridRetriever
+from yaguwiseai.retrieval.models import ScoredChunk
+from yaguwiseai.retrieval.naive import NaiveRetriever
+from yaguwiseai.retrieval.router import Route, route_query
+from yaguwiseai.vectorstore.memory_store import MemoryStore
 
 
 @pytest.fixture
@@ -61,7 +61,7 @@ def test_mmr_caches_candidate_embeddings():
     # Repeated MMR over the same candidate texts must not re-embed them: a perf
     # guard for the bounded per-text embedding cache.
     import numpy as np
-    from auralynq.embeddings.base import EmbeddingBatch
+    from yaguwiseai.embeddings.base import EmbeddingBatch
 
     class CountingEmbedder:
         model = "counting"

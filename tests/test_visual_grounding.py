@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 
 @pytest.fixture
 def client():
-    from auralynq.serving.app import create_app
+    from yaguwiseai.serving.app import create_app
 
     return TestClient(create_app())
 
@@ -19,7 +19,7 @@ def client():
 
 
 def test_resolver_returns_empty_for_no_citations():
-    from auralynq.grounding.resolver import GroundingResolver
+    from yaguwiseai.grounding.resolver import GroundingResolver
 
     resolver = GroundingResolver()
     results = resolver.resolve(answer_id="test", answer="Hello", citations=[])
@@ -28,7 +28,7 @@ def test_resolver_returns_empty_for_no_citations():
 
 def test_resolver_page_level_grounding():
     """Citation with page number but no bbox → page-level grounding."""
-    from auralynq.grounding.resolver import GroundingResolver
+    from yaguwiseai.grounding.resolver import GroundingResolver
 
     resolver = GroundingResolver()
     citations = [
@@ -64,7 +64,7 @@ def test_resolver_page_level_grounding():
 
 def test_resolver_span_level_grounding():
     """Citation with bbox → span-level grounding."""
-    from auralynq.grounding.resolver import GroundingResolver
+    from yaguwiseai.grounding.resolver import GroundingResolver
 
     resolver = GroundingResolver()
     citations = [
@@ -97,7 +97,7 @@ def test_resolver_span_level_grounding():
 
 def test_resolver_reindex_required_for_old_doc():
     """Citation with grounding_version=0 → reindex_required=True."""
-    from auralynq.grounding.resolver import GroundingResolver
+    from yaguwiseai.grounding.resolver import GroundingResolver
 
     resolver = GroundingResolver()
     citations = [
@@ -124,7 +124,7 @@ def test_resolver_reindex_required_for_old_doc():
 
 def test_resolver_to_api_response():
     """to_api_response produces correct structure."""
-    from auralynq.grounding.resolver import GroundingResolver
+    from yaguwiseai.grounding.resolver import GroundingResolver
 
     resolver = GroundingResolver()
     citations = [
@@ -158,7 +158,7 @@ def test_resolver_to_api_response():
 
 
 def test_resolver_page_image_url_format():
-    from auralynq.grounding.resolver import GroundingResolver
+    from yaguwiseai.grounding.resolver import GroundingResolver
 
     resolver = GroundingResolver()
     citations = [
@@ -177,7 +177,7 @@ def test_resolver_page_image_url_format():
 
 
 def test_resolver_claim_grounding_unsupported_without_citations():
-    from auralynq.grounding.resolver import GroundingResolver
+    from yaguwiseai.grounding.resolver import GroundingResolver
 
     resolver = GroundingResolver()
     # Long answer sentences with no citations matching
@@ -206,13 +206,13 @@ def test_resolver_claim_grounding_unsupported_without_citations():
 
 
 def test_visual_grounding_version_constant():
-    from auralynq.ingest.models import VISUAL_GROUNDING_VERSION
+    from yaguwiseai.ingest.models import VISUAL_GROUNDING_VERSION
 
     assert VISUAL_GROUNDING_VERSION == 1
 
 
 def test_document_has_visual_grounding_property():
-    from auralynq.ingest.models import Document, SourceType
+    from yaguwiseai.ingest.models import Document, SourceType
 
     doc = Document(
         id="d1",
@@ -232,7 +232,7 @@ def test_document_has_visual_grounding_property():
 
 
 def test_layout_block_model():
-    from auralynq.ingest.models import LayoutBlock
+    from yaguwiseai.ingest.models import LayoutBlock
 
     blk = LayoutBlock(
         page=1,
@@ -255,7 +255,7 @@ def test_layout_block_model():
 
 
 def test_visual_grounding_settings_defaults():
-    from auralynq.config.settings import VisualGroundingSettings
+    from yaguwiseai.config.settings import VisualGroundingSettings
 
     vgs = VisualGroundingSettings()
     assert vgs.enabled is True
@@ -269,8 +269,8 @@ def test_visual_grounding_settings_defaults():
 def test_settings_has_visual():
     import os
 
-    os.environ["AURALYNQ_DOTENV_DISABLED"] = "1"
-    from auralynq.config.settings import Settings
+    os.environ["YAGUWISEAI_DOTENV_DISABLED"] = "1"
+    from yaguwiseai.config.settings import Settings
 
     s = Settings(_env_file=None)  # type: ignore
     assert hasattr(s, "visual")
@@ -330,7 +330,7 @@ def test_document_grounding_status_endpoint(client):
 
 
 def test_self_rag_strategy_available():
-    from auralynq.rag import get_registry
+    from yaguwiseai.rag import get_registry
 
     registry = get_registry()
     strategies = registry.list_all()
@@ -340,7 +340,7 @@ def test_self_rag_strategy_available():
 
 
 def test_crag_strategy_available():
-    from auralynq.rag import get_registry
+    from yaguwiseai.rag import get_registry
 
     registry = get_registry()
     strategies = registry.list_all()
@@ -350,7 +350,7 @@ def test_crag_strategy_available():
 
 
 def test_adaptive_strategy_available():
-    from auralynq.rag import get_registry
+    from yaguwiseai.rag import get_registry
 
     registry = get_registry()
     strategies = registry.list_all()
@@ -360,7 +360,7 @@ def test_adaptive_strategy_available():
 
 
 def test_lightrag_local_unavailable():
-    from auralynq.rag import get_registry
+    from yaguwiseai.rag import get_registry
 
     registry = get_registry()
     strategies = registry.list_all()
@@ -370,7 +370,7 @@ def test_lightrag_local_unavailable():
 
 
 def test_raptor_unavailable():
-    from auralynq.rag import get_registry
+    from yaguwiseai.rag import get_registry
 
     registry = get_registry()
     strategies = registry.list_all()
@@ -380,7 +380,7 @@ def test_raptor_unavailable():
 
 
 def test_all_strategies_have_status_field():
-    from auralynq.rag import get_registry
+    from yaguwiseai.rag import get_registry
 
     registry = get_registry()
     for s in registry.list_all():

@@ -50,7 +50,7 @@ const FALLBACK_SUGGESTIONS = [
   "Summarize the main topics in the indexed documents.",
   "What are the key entities and how do they relate?",
 ];
-const STORE_KEY = "auralynq.chat.v1";
+const STORE_KEY = "yaguwiseai.chat.v1";
 const TABS = ["overview", "trace", "evidence", "source", "ingest", "wiki", "eval"] as const;
 type Tab = (typeof TABS)[number];
 
@@ -145,7 +145,7 @@ export default function Chat() {
   const [hasAnswered, setHasAnswered] = useState(false);
   const [corpusRefreshKey, setCorpusRefreshKey] = useState(0);
   const [scopedDocIds, setScopedDocIds] = useState<string[] | null>(null);
-  const [ragStrategy, setRagStrategy] = useState<string>("auralynq_rag");
+  const [ragStrategy, setRagStrategy] = useState<string>("yaguwiseai_rag");
   const [showSettings, setShowSettings] = useState(false);
   const [agentActivity, setAgentActivity] = useState<AgentActivity>({ phase: "idle" });
   const [deployMode, setDeployMode] = useState<DeploymentMode | null>(null);
@@ -312,7 +312,7 @@ export default function Chat() {
               warnings: e.warnings,
               fallback: (e as any).fallback_strategy || null,
             });
-            // Capture visual grounding — auto-show Source View side-by-side
+            // Capture visual grounding - auto-show Source View side-by-side
             if (e.visual_grounding) {
               setVisualGrounding(e.visual_grounding);
               if (e.visual_grounding.visual_grounding_available) {
@@ -370,7 +370,7 @@ export default function Chat() {
         ? { role: "assistant", text: "", inventory: summary, question: q }
         : {
             role: "assistant",
-            text: "I couldn't read the corpus inventory right now — the backend may be warming up.",
+            text: "I couldn't read the corpus inventory right now - the backend may be warming up.",
             error: true,
           };
       return c;
@@ -447,9 +447,9 @@ export default function Chat() {
       setShowPanel(true);
       setAgentActivity({ phase: "idle" });
       try { localStorage.removeItem(STORE_KEY); } catch { /* ignore */ }
-      flash("New workspace — manage your corpus in the Ingest panel");
+      flash("New workspace - manage your corpus in the Ingest panel");
     } else {
-      // clear_corpus — open confirmation dialog
+      // clear_corpus - open confirmation dialog
       setClearConfirmOpen(true);
       setClearError(null);
     }
@@ -478,7 +478,7 @@ export default function Chat() {
       if (sug.suggestions?.length) setSuggestions(sug.suggestions);
       setCorpusRefreshKey((k) => k + 1);
       setClearConfirmOpen(false);
-      flash("Corpus cleared — fresh workspace ready");
+      flash("Corpus cleared - fresh workspace ready");
     } catch (err) {
       setClearError((err as Error).message || "Clear failed");
     } finally {
@@ -531,7 +531,7 @@ export default function Chat() {
     }
     try { localStorage.removeItem(STORE_KEY); } catch { /* ignore */ }
     setCorpusRefreshKey((k) => k + 1);
-    flash("Corpus updated — inventory refreshed");
+    flash("Corpus updated - inventory refreshed");
   }, [flash]);
 
   const recentMeta: RecentMeta | null = hasAnswered
@@ -688,10 +688,10 @@ export default function Chat() {
           </div>
         </section>
 
-        {/* Draggable divider — expand the chat or the inspector on the fly (lg+). */}
+        {/* Draggable divider - expand the chat or the inspector on the fly (lg+). */}
         <PanelResizer />
 
-        {/* Inspector — always visible on desktop (lg+), mobile drawer when showPanel */}
+        {/* Inspector - always visible on desktop (lg+), mobile drawer when showPanel */}
         <aside
           className={
             showPanel
@@ -798,7 +798,7 @@ export default function Chat() {
         </aside>
       </div>
 
-      {/* Source Workspace Modal — full-screen overlay */}
+      {/* Source Workspace Modal - full-screen overlay */}
       {showWorkspace && (
         <SourceWorkspaceModal
           grounding={visualGrounding}
@@ -831,7 +831,7 @@ export default function Chat() {
               : []),
             { id: "modelfit", group: "Navigate", label: "Go to ModelFit", icon: Cpu, run: () => router.push("/modelfit") },
             { id: "home", group: "Navigate", label: "Go to Home", icon: Home, run: () => router.push("/") },
-            { id: "s-aura", group: "Retrieval strategy", label: "Use Auralynq-RAG", icon: Zap, run: () => setRagStrategy("auralynq_rag") },
+            { id: "s-aura", group: "Retrieval strategy", label: "Use YaguWiseAi-RAG", icon: Zap, run: () => setRagStrategy("yaguwiseai_rag") },
             { id: "s-hybrid", group: "Retrieval strategy", label: "Use Hybrid vector", icon: Zap, run: () => setRagStrategy("hybrid") },
             { id: "s-naive", group: "Retrieval strategy", label: "Use Naive vector", icon: Zap, run: () => setRagStrategy("naive_vector") },
             { id: "s-bm25", group: "Retrieval strategy", label: "Use Keyword BM25", icon: Zap, run: () => setRagStrategy("keyword_bm25") },
@@ -886,7 +886,7 @@ function EmptyConversation({
             <span className="text-brand2">data</span>
           </h1>
           <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-fg2">
-            Grounded, cited answers from your indexed documents — by text or voice.
+            Grounded, cited answers from your indexed documents - by text or voice.
           </p>
         </div>
       </div>

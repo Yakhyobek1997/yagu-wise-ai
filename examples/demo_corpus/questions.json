@@ -2,7 +2,7 @@
   {
     "id": "q1",
     "category": "factoid",
-    "question": "What is Auralynq?",
+    "question": "What is YaguWiseAi?",
     "expects": "answerable"
   },
   {
@@ -14,7 +14,7 @@
   {
     "id": "q3",
     "category": "summary",
-    "question": "Summarize how Auralynq's retrieval architecture works.",
+    "question": "Summarize how YaguWiseAi's retrieval architecture works.",
     "expects": "answerable"
   },
   {
@@ -32,7 +32,7 @@
   {
     "id": "q6",
     "category": "insufficient_evidence",
-    "question": "What was Auralynq's total revenue in Q4 2025?",
+    "question": "What was YaguWiseAi's total revenue in Q4 2025?",
     "expects": "abstain"
   },
   {

@@ -1,4 +1,4 @@
-// Pure, framework-free presentation helpers — unit-testable in node.
+// Pure, framework-free presentation helpers - unit-testable in node.
 // The backend cites sources by their stored path (e.g. an upload path like
 // "/app/data/storage/uploads/2024/report.pdf"). Those internal paths must never
 // be shown to users; we surface a clean, human filename instead and keep the

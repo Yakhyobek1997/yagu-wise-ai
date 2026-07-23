@@ -1,13 +1,13 @@
 # <Paper / contribution title>
 
-A paper-page / summary card for an Auralynq research contribution
-(Auralynq-RAG, Visual Source Grounding, the ModelFit Index, or CALoRA-RAG).
+A paper-page / summary card for an YaguWiseAi research contribution
+(YaguWiseAi-RAG, Visual Source Grounding, the ModelFit Index, or CALoRA-RAG).
 Keep it honest — this is a research platform, not a benchmark-topping claim.
 
 - **Authors:** <names>
 - **Status:** <preprint | under review | published | working draft>
 - **Links:** <arXiv / PDF / project page / code>
-- **Code:** <https://github.com/MHHamdan/Auralynq> (+ specific module paths)
+- **Code:** <https://github.com/MHHamdan/YaguWiseAi> (+ specific module paths)
 
 ## TL;DR
 
@@ -25,7 +25,7 @@ implemented / experimental / planned, matching
 ## Method
 
 <Short description; link to the detailed writeup and the implementing code
-paths, e.g. `auralynq/retrieval/pathrag/retriever.py`.>
+paths, e.g. `yaguwiseai/retrieval/pathrag/retriever.py`.>
 
 ## Results
 
@@ -63,6 +63,6 @@ dataset.>
   author = {<authors>},
   year   = {<year>},
   eprint = {<arxiv-id, if any>},
-  url    = {https://github.com/MHHamdan/Auralynq}
+  url    = {https://github.com/MHHamdan/YaguWiseAi}
 }
 ```

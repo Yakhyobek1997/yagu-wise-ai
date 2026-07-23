@@ -2,7 +2,7 @@ import { Citation } from "@/lib/api";
 import { displaySource } from "@/lib/format";
 import { citationColor, scoreStrength, STRENGTH_META } from "@/lib/citations";
 
-// Clean, user-facing locator (page / speaker+timestamp) — never raw char spans.
+// Clean, user-facing locator (page / speaker+timestamp) - never raw char spans.
 function cleanLocator(c: Citation): string {
   if (c.speaker || c.start_s != null) {
     const t = (s?: number | null) => {

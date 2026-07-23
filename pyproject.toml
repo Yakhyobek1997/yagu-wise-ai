@@ -3,13 +3,13 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "auralynq"
+name = "yaguwiseai"
 version = "0.2.0"
-description = "Auralynq — Talk to Your Data: a local-first, agentic, voice-enabled RAG platform with PathRAG graph retrieval."
+description = "YaguWiseAi — Talk to Your Data: a local-first, agentic, voice-enabled RAG platform with PathRAG graph retrieval."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
-authors = [{ name = "Auralynq" }]
+authors = [{ name = "YaguWiseAi" }]
 keywords = ["rag", "pathrag", "voice", "agent", "langgraph", "qdrant", "retrieval"]
 classifiers = [
   "Programming Language :: Python :: 3.11",
@@ -76,25 +76,25 @@ dev = [
   "pre-commit>=3.7",
 ]
 all = [
-  "auralynq[embeddings,vector,ingest,voice,agent,llm,eval,telemetry,mcp]",
+  "yaguwiseai[embeddings,vector,ingest,voice,agent,llm,eval,telemetry,mcp]",
 ]
 
 [project.scripts]
-auralynq = "auralynq.cli:app"
-auralynq-mcp = "auralynq.mcp_server.server:main"
-auralynq-modelfit = "auralynq.modelfit.cli:main"
+yaguwiseai = "yaguwiseai.cli:app"
+yaguwiseai-mcp = "yaguwiseai.mcp_server.server:main"
+yaguwiseai-modelfit = "yaguwiseai.modelfit.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/MHHamdan/Auralynq"
-Documentation = "https://github.com/MHHamdan/Auralynq#readme"
+Homepage = "https://github.com/MHHamdan/YaguWiseAi"
+Documentation = "https://github.com/MHHamdan/YaguWiseAi#readme"
 
 [tool.hatch.build.targets.wheel]
-packages = ["auralynq"]
+packages = ["yaguwiseai"]
 
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-src = ["auralynq", "tests", "scripts"]
+src = ["yaguwiseai", "tests", "scripts"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "C4", "SIM", "RUF", "TID"]
@@ -108,7 +108,7 @@ ignore = ["B008", "C901", "RUF012", "UP042", "RUF001"]
 # planned.py embeds multi-line LLM prompt templates whose prose lines exceed
 # the 100-col limit; reflowing them would alter the prompt text, so E501 is
 # waived for this one file only.
-"auralynq/rag/strategies/planned.py" = ["E501"]
+"yaguwiseai/rag/strategies/planned.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.11"
@@ -132,7 +132,7 @@ markers = [
 filterwarnings = ["ignore::DeprecationWarning"]
 
 [tool.coverage.run]
-source = ["auralynq"]
+source = ["yaguwiseai"]
 # Omit integration-only paths that require a live server / network / optional
 # heavy dependency and therefore cannot run in the offline $0 unit suite. Their
 # logic is covered by integration tests behind the `integration` marker.

@@ -1,4 +1,4 @@
-// Auralynq API client. Talks to the FastAPI backend.
+// YaguWiseAi API client. Talks to the FastAPI backend.
 import { consumeSSE, parseSSEFrame } from "@/lib/sse";
 
 export const API_BASE =
@@ -13,7 +13,7 @@ export interface Citation {
   start_s?: number | null;
   end_s?: number | null;
   page?: number | null;
-  score?: number | null;   // retrieval score (0-1) — evidence quality
+  score?: number | null;   // retrieval score (0-1) - evidence quality
   method?: string | null;  // retrieval method: "hybrid" | "pathrag" | …
 }
 
@@ -304,7 +304,7 @@ export interface StatusResponse {
   index: { vectors?: number };
   corpus: { vector_count?: number; entity_count?: number };
   tracing: { provider?: string; phoenix_endpoint?: string };
-  // Deployment posture (see auralynq/config/settings.py + /api/status). Present
+  // Deployment posture (see yaguwiseai/config/settings.py + /api/status). Present
   // on any recent backend; older backends simply omit them (all optional here).
   hf_space?: boolean;
   demo_mode?: boolean;
@@ -411,7 +411,7 @@ export async function ingestFile(file: File) {
 }
 
 // --- Voice preference (male / female TTS voice) --------------------------
-const VOICE_KEY = "auralynq_voice";
+const VOICE_KEY = "yaguwiseai_voice";
 export const VOICES: { label: string; value: string }[] = [
   { label: "Female", value: "af_heart" },
   { label: "Male", value: "am_michael" },

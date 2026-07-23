@@ -1,7 +1,7 @@
-// Pure theme helpers — kept framework-free so they're unit-testable in node.
+// Pure theme helpers - kept framework-free so they're unit-testable in node.
 export type Theme = "light" | "dark" | "comfort";
 
-export const THEME_KEY = "auralynq.theme";
+export const THEME_KEY = "yaguwiseai.theme";
 export const THEME_ORDER: Theme[] = ["dark", "light", "comfort"];
 export const THEME_META: Record<Theme, { icon: string; label: string }> = {
   dark: { icon: "🌙", label: "Dark" },

@@ -60,7 +60,7 @@ function Breakdown({
   );
 }
 
-// "Why selected" copy by source type — explains the evidence to the user.
+// "Why selected" copy by source type - explains the evidence to the user.
 function whySelected(c: Citation): string {
   if (c.source_type === "audio") return "Top-ranked transcript segment matching your question.";
   if (c.source_type === "web") return "High-relevance passage from a retrieved web source.";
@@ -91,7 +91,7 @@ function ScoreDot({ score }: { score: number }) {
   return (
     <span
       className={`inline-block h-2 w-2 rounded-full ${cls}`}
-      title={`Retrieval score: ${score.toFixed(2)} — ${label}`}
+      title={`Retrieval score: ${score.toFixed(2)} - ${label}`}
       aria-label={label}
     />
   );
@@ -221,7 +221,7 @@ export function EvidencePaths({
         <p className="text-sm font-medium text-fg">Ask a question to see the evidence trail.</p>
         <p className="max-w-xs text-xs text-fg3">
           Vector hits, PathRAG graph paths, and the exact citations an answer was grounded on appear
-          here — with a coverage score and per-source reasoning.
+          here - with a coverage score and per-source reasoning.
         </p>
       </div>
     );
@@ -303,7 +303,7 @@ export function EvidencePaths({
                       <span className="rounded-md bg-edge px-2 py-0.5 font-medium text-fg">{n}</span>
                       {j < p.relations.length && (
                         <span className="flex items-center gap-0.5 text-xs text-accent">
-                          <span>—</span>
+                          <span>-</span>
                           <span className="italic">{p.relations[j]}</span>
                           <span>→</span>
                         </span>
@@ -337,7 +337,7 @@ export function EvidencePaths({
           </div>
         ) : (
           <p className="text-xs text-fg3">
-            No graph paths — this was answered by vector retrieval alone.
+            No graph paths - this was answered by vector retrieval alone.
           </p>
         )}
       </Section>

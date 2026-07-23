@@ -5,21 +5,21 @@ the new status/corpus/observability endpoints."""
 from __future__ import annotations
 
 import pytest
-from auralynq.pipeline import build_index
-from auralynq.serving.app import create_app
-from auralynq.serving.corpus import (
+from yaguwiseai.pipeline import build_index
+from yaguwiseai.serving.app import create_app
+from yaguwiseai.serving.corpus import (
     corpus_summary,
     detect_entities,
     suggested_questions,
 )
-from auralynq.serving.observability import to_trace_steps, trace_summary
+from yaguwiseai.serving.observability import to_trace_steps, trace_summary
 from fastapi.testclient import TestClient
 
 
 @pytest.fixture
 def client(corpus_dir):
     build_index(corpus_dir)
-    from auralynq.agent import runner
+    from yaguwiseai.agent import runner
 
     runner._CACHE.clear()
     return TestClient(create_app())
@@ -48,7 +48,7 @@ def test_corpus_summary_reports_languages(corpus_dir):
 
 
 def test_detect_script_identifies_arabic():
-    from auralynq.serving.corpus import _detect_script
+    from yaguwiseai.serving.corpus import _detect_script
 
     assert _detect_script("مرحبا هذا نص عربي طويل بما فيه الكفاية") == "Arabic"
     assert _detect_script("Hello, this is plain English text") is None

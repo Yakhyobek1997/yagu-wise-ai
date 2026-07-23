@@ -36,13 +36,13 @@ DOCS = [
 
 # Env vars the HF/getting-started docs promise exist; env.example must list them.
 REQUIRED_ENV_VARS = [
-    "AURALYNQ_HF_SPACE",
-    "AURALYNQ_DEMO_MODE",
-    "AURALYNQ_ALLOW_UPLOADS",
-    "AURALYNQ_LLM__PROVIDER",
-    "AURALYNQ_VECTOR__BACKEND",
-    "AURALYNQ_EMBEDDING__PROVIDER",
-    "AURALYNQ_SERVE__API_KEY",
+    "YAGUWISEAI_HF_SPACE",
+    "YAGUWISEAI_DEMO_MODE",
+    "YAGUWISEAI_ALLOW_UPLOADS",
+    "YAGUWISEAI_LLM__PROVIDER",
+    "YAGUWISEAI_VECTOR__BACKEND",
+    "YAGUWISEAI_EMBEDDING__PROVIDER",
+    "YAGUWISEAI_SERVE__API_KEY",
 ]
 
 _LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")

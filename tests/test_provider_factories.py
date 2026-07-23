@@ -8,10 +8,10 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-import auralynq.embeddings.factory as embed_factory
-import auralynq.llm.factory as llm_factory
-from auralynq.embeddings.hashing import HashingEmbedder
-from auralynq.llm.fallback import ExtractiveLLM
+import yaguwiseai.embeddings.factory as embed_factory
+import yaguwiseai.llm.factory as llm_factory
+from yaguwiseai.embeddings.hashing import HashingEmbedder
+from yaguwiseai.llm.fallback import ExtractiveLLM
 
 
 def _fake_settings(

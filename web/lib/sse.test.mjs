@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 // Compile sse.ts -> JS with the TypeScript compiler already in devDependencies,
-// then import it — keeps the test free of any JS test framework.
+// then import it - keeps the test free of any JS test framework.
 const dir = mkdtempSync(join(tmpdir(), "sse-test-"));
 execFileSync(
   "node",

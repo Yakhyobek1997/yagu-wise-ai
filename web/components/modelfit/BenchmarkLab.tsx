@@ -133,7 +133,7 @@ export function BenchmarkLab({
       {/* Preview plan */}
       {plan && phase === "preview" && (
         <div className="rounded-lg border border-zinc-700 bg-zinc-800/50 p-4 space-y-3 text-sm">
-          <p className="text-amber-400 text-xs font-semibold">DRY RUN — No benchmark has run yet</p>
+          <p className="text-amber-400 text-xs font-semibold">DRY RUN - No benchmark has run yet</p>
           <p className="text-zinc-300 font-mono">{plan.note}</p>
           <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-xs">
             <span className="text-zinc-500">Model</span>
@@ -217,21 +217,21 @@ function BenchmarkResultCard({ result }: { result: BenchmarkResult }) {
           </span>
           <span className="text-zinc-500">p50 latency</span>
           <span className="font-mono text-zinc-200">
-            {result.p50_latency_ms != null ? `${result.p50_latency_ms} ms` : "—"}
+            {result.p50_latency_ms != null ? `${result.p50_latency_ms} ms` : "-"}
           </span>
           <span className="text-zinc-500">p95 latency</span>
           <span className="font-mono text-zinc-200">
-            {result.p95_latency_ms != null ? `${result.p95_latency_ms} ms` : "—"}
+            {result.p95_latency_ms != null ? `${result.p95_latency_ms} ms` : "-"}
           </span>
           <span className="text-zinc-500">TTFT</span>
           <span className="font-mono text-zinc-200">
             {result.time_to_first_token_ms != null
               ? `${result.time_to_first_token_ms} ms`
-              : "—"}
+              : "-"}
           </span>
           <span className="text-zinc-500">Peak memory</span>
           <span className="font-mono text-zinc-200">
-            {result.peak_memory_gb != null ? `${result.peak_memory_gb} GB` : "—"}
+            {result.peak_memory_gb != null ? `${result.peak_memory_gb} GB` : "-"}
           </span>
           <span className="text-zinc-500">Examples</span>
           <span className="font-mono text-zinc-200">

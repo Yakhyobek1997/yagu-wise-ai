@@ -12,8 +12,8 @@ import importlib.util
 import sys
 import types
 
-from auralynq.telemetry.langfuse_export import export_trace, langfuse_enabled
-from auralynq.telemetry.tracing import Trace
+from yaguwiseai.telemetry.langfuse_export import export_trace, langfuse_enabled
+from yaguwiseai.telemetry.tracing import Trace
 
 
 def _trace() -> Trace:
@@ -28,7 +28,7 @@ def _trace() -> Trace:
 def test_disabled_without_keys(monkeypatch):
     monkeypatch.setenv("LANGFUSE_PUBLIC_KEY", "")
     monkeypatch.setenv("LANGFUSE_SECRET_KEY", "")
-    from auralynq.config import reload_settings
+    from yaguwiseai.config import reload_settings
 
     reload_settings()
     assert langfuse_enabled() is False
@@ -66,13 +66,13 @@ def _install_fake_langfuse(monkeypatch, recorder):
 def test_enabled_and_exports_with_keys_and_sdk(monkeypatch):
     monkeypatch.setenv("LANGFUSE_PUBLIC_KEY", "pk-test")
     monkeypatch.setenv("LANGFUSE_SECRET_KEY", "sk-test")
-    from auralynq.config import reload_settings
+    from yaguwiseai.config import reload_settings
 
     reload_settings()
     rec = {"spans": []}
     _install_fake_langfuse(monkeypatch, rec)
     # reset the cached client so it picks up the stub + keys
-    from auralynq.telemetry import langfuse_export as lx
+    from yaguwiseai.telemetry import langfuse_export as lx
 
     lx._client.cache_clear()
 
@@ -94,7 +94,7 @@ def test_enabled_and_exports_with_keys_and_sdk(monkeypatch):
 def test_export_never_raises_on_sdk_error(monkeypatch):
     monkeypatch.setenv("LANGFUSE_PUBLIC_KEY", "pk-test")
     monkeypatch.setenv("LANGFUSE_SECRET_KEY", "sk-test")
-    from auralynq.config import reload_settings
+    from yaguwiseai.config import reload_settings
 
     reload_settings()
     fake = types.ModuleType("langfuse")
@@ -106,7 +106,7 @@ def test_export_never_raises_on_sdk_error(monkeypatch):
 
     fake.Langfuse = _Boom
     monkeypatch.setitem(sys.modules, "langfuse", fake)
-    from auralynq.telemetry import langfuse_export as lx
+    from yaguwiseai.telemetry import langfuse_export as lx
 
     lx._client.cache_clear()
     # must swallow the error and return False, not propagate

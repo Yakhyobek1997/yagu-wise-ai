@@ -10,16 +10,16 @@ import os
 import time
 from pathlib import Path
 
-from auralynq.config import get_settings, reload_settings
-from auralynq.serving import watcher
-from auralynq.vectorstore.factory import get_store
+from yaguwiseai.config import get_settings, reload_settings
+from yaguwiseai.serving import watcher
+from yaguwiseai.vectorstore.factory import get_store
 
 
 def _enable(monkeypatch, watch_dir: Path, delete_missing: bool = True) -> None:
-    monkeypatch.setenv("AURALYNQ_WATCH__ENABLED", "true")
-    monkeypatch.setenv("AURALYNQ_WATCH__DIRS", f'["{watch_dir}"]')
-    monkeypatch.setenv("AURALYNQ_WATCH__POLL_SECONDS", "0")
-    monkeypatch.setenv("AURALYNQ_WATCH__DELETE_MISSING", "true" if delete_missing else "false")
+    monkeypatch.setenv("YAGUWISEAI_WATCH__ENABLED", "true")
+    monkeypatch.setenv("YAGUWISEAI_WATCH__DIRS", f'["{watch_dir}"]')
+    monkeypatch.setenv("YAGUWISEAI_WATCH__POLL_SECONDS", "0")
+    monkeypatch.setenv("YAGUWISEAI_WATCH__DELETE_MISSING", "true" if delete_missing else "false")
     reload_settings()
     get_store.cache_clear()
 
@@ -41,7 +41,7 @@ def test_watch_dirs_default_and_relative(monkeypatch):
     s = get_settings()
     # Default: <data_dir>/watch when none configured.
     assert s.watch_dirs == [s.data_dir / "watch"]
-    monkeypatch.setenv("AURALYNQ_WATCH__DIRS", '["reports","/mnt/docs"]')
+    monkeypatch.setenv("YAGUWISEAI_WATCH__DIRS", '["reports","/mnt/docs"]')
     reload_settings()
     s = get_settings()
     assert s.watch_dirs[0] == s.data_dir / "reports"  # relative → under data_dir

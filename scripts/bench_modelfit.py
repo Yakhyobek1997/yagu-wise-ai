@@ -2,9 +2,9 @@
 
 Non-interactive and offline-safe: scores every catalog model against a real
 hardware probe (no Ollama server or model downloads required — scores are
-estimates unless a prior `auralynq-modelfit benchmark` run already recorded
+estimates unless a prior `yaguwiseai-modelfit benchmark` run already recorded
 measured tok/s for a model). Writes reports/modelfit_bench_report.json with
-provenance. This is a read-only snapshot of `auralynq-modelfit recommend`'s
+provenance. This is a read-only snapshot of `yaguwiseai-modelfit recommend`'s
 underlying scoring, not a new benchmark methodology.
 """
 
@@ -14,11 +14,11 @@ import argparse
 import json
 from typing import Any
 
-from auralynq.config import get_settings
-from auralynq.eval.provenance import report_provenance
-from auralynq.modelfit.hardware import probe_hardware
-from auralynq.modelfit.model_registry import get_registry
-from auralynq.modelfit.scoring import score_model
+from yaguwiseai.config import get_settings
+from yaguwiseai.eval.provenance import report_provenance
+from yaguwiseai.modelfit.hardware import probe_hardware
+from yaguwiseai.modelfit.model_registry import get_registry
+from yaguwiseai.modelfit.scoring import score_model
 
 
 def run(task: str | None = None, limit: int = 10, write_report: bool = True) -> dict[str, Any]:

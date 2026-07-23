@@ -13,7 +13,7 @@ QUESTIONS_PATH = Path(__file__).resolve().parent.parent / "examples/demo_corpus/
 
 
 def main() -> None:
-    from auralynq.agent.runner import answer_question
+    from yaguwiseai.agent.runner import answer_question
 
     questions = json.loads(QUESTIONS_PATH.read_text())
     for item in questions:

@@ -1,13 +1,13 @@
 # Demo Space launch checklist
 
 Run through this before making a public Hugging Face Space live. See
-[`deploy/huggingface/`](https://github.com/MHHamdan/Auralynq/tree/main/deploy/huggingface)
+[`deploy/huggingface/`](https://github.com/MHHamdan/YaguWiseAi/tree/main/deploy/huggingface)
 for the image, entrypoint, and env reference this assumes.
 
 ## Build & smoke test locally first
 
-- [ ] `podman build -f deploy/huggingface/Dockerfile -t auralynq-space .` succeeds
-- [ ] `podman run --rm -p 7860:7860 auralynq-space` starts and stays up
+- [ ] `podman build -f deploy/huggingface/Dockerfile -t yaguwiseai-space .` succeeds
+- [ ] `podman run --rm -p 7860:7860 yaguwiseai-space` starts and stays up
 - [ ] `curl -sf http://localhost:7860/api/health` → 200
 - [ ] `curl -sf http://localhost:7860/api/status` shows `demo_mode: true`
 - [ ] Landing page loads at `http://localhost:7860`
@@ -16,11 +16,11 @@ for the image, entrypoint, and env reference this assumes.
 
 ## Safety & privacy defaults
 
-- [ ] `AURALYNQ_ALLOW_UPLOADS=false` (unless you've read the persistence/privacy
+- [ ] `YAGUWISEAI_ALLOW_UPLOADS=false` (unless you've read the persistence/privacy
       note and *intend* public uploads)
 - [ ] No secrets baked into the image or set as **Variables** — keys go in
       **Secrets** only
-- [ ] `AURALYNQ_SERVE__API_KEY` is a Secret if the API is reachable directly
+- [ ] `YAGUWISEAI_SERVE__API_KEY` is a Secret if the API is reachable directly
 - [ ] Only the safe offline defaults are on by default
       (`memory` vector store, `hash` embeddings, `extractive` LLM)
 - [ ] No private/copyrighted documents in the seeded corpus — the shipped

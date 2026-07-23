@@ -52,7 +52,7 @@ export function IngestPanel({ onAsk, onDeleted }: { onAsk?: (q: string) => void;
   const upload = useCallback(
     async (file: File) => {
       setBusy(true);
-      setStatus({ kind: "info", msg: `Uploading ${file.name} — parsing → chunking → indexing…` });
+      setStatus({ kind: "info", msg: `Uploading ${file.name} - parsing → chunking → indexing…` });
       try {
         const r = await ingestFile(file);
         setStatus({
@@ -223,7 +223,7 @@ export function IngestPanel({ onAsk, onDeleted }: { onAsk?: (q: string) => void;
                     grounding metadata was available.
                   </p>
                   <p>
-                    Re-upload those documents above — the indexer will automatically attach bounding-box
+                    Re-upload those documents above - the indexer will automatically attach bounding-box
                     and page metadata so citations show highlighted source regions.
                   </p>
                 </div>

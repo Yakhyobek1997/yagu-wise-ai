@@ -1,8 +1,8 @@
 {
-  "name": "auralynq-web",
+  "name": "yaguwiseai-web",
   "version": "0.2.0",
   "private": true,
-  "description": "Auralynq — Talk to Your Data. Web UI.",
+  "description": "YaguWiseAi - Talk to Your Data. Web UI.",
   "engines": {
     "node": ">=18.18"
   },

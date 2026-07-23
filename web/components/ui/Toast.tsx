@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 
 /**
  * Dismissible toast. Auto-dismisses after `duration` ms, but pauses the timer
- * while hovered and offers a manual close — so a user can actually read (or
+ * while hovered and offers a manual close - so a user can actually read (or
  * re-read) it instead of racing a 2.2s timeout. Re-arms whenever `message`
  * changes (keyed by the caller).
  */

@@ -1,6 +1,6 @@
 // Structural UI guards for the premium redesign. The project's test harness is
 // dependency-free (no DOM runtime), so these assert that each redesigned surface
-// composes the required sections, copy and states at the source level — catching
+// composes the required sections, copy and states at the source level - catching
 // accidental regressions of the acceptance criteria without a browser.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -31,7 +31,7 @@ t("hero has value prop, dual CTAs and trust badges", () => {
   const hero = read("components/landing/Hero.tsx");
   has(hero, "Voice-native RAG for private documents");
   has(hero, "/chat"); // launch CTA
-  has(hero, "github.com/MHHamdan/Auralynq"); // github CTA
+  has(hero, "github.com/MHHamdan/YaguWiseAi"); // github CTA
   for (const b of ["Local-first", "$0 default", "Open source", "Citations on every answer", "Voice in / out", "Provider-agnostic"]) {
     has(hero, b, `hero missing trust badge: ${b}`);
   }
@@ -68,7 +68,7 @@ t("how-it-works renders the nine-step pipeline", () => {
 
 t("differentiators proof section exists", () => {
   const d = read("components/landing/Differentiators.tsx");
-  has(d, "What makes Auralynq different?");
+  has(d, "What makes YaguWiseAi different?");
   has(d, "Evidence-gated abstention");
   has(d, "Local-first by default");
 });
@@ -187,7 +187,7 @@ t("agent activity rail has all required states", () => {
   has(rail, "TraceMiniTimeline");
   has(rail, "AlgorithmBadge");
   has(rail, "RiskBadge");
-  has(rail, "Ready — ask a question to see agent activity");
+  has(rail, "Ready - ask a question to see agent activity");
 });
 
 t("algorithm selector renders strategy dropdown near composer", () => {
@@ -196,9 +196,9 @@ t("algorithm selector renders strategy dropdown near composer", () => {
   has(sel, "Available");
   has(sel, "Experimental");
   has(sel, "Planned");
-  has(sel, "auralynq_rag");
+  has(sel, "yaguwiseai_rag");
   has(sel, "fetchRAGStrategies");
-  has(sel, "auralynq.rag_strategy.v1");
+  has(sel, "yaguwiseai.rag_strategy.v1");
 });
 
 t("composer includes algorithm selector", () => {

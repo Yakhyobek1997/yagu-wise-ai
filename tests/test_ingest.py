@@ -3,9 +3,9 @@ from __future__ import annotations
 import json
 import wave
 
-from auralynq.ingest.chunking import chunk_text
-from auralynq.ingest.models import SourceType
-from auralynq.ingest.pipeline import ingest_path
+from yaguwiseai.ingest.chunking import chunk_text
+from yaguwiseai.ingest.models import SourceType
+from yaguwiseai.ingest.pipeline import ingest_path
 
 
 def test_chunking_preserves_spans():

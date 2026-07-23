@@ -1,6 +1,6 @@
-# Auralynq Web UI
+# YaguWiseAi Web UI
 
-Next.js 14 (App Router) + Tailwind UI for Auralynq.
+Next.js 14 (App Router) + Tailwind UI for YaguWiseAi.
 
 ## Features
 - Chat with **SSE token streaming** and visible **citations**

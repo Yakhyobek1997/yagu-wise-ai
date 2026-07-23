@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Auralynq startup script
+# YaguWiseAi startup script
 # Usage: ./start.sh
 # Access: http://172.24.50.21:3001
 #
 # Port assignments (conflict-free on this server):
-#   8000 — Auralynq API  (FastAPI / uvicorn)
-#   3001 — Auralynq UI   (Next.js dev server)
+#   8000 — YaguWiseAi API  (FastAPI / uvicorn)
+#   3001 — YaguWiseAi UI   (Next.js dev server)
 # Already running on this server (do not touch):
 #   3000 — Tadabbur frontend
 #   8002 — Tadabbur backend API
@@ -58,42 +58,42 @@ if ! curl -sf http://localhost:6333 -o /dev/null 2>/dev/null; then
   elif [[ -f /tmp/qdrant/qdrant ]]; then
     /tmp/qdrant/qdrant --storage-path "$QDRANT_STORAGE" >> "$LOG_DIR/qdrant.log" 2>&1 &
   else
-    die "Qdrant binary not found. Run: ./scripts/download_qdrant.sh  or set AURALYNQ_VECTOR__BACKEND=chroma"
+    die "Qdrant binary not found. Run: ./scripts/download_qdrant.sh  or set YAGUWISEAI_VECTOR__BACKEND=chroma"
   fi
   wait_up http://localhost:6333 "Qdrant"
 else
   ok "Qdrant already running"
 fi
 
-# ── 4. Auralynq API (port 8000) ───────────────────────────────────────────────
+# ── 4. YaguWiseAi API (port 8000) ───────────────────────────────────────────────
 if port_free 8000; then
-  info "Starting Auralynq API on :8000…"
+  info "Starting YaguWiseAi API on :8000…"
   cd "$REPO"
-  python -m uvicorn auralynq.serving:app \
+  python -m uvicorn yaguwiseai.serving:app \
     --host 0.0.0.0 --port 8000 \
     --log-level warning \
     >> "$LOG_DIR/api.log" 2>&1 &
-  wait_up http://127.0.0.1:8000/health "Auralynq API"
+  wait_up http://127.0.0.1:8000/health "YaguWiseAi API"
 else
-  ok "Auralynq API already on :8000"
+  ok "YaguWiseAi API already on :8000"
 fi
 
-# ── 5. Auralynq UI (port 3001) ────────────────────────────────────────────────
+# ── 5. YaguWiseAi UI (port 3001) ────────────────────────────────────────────────
 if port_free 3001; then
-  info "Starting Auralynq UI on :3001…"
+  info "Starting YaguWiseAi UI on :3001…"
   cd "$REPO/web"
   npm run dev -- --port 3001 \
     >> "$LOG_DIR/web.log" 2>&1 &
   WEB_PID=$!
   info "Waiting for Next.js to compile (may take ~15s on first run)…"
-  wait_up http://127.0.0.1:3001 "Auralynq UI"
+  wait_up http://127.0.0.1:3001 "YaguWiseAi UI"
 else
-  ok "Auralynq UI already on :3001"
+  ok "YaguWiseAi UI already on :3001"
 fi
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  Auralynq is ready"
+echo "  YaguWiseAi is ready"
 echo ""
 echo "  Chat:          http://172.24.50.21:3001"
 echo "  ModelFit:      http://172.24.50.21:3001/modelfit"

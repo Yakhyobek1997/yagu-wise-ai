@@ -16,7 +16,7 @@ export function applyTheme(t: Theme) {
   try {
     localStorage.setItem(THEME_KEY, t);
   } catch {
-    /* private mode — non-fatal */
+    /* private mode - non-fatal */
   }
 }
 
@@ -45,7 +45,7 @@ export function ThemeToggle({ compact = false }: { compact?: boolean }) {
         onClick={() => pick(next)}
         className="btn-ghost text-sm"
         aria-label={`Theme: ${META[theme].label}. Switch to ${META[next].label}`}
-        title={`Theme: ${META[theme].label} — click for ${META[next].label}`}
+        title={`Theme: ${META[theme].label} - click for ${META[next].label}`}
       >
         <span aria-hidden>{META[theme].icon}</span>
         <span className="ml-1 hidden sm:inline">{META[theme].label}</span>

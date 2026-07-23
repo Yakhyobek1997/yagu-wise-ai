@@ -14,9 +14,9 @@ import asyncio
 import json
 from typing import Any
 
-from auralynq.config import get_settings
-from auralynq.eval.provenance import report_provenance
-from auralynq.modelfit.rag_bench import run_rag_benchmark
+from yaguwiseai.config import get_settings
+from yaguwiseai.eval.provenance import report_provenance
+from yaguwiseai.modelfit.rag_bench import run_rag_benchmark
 
 
 def run(

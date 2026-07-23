@@ -11,7 +11,7 @@ const SIZE: Record<string, string> = {
 };
 
 /**
- * Token-skinned dialog built on Radix — gives focus-trap, Escape, scroll-lock,
+ * Token-skinned dialog built on Radix - gives focus-trap, Escape, scroll-lock,
  * `aria-modal`, and focus restoration for free, so the app stops hand-rolling
  * these per modal. Visual layer stays 100% ours (tokens + tailwindcss-animate).
  */

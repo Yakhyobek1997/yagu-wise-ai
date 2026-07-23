@@ -19,8 +19,8 @@ function Icon({ children, tint }: { children: ReactNode; tint: string }) {
 
 const FEATURES = [
   {
-    title: "Compounding Wiki — knowledge that accumulates",
-    body: "Beyond query-time RAG: as you ingest, Auralynq synthesizes durable, cited entity pages from the knowledge graph — compiled once, kept current. Answers consult these pre-built pages and file good answers back, so exploration compounds. When a new source contradicts a prior claim, it's flagged and dated (invalidate-not-delete) — never silently overwritten.",
+    title: "A wiki that keeps learning",
+    body: "YaguWise AI turns your documents into a cited wiki and keeps it updated. Conflicting sources are flagged, not hidden.",
     tint: "text-accent",
     ring: "ring-accent/15",
     icon: (tint: string) => (
@@ -31,8 +31,8 @@ const FEATURES = [
     ),
   },
   {
-    title: "Span-level visual grounding",
-    body: "Every citation resolves to an exact bounding box on the original PDF page, rendered in a full-screen Source Workspace at 144 DPI. Verify any claim against the pixels — not just a page number. Staged span → page → unavailable so you always know the grounding quality.",
+    title: "Visual source proof",
+    body: "Open any citation to see the exact answer area on the original PDF page.",
     tint: "text-brand2",
     ring: "ring-brand2/15",
     icon: (tint: string) => (
@@ -44,8 +44,8 @@ const FEATURES = [
     ),
   },
   {
-    title: "Hardware-aware ModelFit Index",
-    body: "Profiles your VRAM, RAM and backend, then scores every candidate model with a will-it-run verdict and a 0–100 fit score. Surfaces the best model for your actual box — the ModelFitChip shows it on every answer. No model is ever downloaded without your confirmation.",
+    title: "Models matched to your hardware",
+    body: "Checks your RAM, VRAM, and backend, then recommends models your machine can run. Downloads require approval.",
     tint: "text-accent",
     ring: "ring-accent/15",
     icon: (tint: string) => (
@@ -56,8 +56,8 @@ const FEATURES = [
     ),
   },
   {
-    title: "Voice-native document chat",
-    body: "Speak your question and hear the grounded answer back. Whisper ASR, speaker diarization and TTS are first-class — with deterministic offline fallbacks, no cloud required.",
+    title: "Voice document chat",
+    body: "Ask by voice and hear cited answers. Offline fallbacks work without the cloud.",
     tint: "text-brand",
     ring: "ring-brand/15",
     icon: (tint: string) => (
@@ -68,8 +68,8 @@ const FEATURES = [
     ),
   },
   {
-    title: "Grounded answers with citations",
-    body: "Every claim links back to its source — document, page, speaker, timestamp. When retrieval coverage falls below threshold, the pipeline emits an abstention signal with diagnostic snippets rather than generating a low-confidence response.",
+    title: "Cited, grounded answers",
+    body: "Every answer links to its source. If evidence is weak, YaguWise AI says so instead of guessing.",
     tint: "text-brand2",
     ring: "ring-brand2/15",
     icon: (tint: string) => (
@@ -80,8 +80,8 @@ const FEATURES = [
     ),
   },
   {
-    title: "PathRAG graph reasoning",
-    body: "Builds a knowledge graph from your corpus and traverses flow-pruned relational paths, so multi-hop questions get reasoned answers — not keyword soup.",
+    title: "PathRAG reasoning",
+    body: "Uses a knowledge graph to answer connected, multi-step questions.",
     tint: "text-accent",
     ring: "ring-accent/15",
     icon: (tint: string) => (
@@ -94,8 +94,8 @@ const FEATURES = [
     ),
   },
   {
-    title: "Hybrid retrieval & reranking",
-    body: "Dense + sparse search fused with reciprocal-rank fusion, a cross-encoder reranker, MMR de-duplication and lost-in-the-middle reordering for precise context.",
+    title: "Better search and ranking",
+    body: "Combines semantic and keyword search, then ranks the most useful context.",
     tint: "text-brand",
     ring: "ring-brand/15",
     icon: (tint: string) => (
@@ -105,8 +105,8 @@ const FEATURES = [
     ),
   },
   {
-    title: "Agent trace & observability",
-    body: "An adaptive router picks fast vector search or deep graph traversal, runs a self-checking loop, and shows you the full reasoning trace, latencies and evidence paths.",
+    title: "Visible AI workflow",
+    body: "See the selected route, evidence, response time, and reasoning trace.",
     tint: "text-accent2",
     ring: "ring-accent2/15",
     icon: (tint: string) => (
@@ -116,8 +116,8 @@ const FEATURES = [
     ),
   },
   {
-    title: "Local-first provider routing",
-    body: "Runs entirely on your machine via rootless Podman — no account, no bill. Bring your own keys (Cohere, OpenAI, Anthropic) to upgrade any single layer when you want.",
+    title: "Local and flexible",
+    body: "Runs on your machine by default. Connect other AI providers only when you choose.",
     tint: "text-brand2",
     ring: "ring-brand2/15",
     icon: (tint: string) => (
@@ -134,19 +134,19 @@ export function Features() {
     <section id="features" className="relative mx-auto max-w-7xl px-4 py-14 md:px-6">
       <div className="mb-12 max-w-2xl">
         <p className="overline mb-2">Capabilities</p>
-        <h2 className="section-title">Full-stack retrieval-augmented generation — single local binary, measurable at every layer</h2>
+        <h2 className="section-title">Everything you need for private, grounded AI</h2>
         <p className="mt-3 text-lg text-fg2">
-          Encode, retrieve, rerank, synthesize — every stage instrumented and swappable.
+          Search, reason, cite, and monitor - all on your machine.
         </p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {FEATURES.map((f) => (
-          <div key={f.title} className={`card card-hover group ring-1 ${f.ring} p-6`}>
+        {FEATURES.map((feature) => (
+          <div key={feature.title} className={`card card-hover group ring-1 ${feature.ring} p-6`}>
             <div className="mb-4 inline-flex rounded-xl border border-edge bg-panel2 p-2.5">
-              {f.icon(f.tint)}
+              {feature.icon(feature.tint)}
             </div>
-            <h3 className="mb-2 text-lg font-semibold text-fg">{f.title}</h3>
-            <p className="text-sm leading-relaxed text-fg2">{f.body}</p>
+            <h3 className="mb-2 text-lg font-semibold text-fg">{feature.title}</h3>
+            <p className="text-sm leading-relaxed text-fg2">{feature.body}</p>
           </div>
         ))}
       </div>

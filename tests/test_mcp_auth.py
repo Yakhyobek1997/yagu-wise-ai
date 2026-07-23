@@ -7,7 +7,7 @@ trivial Starlette app (no MCP SDK needed). The middleware itself is SDK-agnostic
 from __future__ import annotations
 
 import pytest
-from auralynq.mcp_server.auth import MCPAuthMiddleware, resolve_mcp_api_key
+from yaguwiseai.mcp_server.auth import MCPAuthMiddleware, resolve_mcp_api_key
 from starlette.applications import Starlette
 from starlette.responses import PlainTextResponse
 from starlette.routing import Route
@@ -57,9 +57,9 @@ def test_options_preflight_bypasses_auth():
 @pytest.mark.parametrize(
     "env,expected",
     [
-        ({"AURALYNQ_MCP_API_KEY": "mcpkey", "AURALYNQ_SERVE__API_KEY": "apikey"}, "mcpkey"),
-        ({"AURALYNQ_MCP_API_KEY": "", "AURALYNQ_SERVE__API_KEY": "apikey"}, "apikey"),
-        ({"AURALYNQ_MCP_API_KEY": "", "AURALYNQ_SERVE__API_KEY": ""}, ""),
+        ({"YAGUWISEAI_MCP_API_KEY": "mcpkey", "YAGUWISEAI_SERVE__API_KEY": "apikey"}, "mcpkey"),
+        ({"YAGUWISEAI_MCP_API_KEY": "", "YAGUWISEAI_SERVE__API_KEY": "apikey"}, "apikey"),
+        ({"YAGUWISEAI_MCP_API_KEY": "", "YAGUWISEAI_SERVE__API_KEY": ""}, ""),
     ],
 )
 def test_key_resolution_precedence(monkeypatch, env, expected):

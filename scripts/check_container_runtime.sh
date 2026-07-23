@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Detect the available Podman Compose command and print it on stdout.
-# Auralynq is Podman-first and does NOT require Docker.
+# YaguWiseAi is Podman-first and does NOT require Docker.
 set -euo pipefail
 
 if podman compose version >/dev/null 2>&1; then

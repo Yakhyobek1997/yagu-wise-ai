@@ -1,4 +1,4 @@
-# Auralynq web UI image (Next.js). Build context is ./web.
+# YaguWiseAi web UI image (Next.js). Build context is ./web.
 FROM docker.io/library/node:20-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json* ./
@@ -18,9 +18,9 @@ RUN npm run build
 
 FROM docker.io/library/node:20-alpine AS runner
 WORKDIR /app
-LABEL org.opencontainers.image.title="auralynq-web" \
-      org.opencontainers.image.description="Auralynq web UI (Next.js) — chat, voice, trace, evidence" \
-      org.opencontainers.image.source="https://github.com/MHHamdan/Auralynq" \
+LABEL org.opencontainers.image.title="yaguwiseai-web" \
+      org.opencontainers.image.description="YaguWiseAi web UI (Next.js) — chat, voice, trace, evidence" \
+      org.opencontainers.image.source="https://github.com/MHHamdan/YaguWiseAi" \
       org.opencontainers.image.licenses="Apache-2.0"
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
 RUN addgroup -g 10001 web && adduser -u 10001 -G web -S web

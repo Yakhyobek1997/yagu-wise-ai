@@ -4,29 +4,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auralynq-api
-  namespace: auralynq
-  labels: { app.kubernetes.io/name: auralynq-api, app.kubernetes.io/part-of: auralynq }
+  name: yaguwiseai-api
+  namespace: yaguwiseai
+  labels: { app.kubernetes.io/name: yaguwiseai-api, app.kubernetes.io/part-of: yaguwiseai }
 spec:
   replicas: 2
   selector:
-    matchLabels: { app.kubernetes.io/name: auralynq-api }
+    matchLabels: { app.kubernetes.io/name: yaguwiseai-api }
   template:
     metadata:
-      labels: { app.kubernetes.io/name: auralynq-api, app.kubernetes.io/part-of: auralynq }
+      labels: { app.kubernetes.io/name: yaguwiseai-api, app.kubernetes.io/part-of: yaguwiseai }
     spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 10001
       containers:
         - name: api
-          image: ghcr.io/mhhamdan/auralynq-api:0.1.0
-          args: ["uvicorn", "auralynq.serving.app:app", "--host", "0.0.0.0", "--port", "8000"]
+          image: ghcr.io/mhhamdan/yaguwiseai-api:0.1.0
+          args: ["uvicorn", "yaguwiseai.serving.app:app", "--host", "0.0.0.0", "--port", "8000"]
           ports:
             - { name: http, containerPort: 8000 }
           envFrom:
-            - configMapRef: { name: auralynq-config }
-            - secretRef: { name: auralynq-secrets }
+            - configMapRef: { name: yaguwiseai-config }
+            - secretRef: { name: yaguwiseai-secrets }
           startupProbe:        # allow slow first-time model/index work
             httpGet: { path: /health, port: 8000 }
             failureThreshold: 30
@@ -46,10 +46,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: auralynq-api
-  namespace: auralynq
-  labels: { app.kubernetes.io/name: auralynq-api, app.kubernetes.io/part-of: auralynq }
+  name: yaguwiseai-api
+  namespace: yaguwiseai
+  labels: { app.kubernetes.io/name: yaguwiseai-api, app.kubernetes.io/part-of: yaguwiseai }
 spec:
-  selector: { app.kubernetes.io/name: auralynq-api }
+  selector: { app.kubernetes.io/name: yaguwiseai-api }
   ports:
     - { name: http, port: 8000, targetPort: 8000 }

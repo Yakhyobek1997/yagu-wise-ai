@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 
 @pytest.fixture
 def client():
-    from auralynq.serving.app import create_app
+    from yaguwiseai.serving.app import create_app
 
     return TestClient(create_app())
 
@@ -19,7 +19,7 @@ def client():
 
 
 def test_page_layout_block_schema():
-    from auralynq.serving.schemas import PageLayoutBlock
+    from yaguwiseai.serving.schemas import PageLayoutBlock
 
     blk = PageLayoutBlock(
         block_id="chunk_001",
@@ -41,7 +41,7 @@ def test_page_layout_block_schema():
 
 
 def test_page_layout_response_schema():
-    from auralynq.serving.schemas import PageLayoutBlock, PageLayoutResponse
+    from yaguwiseai.serving.schemas import PageLayoutBlock, PageLayoutResponse
 
     resp = PageLayoutResponse(
         doc_id="abc123",
@@ -194,7 +194,7 @@ def test_layout_no_internal_paths(client):
 
 def test_resolver_span_level_grounding():
     """Citation with bbox → span-level grounding stage."""
-    from auralynq.grounding.resolver import GroundingResolver
+    from yaguwiseai.grounding.resolver import GroundingResolver
 
     resolver = GroundingResolver()
     citations = [
@@ -225,7 +225,7 @@ def test_resolver_span_level_grounding():
 
 def test_resolver_page_level_fallback():
     """Citation with page but no bbox → page-level grounding."""
-    from auralynq.grounding.resolver import GroundingResolver
+    from yaguwiseai.grounding.resolver import GroundingResolver
 
     resolver = GroundingResolver()
     citations = [
@@ -251,7 +251,7 @@ def test_resolver_page_level_fallback():
 
 def test_resolver_to_api_response():
     """to_api_response produces the expected dict structure."""
-    from auralynq.grounding.resolver import GroundingResolver
+    from yaguwiseai.grounding.resolver import GroundingResolver
 
     resolver = GroundingResolver()
     citations = [

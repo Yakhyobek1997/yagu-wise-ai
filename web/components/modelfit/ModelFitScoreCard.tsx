@@ -108,7 +108,7 @@ export function ModelFitScoreCard({
         )}
         {score.estimate_used && (
           <div className="text-amber-500 italic text-[10px]">
-            Speed score uses estimates — run benchmark for measured data.
+            Speed score uses estimates - run benchmark for measured data.
           </div>
         )}
       </div>
