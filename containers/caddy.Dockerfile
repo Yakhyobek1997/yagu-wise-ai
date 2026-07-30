@@ -10,7 +10,7 @@ FROM docker.io/library/caddy:2.8-alpine
 
 LABEL org.opencontainers.image.title="yaguwiseai-caddy" \
       org.opencontainers.image.description="YaguWiseAi TLS reverse proxy (Caddy) — single public HTTPS entrypoint" \
-      org.opencontainers.image.source="https://github.com/MHHamdan/YaguWiseAi" \
+      org.opencontainers.image.source="https://github.com/Yakhyobek1997/yagu-wise-ai" \
       org.opencontainers.image.licenses="Apache-2.0"
 
 ARG YAGUWISEAI_CERT_HOST=localhost

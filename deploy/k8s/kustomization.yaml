@@ -24,7 +24,7 @@ commonLabels:
 # Central image pinning — bump the tag here to roll the whole app to a new
 # released version (images are published to GHCR by the release workflow).
 images:
-  - name: ghcr.io/mhhamdan/yaguwiseai-api
+  - name: ghcr.io/yakhyobek1997/yaguwiseai-api
     newTag: "0.1.0"
-  - name: ghcr.io/mhhamdan/yaguwiseai-web
+  - name: ghcr.io/yakhyobek1997/yaguwiseai-web
     newTag: "0.1.0"

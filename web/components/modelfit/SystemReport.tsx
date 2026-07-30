@@ -173,7 +173,7 @@ export function SystemReport({
           server, not on your machine. To profile your Mac/PC and pull models onto it, run YaguWiseAi
           locally (
           <a
-            href="https://github.com/MHHamdan/YaguWiseAi"
+            href="https://github.com/Yakhyobek1997/yagu-wise-ai"
             target="_blank"
             rel="noopener noreferrer"
             className="underline hover:text-amber-100"

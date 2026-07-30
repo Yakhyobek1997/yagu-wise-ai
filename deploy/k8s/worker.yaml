@@ -21,7 +21,7 @@ spec:
         runAsUser: 10001
       containers:
         - name: worker
-          image: ghcr.io/mhhamdan/yaguwiseai-api:0.1.0
+          image: ghcr.io/yakhyobek1997/yaguwiseai-api:0.1.0
           args: ["python", "-m", "yaguwiseai.serving.worker"]
           envFrom:
             - configMapRef: { name: yaguwiseai-config }

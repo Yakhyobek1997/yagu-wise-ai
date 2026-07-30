@@ -11,7 +11,7 @@ window instead.
 
 Please **do not open a public GitHub issue** for a suspected security
 vulnerability. Instead, use
-[GitHub Security Advisories](https://github.com/MHHamdan/YaguWiseAi/security/advisories/new)
+[GitHub Security Advisories](https://github.com/Yakhyobek1997/yagu-wise-ai/security/advisories/new)
 for this repository ("Security" tab → "Report a vulnerability"). This opens
 a private draft advisory visible only to the maintainer and you, so details
 aren't public before a fix ships.

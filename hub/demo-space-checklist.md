@@ -1,7 +1,7 @@
 # Demo Space launch checklist
 
 Run through this before making a public Hugging Face Space live. See
-[`deploy/huggingface/`](https://github.com/MHHamdan/YaguWiseAi/tree/main/deploy/huggingface)
+[`deploy/huggingface/`](https://github.com/Yakhyobek1997/yagu-wise-ai/tree/main/deploy/huggingface)
 for the image, entrypoint, and env reference this assumes.
 
 ## Build & smoke test locally first

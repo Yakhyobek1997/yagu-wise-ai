@@ -29,7 +29,7 @@ COPY scripts ./scripts
 # OCI image metadata (build_images.sh / CI also inject version + revision).
 LABEL org.opencontainers.image.title="yaguwiseai-api" \
       org.opencontainers.image.description="YaguWiseAi API/worker/MCP — agentic voice RAG with PathRAG" \
-      org.opencontainers.image.source="https://github.com/MHHamdan/YaguWiseAi" \
+      org.opencontainers.image.source="https://github.com/Yakhyobek1997/yagu-wise-ai" \
       org.opencontainers.image.licenses="Apache-2.0"
 
 # Non-root user (rootless containers map this safely). Create the data/reports

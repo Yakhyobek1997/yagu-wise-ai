@@ -14,7 +14,7 @@ short_description: <one line, <60 chars>
 # <Space title>
 
 > A **ready-to-copy, already-filled** version of this template lives at
-> [`deploy/huggingface/README_SPACE_TEMPLATE.md`](https://github.com/MHHamdan/YaguWiseAi/blob/main/deploy/huggingface/README_SPACE_TEMPLATE.md),
+> [`deploy/huggingface/README_SPACE_TEMPLATE.md`](https://github.com/Yakhyobek1997/yagu-wise-ai/blob/main/deploy/huggingface/README_SPACE_TEMPLATE.md),
 > alongside the Dockerfile, entrypoint, and env reference. Prefer that one for
 > the standard YaguWiseAi demo Space; use this generic template only if you're
 > building a customized Space and want the section skeleton.
@@ -44,7 +44,7 @@ click-through, ModelFit page, etc.>
   `COHERE_API_KEY`, `YAGUWISEAI_SERVE__API_KEY`, `HUGGINGFACE_TOKEN`.
 
 Full list with safe defaults:
-[`deploy/huggingface/env.example`](https://github.com/MHHamdan/YaguWiseAi/blob/main/deploy/huggingface/env.example).
+[`deploy/huggingface/env.example`](https://github.com/Yakhyobek1997/yagu-wise-ai/blob/main/deploy/huggingface/env.example).
 
 ## How to duplicate
 
@@ -64,5 +64,5 @@ only; single demo corpus; no persistence; etc. — be honest.>
 
 ## Source & license
 
-Source: <https://github.com/MHHamdan/YaguWiseAi>. License: Apache-2.0 (code).
+Source: <https://github.com/Yakhyobek1997/yagu-wise-ai>. License: Apache-2.0 (code).
 Demo data: <its own license, e.g. CC0-1.0>.

@@ -31,7 +31,7 @@ t("hero has value prop, dual CTAs and trust badges", () => {
   const hero = read("components/landing/Hero.tsx");
   has(hero, "Voice-native RAG for private documents");
   has(hero, "/chat"); // launch CTA
-  has(hero, "github.com/MHHamdan/YaguWiseAi"); // github CTA
+  has(hero, "github.com/Yakhyobek1997/yagu-wise-ai"); // github CTA
   for (const b of ["Local-first", "$0 default", "Open source", "Citations on every answer", "Voice in / out", "Provider-agnostic"]) {
     has(hero, b, `hero missing trust badge: ${b}`);
   }

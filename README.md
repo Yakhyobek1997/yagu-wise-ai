@@ -12,7 +12,7 @@ short_description: "Voice-native agentic RAG on Llama-3.3-70B"
 
 # YaguWiseAi — Talk to Your Data
 
-[YaguWiseAi](https://github.com/MHHamdan/YaguWiseAi) is a local-first, voice-native,
+[YaguWiseAi](https://github.com/Yakhyobek1997/yagu-wise-ai) is a local-first, voice-native,
 agentic RAG platform with span-level visual citation grounding, a PathRAG
 knowledge graph, a Compounding Wiki, and an observable retrieval pipeline.
 

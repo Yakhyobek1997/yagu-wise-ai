@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
-const REPO = "https://github.com/MHHamdan/YaguWiseAi";
+const REPO = "https://github.com/Yakhyobek1997/yagu-wise-ai";
 
 export function CTA() {
   return (

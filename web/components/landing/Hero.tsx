@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ChatPreview } from "@/components/landing/ChatPreview";
 
-const REPO = "https://github.com/MHHamdan/YaguWiseAi";
+const REPO = "https://github.com/Yakhyobek1997/yagu-wise-ai";
 
 // Trust / value badges - the product promise at a glance.
 const BADGES = [

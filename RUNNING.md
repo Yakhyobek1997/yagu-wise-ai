@@ -18,7 +18,7 @@ machine**. Podman only — no Docker, no sudo required.
 The stack is normally already running. Otherwise:
 
 ```bash
-cd /home/mhamdan/YaguWiseAi
+cd /home/user/yagu-wise-ai
 make stack-up      # start;  make stack-down to stop
 ```
 
@@ -63,7 +63,7 @@ Clone the repo (or copy just `compose.yml`, `containers/Caddyfile`,
 `scripts/`, `Makefile`):
 
 ```bash
-git clone https://github.com/MHHamdan/YaguWiseAi.git && cd YaguWiseAi
+git clone https://github.com/Yakhyobek1997/yagu-wise-ai.git && cd yagu-wise-ai
 ```
 
 ### Step 2 — create `.env` (git-ignored; never commit it)
@@ -81,7 +81,7 @@ NEXT_PUBLIC_API_BASE=/api                         # browser → same-origin prox
 YAGUWISEAI_BIND_INTERNAL=127.0.0.1                  # internal services off the public NIC
 
 # --- run the PUBLISHED images from GHCR (no local build needed) ---
-YAGUWISEAI_IMAGE_PREFIX=ghcr.io/mhhamdan/yaguwiseai-
+YAGUWISEAI_IMAGE_PREFIX=ghcr.io/yakhyobek1997/yaguwiseai-
 YAGUWISEAI_IMAGE_TAG=0.1.0
 
 # --- providers (all optional; degrade to local fallbacks) ---
@@ -139,7 +139,7 @@ the UI **transparently fail over to the remote server** when the laptop's own AP
 is down (ADR-0020). Because it's your laptop, `localhost` works in the browser.
 
 ```bash
-git clone https://github.com/MHHamdan/YaguWiseAi.git && cd YaguWiseAi
+git clone https://github.com/Yakhyobek1997/yagu-wise-ai.git && cd yagu-wise-ai
 
 cat > .env <<'EOF'
 # --- browser reaches the laptop locally ---
@@ -203,7 +203,7 @@ podman start yaguwiseai-api         # back to local
 ## 2. Full production stack on THIS machine (from source)
 
 ```bash
-cd /home/mhamdan/YaguWiseAi
+cd /home/user/yagu-wise-ai
 make images          # build api/web/caddy locally (versioned + OCI labels)
 make stack-up        # start; make stack-down to stop; make stack-logs to tail
 ```

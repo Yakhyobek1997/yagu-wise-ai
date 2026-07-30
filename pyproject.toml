@@ -85,8 +85,8 @@ yaguwiseai-mcp = "yaguwiseai.mcp_server.server:main"
 yaguwiseai-modelfit = "yaguwiseai.modelfit.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/MHHamdan/YaguWiseAi"
-Documentation = "https://github.com/MHHamdan/YaguWiseAi#readme"
+Homepage = "https://github.com/Yakhyobek1997/yagu-wise-ai"
+Documentation = "https://github.com/Yakhyobek1997/yagu-wise-ai#readme"
 
 [tool.hatch.build.targets.wheel]
 packages = ["yaguwiseai"]

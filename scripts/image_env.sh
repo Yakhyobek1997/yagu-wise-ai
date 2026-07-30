@@ -7,7 +7,7 @@ set -euo pipefail
 # GHCR requires). Override YAGUWISEAI_REGISTRY / YAGUWISEAI_IMAGE_NAMESPACE for a
 # different registry (Docker Hub, a private registry, etc.).
 YAGUWISEAI_REGISTRY="${YAGUWISEAI_REGISTRY:-ghcr.io}"
-YAGUWISEAI_IMAGE_NAMESPACE="${YAGUWISEAI_IMAGE_NAMESPACE:-mhhamdan}"
+YAGUWISEAI_IMAGE_NAMESPACE="${YAGUWISEAI_IMAGE_NAMESPACE:-yakhyobek1997}"
 
 # Version from the package (the one true source); allow override for CI tags.
 _pkg_version() {

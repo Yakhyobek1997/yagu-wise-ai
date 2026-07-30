@@ -7,7 +7,7 @@ Keep it honest — this is a research platform, not a benchmark-topping claim.
 - **Authors:** <names>
 - **Status:** <preprint | under review | published | working draft>
 - **Links:** <arXiv / PDF / project page / code>
-- **Code:** <https://github.com/MHHamdan/YaguWiseAi> (+ specific module paths)
+- **Code:** <https://github.com/Yakhyobek1997/yagu-wise-ai> (+ specific module paths)
 
 ## TL;DR
 
@@ -63,6 +63,6 @@ dataset.>
   author = {<authors>},
   year   = {<year>},
   eprint = {<arxiv-id, if any>},
-  url    = {https://github.com/MHHamdan/YaguWiseAi}
+  url    = {https://github.com/Yakhyobek1997/yagu-wise-ai}
 }
 ```

@@ -106,7 +106,7 @@ RUN chmod +x /app/entrypoint.sh \
 
 LABEL org.opencontainers.image.title="yaguwiseai-space" \
       org.opencontainers.image.description="YaguWiseAi single-container image for Hugging Face Spaces" \
-      org.opencontainers.image.source="https://github.com/MHHamdan/YaguWiseAi" \
+      org.opencontainers.image.source="https://github.com/Yakhyobek1997/yagu-wise-ai" \
       org.opencontainers.image.licenses="Apache-2.0"
 
 USER yaguwiseai

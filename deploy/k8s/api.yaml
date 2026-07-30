@@ -20,7 +20,7 @@ spec:
         runAsUser: 10001
       containers:
         - name: api
-          image: ghcr.io/mhhamdan/yaguwiseai-api:0.1.0
+          image: ghcr.io/yakhyobek1997/yaguwiseai-api:0.1.0
           args: ["uvicorn", "yaguwiseai.serving.app:app", "--host", "0.0.0.0", "--port", "8000"]
           ports:
             - { name: http, containerPort: 8000 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const REPO = "https://github.com/MHHamdan/YaguWiseAi";
+const REPO = "https://github.com/Yakhyobek1997/yagu-wise-ai";
 
 export function Footer() {
   return (

@@ -67,7 +67,7 @@ export function DemoBanner({ mode }: { mode: DeploymentMode | null }) {
           <>
             {" "}
             <a
-              href="https://github.com/MHHamdan/YaguWiseAi/blob/main/docs/getting-started/huggingface-space.md"
+              href="https://github.com/Yakhyobek1997/yagu-wise-ai/blob/main/docs/getting-started/huggingface-space.md"
               target="_blank"
               rel="noreferrer"
               className="underline decoration-dotted hover:text-brand"

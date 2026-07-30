@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { statusSummary, type StatusResponse } from "@/lib/api";
 
-const REPO = "https://github.com/MHHamdan/YaguWiseAi";
+const REPO = "https://github.com/Yakhyobek1997/yagu-wise-ai";
 
 type Health = "healthy" | "degraded" | "offline" | "checking";
 
