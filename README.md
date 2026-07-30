@@ -40,5 +40,3 @@ setting `YAGUWISEAI_EMBEDDING__PROVIDER`.
 > Generation calls are billed to the token owner's Hugging Face account. This
 > Space is **private** by default — keep it private unless you intend to let
 > others spend your Inference Providers credits.
-
-Source & docs: <https://github.com/MHHamdan/YaguWiseAi>
