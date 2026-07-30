@@ -10,7 +10,7 @@ license: apache-2.0
 short_description: "Voice-native agentic RAG on Llama-3.3-70B"
 ---
 
-# YaguWiseAi — Talk to Your Data
+# YaguWiseAi - Talk to Your Data
 
 [YaguWiseAi](https://github.com/Yakhyobek1997/yagu-wise-ai) is a local-first, voice-native,
 agentic RAG platform with span-level visual citation grounding, a PathRAG

@@ -48,7 +48,7 @@ def main() -> None:
     s = get_settings()
     configure_logging(level="WARNING")
     s.ensure_dirs()
-    console.rule("[bold cyan]YaguWiseAi — Talk to Your Data[/]")
+    console.rule("[bold cyan]YaguWiseAi - Talk to Your Data[/]")
 
     # 1-2. data + index
     from yaguwiseai.pipeline import build_index

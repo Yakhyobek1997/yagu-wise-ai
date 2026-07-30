@@ -1,4 +1,4 @@
-"""YaguWiseAi — Talk to Your Data.
+"""YaguWiseAi - Talk to Your Data.
 
 A local-first, agentic, voice-enabled RAG platform with PathRAG graph retrieval.
 """

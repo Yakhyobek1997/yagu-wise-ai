@@ -1,4 +1,4 @@
-# YaguWiseAi — Talk to Your Data. Podman-first, local at $0.
+# YaguWiseAi - Talk to Your Data. Podman-first, local at $0.
 .DEFAULT_GOAL := help
 SHELL := /usr/bin/env bash
 

@@ -19,7 +19,7 @@ from yaguwiseai.config import get_settings
 
 app = typer.Typer(
     name="yaguwiseai",
-    help="YaguWiseAi — Talk to Your Data. Local-first agentic voice RAG with PathRAG.",
+    help="YaguWiseAi - Talk to Your Data. Local-first agentic voice RAG with PathRAG.",
     no_args_is_help=True,
     add_completion=False,
 )
